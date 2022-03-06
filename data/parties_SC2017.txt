@@ -1,0 +1,24 @@
+Anon	white	.
+Con	blue	Scottish Conservative and Unionist
+Grn	green	Scottish Green Party
+IANL	white	Independent Alliance North Lanarkshire
+Ind	white	Independent
+IndN	white	Scotland Independent Network
+Lab	pink	Scottish Labour Party
+NF	purple	National Front
+NFMU	purple	No Referendum Maintain Union Pro-Brexit
+OMG	purple	Orkney Manifesto Group
+RISE	red	Respect Independence Socialism and Environmentalism
+Rub	purple	The Rubbish Party
+SC	purple	Scottish Christian Party Proclaiming Christ's Lordship
+SDPS	purple	Social Democratic Party Scotland
+SL	red	Socialist Labour Party
+SLD	orange	Scottish Liberal Democrats
+SLP	purple	Scottish Libertarian Party
+SNP	yellow	Scottish National Party
+Sol	red	Solidarity - Hope not Fear
+SSP	red	Scottish Socialist Party
+SUPS	purple	Scottish Unionists Proudly Scottish Proudly British
+TUSC	purple	Scottish Trade Unionist and Socialist
+UKIP	purple	United Kingdom Independence Party
+WDCP	purple	West Dunbartonshire Community Party

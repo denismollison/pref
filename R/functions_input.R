@@ -1,18 +1,47 @@
 # stvfunctions_input.R
-# main function votedata; with abbrev, party_colour and capwords for tidying up
-
-# function votedata reads STV data with full header
+# main function stv.data
+# uses abbrev, party_colour and capwords for tidying up
+# for either .blt format with full details
+# or minimal format - vote matrix with candidate names/codes
 # election title, ns, nc
 # candidate info: fname,name; and party
 # full vote data matrix: vote, mult
-# if nc+1 columns, assumes mult = 1st column, otherwise mult=1
 # data in ballot format (if in pref order, use pref2blt.R to convert)
-votedata=function(datafile,parties,elecname){
-dat=readLines(datafile)    # if(dat[[1]]!=ward){cat("Wrong ward name?","\n")}
+
+#' put election data in an R file (.rda)
+#'
+#' @param datafile File with election data
+#' @param mult Whether includes aggregated votes (default F)
+#' @param parties File with party details (default F, i.e. omit)
+#' @param format Default "ballot"
+#' @param details Whether full election detail (default) or just vote matrix
+#'
+#' @return A standardised list of election info to save in a .rda file
+#' @export
+#'
+# @examples p17=stv.data("inst/extdata/Partick2017.blt",mult=T,parties="inst/extdata/parties_SC2017.txt")
+
+stv.data=function(datafile,mult=F,parties=F,format="ballot",details=T){
+
+# minimal case where data are just a vote matrix with header of candidate names
+if(details==F){     # minimal case with abbrev names and vote matrix only
+vote=as.matrix(utils::read.table(datafile,header=T,row.names=NULL,sep=" "))
+vote[vote==""]=0
+  if(mult==T){mult=vote[,1]; vote=vote[,2:dim(vote)[[2]]]}else{
+  mult=rep(1,dim(vote)[[1]])}
+nv=sum(mult); nc=dim(vote)[[2]]; name2=dimnames(vote)[[2]]
+fname=rep("",nc); name=name2; party=rep("",nc)
+colour=grDevices::rainbow(nc)
+elecname=readline("election name?")
+ns=as.numeric(readline("number to elect?"))
+}else{
+
+dat=base::readLines(datafile)
+elecname=dat[[1]]
 x=as.numeric(strsplit(dat[[2]]," ")[[1]])
 ns=x[[1]]; nc=x[[2]]; ic=1:nc
-# datafile may contain x[3:4]=c(nv,totalvote) - could be used as check
-name=character(); fname=character(); party=rep("",nc); colour=character()
+    name=character(); fname=character(); party=rep("",nc)
+    colour=grDevices::rainbow(nc)
 for(i in ic){
     x=strsplit(dat[[2+i]],",")[[1]]
     if(length(x)>1){party[[i]]=x[[2]]}
@@ -20,13 +49,13 @@ y=strsplit(x[[1]]," ")[[1]]; z=length(y)
     name[[i]]=y[[z]]
     if(z==1){fname[[i]]=""}else{fname[[i]]=paste(y[1:(z-1)],collapse=" ")}
 }
-name2=abbrev(name,fname,elecname)
-ip=ic[party!=""]
-if(length(ip)>0){
+name2=abbrev(name,fname)
+ip=ic[party!=""]; cat(parties,"\n\n")
+if(length(ip)>0){if(parties!=F){
     colour=rep("white",nc)
-    colour[ip]=party_colour(party[ip],parties)
-}else{colour=rainbow(nc)}
-
+    colour[ip]=party_colour(party[ip],parties)}
+    else{cat("recommend re-run with party colours file if available\n\n")}
+}
 nv=length(dat)-nc-2
 if(nv>0){
 # read data as a matrix
@@ -39,11 +68,13 @@ vote=matrix(0,nrow=nv,ncol=n2)
         mult=vote[,1]; vote=vote[,2:n2]
     }else{mult=rep(1,nv)}
 }else{m=0; v=0}   # uncontested case, recognised by nv=0
-    d=list(s=ns,c=nc,nv=nv,m=mult,v=vote,f=fname,n=name,n2=name2,p=party,col=colour)
 }
+list(e=elecname,s=ns,c=nc,nv=nv,m=mult,v=vote,f=fname,n=name,n2=name2,p=party,col=colour)
+}
+# save(d,"elec.R")    # load(d,"elec.R")
 
 
-abbrev=function(name,fname,elecname){
+abbrev=function(name,fname){
 # adds name2, abbreviated names for output - need to check don't have 2 same
 # for 2012 suffices to have 2 letters of first name, or initials
 name2=name; ic=1:length(name)
@@ -54,7 +85,7 @@ if(length(dn)>0){
     for(idn in 1:length(dn)){
       dnc=ic[name==dn[[idn]]]
       fname[dnc]=capwords(fname[dnc],T)
-        cat(elecname,"- duplicate surname -",dn,"\n",fname[dnc],"\n")         # diagnostic of duplicate names
+cat("warning - duplicate surname -",dn,"\n",fname[dnc],"\n")
 	tfn=table(fname[dnc])
 	kc=0; while(max(table(name2[dnc]))>1 & kc<2){
 		kc=kc+1
@@ -76,7 +107,7 @@ name2
 # party_colour calculates party colour from parties file
 # file parties also contains full party names (pn) - not used at mo
 party_colour=function(pa,parties){
-ps=readLines(parties); np=length(ps)
+ps=base::readLines(parties); np=length(ps)
 pna=character(); pcolour=character() # ; pn=character()
 for(i in 1:np){
 z=strsplit(ps[[i]],"\t")[[1]]

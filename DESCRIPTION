@@ -10,6 +10,11 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Imports:
+    base,
     graphics,
     grDevices,
+    jpeg,
     utils
+Depends:
+    R (>= 2.10)
+LazyData: true

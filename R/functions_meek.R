@@ -6,13 +6,15 @@
 # .. share which calculates details for a single vote
 #
 
+# apply(p17c$va,c(2,3),sum)
+
 # transfer.R
 # to transfer surpluses at each stage
 transfer=function(k,qa,inn,iter,surplus,vote,mult,ns,ie,em,sel){
     nc=dim(vote)[[2]]; ic=1:nc
     while(surplus>em){
     vm=keep(k,ie,vote,mult,sel)
-    vmp=vm
+#   vmp=vm
     vc=apply(vm,2,sum)
     qa=sum(vc[1:nc])/(ns+1)   # revise quota
 # calculate surplus of already-elected candidates
@@ -21,7 +23,7 @@ transfer=function(k,qa,inn,iter,surplus,vote,mult,ns,ie,em,sel){
     k[inn]=k[inn]*qa/vc[inn] 
     iter=iter+1
 }
-d=list(k=k,vmp=vmp,vc=vc,qa=qa,inn=inn,iter=iter,sur=surplus)
+d=list(k=k,vm=vm,vc=vc,qa=qa,inn=inn,iter=iter,sur=surplus)
 }
 
 
@@ -90,11 +92,11 @@ if(max(b)>0){
     }
     }
 c(sh,x)   # anything left over (x) is non-transferable
-}  
+}
 
 
-# to make next decision (elect/exclude)
 decision=function(nc,vc,qa,ie,surplus,k,em,stage,it,fin,vo,st){
+#   to make next decision (elect/exclude)
   x=order(-vc[1:nc]);  x=x[ie[x]==0]; elec=numeric(); xcl=numeric()
   if(vc[x[[1]]]>=qa){
 # if exact order of elec important, need to check margin > surplus 
@@ -120,6 +122,30 @@ if(fin==0){
 vo=cbind(vo,vc); st=c(st,paste("stage",stage,sep=""))
 }}
 dn=list(k=k,ie=ie,elec=elec,xcl=xcl,surplus=surplus,stage=stage,vo=vo,st=st)
+}
+
+
+
+decision_text=function(stage,ne,ns,elec,xcl,name,dnext){
+#   function to generate output text for a stage
+#   not expecting to elect and exclude at same stage
+#   and only expect one exclusion at a time
+if(ne==ns){final=" - final result"}else{final=""}
+    dec2=""
+if(stage==1){dec1=paste("first preferences - ",final,sep="")}else{
+    dec1=paste("stage ",stage,final," - ",dnext,sep="")
+ }
+if(length(elec)>0){
+    x=plural(name[elec])
+    dec2=paste(x$out,x$has,"achieved the quota, so",x$is,"elected")# }
+    dnext=paste("after transfer of surplus",x$es," of ",x$out,sep="")
+}
+if(length(elec)==0){
+    if(ne==0){nomore="no-one"}else{nomore="no-one else"}
+    dec2=paste(nomore,"has achieved the quota, so exclude",name[xcl])
+    dnext=paste("after transfer of votes of",name[xcl])
+}
+list(t=c(dec1,dec2),d=dnext)
 }
 
 

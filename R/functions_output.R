@@ -1,4 +1,4 @@
-# output plotting functions outplot, voteplot & webpages, with util func plural
+# output plotting functions voteplot & webpages, plot_jpeg
 # 
 voteplot=function(ns,vm,it,tx,name,party,colour,transf,elecname,cx=1){
 # consider getting rid of cx (regulates font scaling)
@@ -114,7 +114,7 @@ webpages=function(elecdata,va,vo,itt,outdirec,datafile=F){
 # outlines, = non-varying lines of html, are available because in sysdata.rda
 space="&#160;&#160;"       # needed for formatting
 ed=elecdata
-elecname=ed$e; ns=ed$s; nc=ed$c; fname=ed$f; name=ed$n; party=ed$p
+elecname=ed$e; ns=ed$s; nc=ed$c; mult=ed$m; fname=ed$f; name=ed$n; party=ed$p
 if(length(dim(va))==3){nstages=dim(va)[[3]]}else{nstages=1}
 it=itt[[nstages]]
 tra=c("","t"); tra1=c("t",""); hide=c("Show","Hide")
@@ -149,12 +149,12 @@ for(i in 1:nstages){
 for(i in 11:48){
     cat(outlines[[i]],"\n",sep="")
 }
-    options(width=200)
+    options(width=140,max.print=5000)
     print(round(vo,2)); cat("<p>")
+    tv0=sum(mult); q0=tv0/(ns+1)
     if(nstages>1){
-    tv0=sum(va[1:nc,1:nc,1]); q0=tv0/(ns+1)
     qf=sum(va[1:nc,1:nc,nstages])/(ns+1)
-    }else{tv0=sum(va[1:nc,1:nc]); q0=tv0/(ns+1); qf=q0}
+    }else{qf=q0}
 cat("Total votes ",tv0,", &#160;",sep="")
 cat("initial quota = ",round(q0,2),", final quota = ",round(qf,2),"\n",sep="")
 for(i in 49:60){
@@ -171,19 +171,7 @@ webpp
 }
 
 
-# function plural - for grammatical detail of output
-plural=function(names){
-n=length(names)
-outnames=paste(names[[n]])
-if(n>1){outnames=paste(names[[n-1]],"and",outnames)}
-if(n>2){
-  for(i in (n-2):1){outnames=paste(names[[i]],", ",outnames,sep="")}}
-  if(n==1){is="is"; has="has"; es=""}else{is="are"; has="have";es="es"}
-  list(out=outnames,is=is,has=has,es=es)
-}
-
-
-plot_jpeg = function(plotfile,stage)
+plot_jpeg=function(plotfile,stage)
  {dpi=200
   jpg = jpeg::readJPEG(plotfile, native=T) # read the file
   res = dim(jpg)[2:1] # get the resolution, [x, y]

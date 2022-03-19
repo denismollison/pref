@@ -13,65 +13,110 @@
 #' @param datafile File with election data
 #' @param mult Whether includes aggregated votes (default F)
 #' @param parties File with party details (default F, i.e. omit)
-#' @param format Default "ballot"
+#' @param ballot Default F (meaning pref format)
+#' @param friendly Default F (meaning most details after votes)
 #' @param details Whether full election detail (default) or just vote matrix
 #'
 #' @return A standardised list of election info to save in a .rda file
 #' @export
-#'
-# @examples p17=stv.data("inst/extdata/Partick2017.blt",mult=T,parties="inst/extdata/parties_SC2017.txt")
+#' @examples datafile=system.file("extdata","jmt2002.dat",package="stv")
+#' @examples jmt02=stv.data(datafile)
+#' @examples datafile=system.file("extdata","Partick2017.blt",package="stv")
+#' @examples parties17=system.file("extdata","parties_SC2017.txt",package="stv")
+#' @examples p17=stv.data(datafile,mult=TRUE,parties=parties17,ballot=TRUE,friendly=TRUE)
+#' # @examples y12=stv.data("inst/extdata/yale12.blt",details=F)
 
-stv.data=function(datafile,mult=F,parties=F,format="ballot",details=T){
-
-# minimal case where data are just a vote matrix with header of candidate names
+stv.data=function(datafile,mult=F,details=T,parties=F,ballot=F,friendly=F){
+#
+# first: minimal case - data a vote matrix with header of candidate names
 if(details==F){     # minimal case with abbrev names and vote matrix only
 vote=as.matrix(utils::read.table(datafile,header=T,row.names=NULL,sep=" "))
 vote[vote==""]=0
-  if(mult==T){mult=vote[,1]; vote=vote[,2:dim(vote)[[2]]]}else{
-  mult=rep(1,dim(vote)[[1]])}
-nv=sum(mult); nc=dim(vote)[[2]]; name2=dimnames(vote)[[2]]
+  if(mult==T){mul=vote[,1]; vote=vote[,2:dim(vote)[[2]]]}else{
+  mul=rep(1,dim(vote)[[1]])}
+nv=dim(vote)[[1]]; nc=dim(vote)[[2]]; name2=dimnames(vote)[[2]]
 fname=rep("",nc); name=name2; party=rep("",nc)
 colour=grDevices::rainbow(nc)
 elecname=readline("election name?")
 ns=as.numeric(readline("number to elect?"))
 }else{
-
+#
+# detailed case: details=T - elecname, ns, nc, names - option of parties
 dat=base::readLines(datafile)
+name=character(); fname=character()
+if(friendly==T){    # user-friendly file order, with details first, then votes
 elecname=dat[[1]]
 x=as.numeric(strsplit(dat[[2]]," ")[[1]])
 ns=x[[1]]; nc=x[[2]]; ic=1:nc
-    name=character(); fname=character(); party=rep("",nc)
-    colour=grDevices::rainbow(nc)
-for(i in ic){
-    x=strsplit(dat[[2+i]],",")[[1]]
-    if(length(x)>1){party[[i]]=x[[2]]}
-y=strsplit(x[[1]]," ")[[1]]; z=length(y)
-    name[[i]]=y[[z]]
-    if(z==1){fname[[i]]=""}else{fname[[i]]=paste(y[1:(z-1)],collapse=" ")}
+cdata=2+ic
+# what if no contest, therefore no vote data? (need to cover for batch mode)
+nv=length(dat)-(nc+2)
+vdata=(nc+3):length(dat)
+}else{   # user-unfriendly file order, with most details at end (Hill's format)
+x=as.numeric(strsplit(dat[[1]]," ")[[1]])
+nc=x[[1]]; ns=x[[2]]
+i=1:length(dat)
+nv=i[substring(dat[i],1,1)=="0"]-2
+vdata=2:(nv+1)
+cdata=(nv+3):(nv+nc+2)
+elecname=dat[[nv+nc+3]]
+}
+# for either input order, can now extract details and votes
+# candidate names, calculate a short-form unique version, name2
+party=rep("",nc); fname=rep("",nc); name=rep("",nc)
+for(i in cdata){
+  j=i+1-cdata[[1]]
+  x=strsplit(dat[[i]],",")[[1]]
+  if(length(x)>1){party[[j]]=x[[2]]}
+  y=strsplit(x[[1]]," ")[[1]]; z=length(y)
+  name[[j]]=y[[z]]
+  if(z>1){fname[[j]]=paste(y[1:(z-1)],collapse=" ")}
 }
 name2=abbrev(name,fname)
-ip=ic[party!=""]; cat(parties,"\n\n")
-if(length(ip)>0){if(parties!=F){
+# parties and party colours if specified
+if(parties!=F){
+    ip=ic[party!=""]
+    cat("5a ",party,"\n\n")
+if(length(ip)>0){
     colour=rep("white",nc)
     colour[ip]=party_colour(party[ip],parties)}
-    else{cat("recommend re-run with party colours file if available\n\n")}
-}
-nv=length(dat)-nc-2
+else{cat("recommend re-run with party colours file if available\n\n")}
+     cat("6 ",colour[1:3],"\n")
+}else{colour=grDevices::rainbow(nc)}
+# and last but not least - the votes
 if(nv>0){
-# read data as a matrix
-    n2=length(strsplit(dat[[nc+3]]," ")[[1]])
-vote=matrix(0,nrow=nv,ncol=n2)
-    for(i in 1:nv){
-        vote[i,]=as.numeric(strsplit(dat[[nc+2+i]]," ")[[1]])
-    }
-    if(n2>nc){
-        mult=vote[,1]; vote=vote[,2:n2]
-    }else{mult=rep(1,nv)}
+  vote=matrix(0,nrow=nv,ncol=nc)
+  mul=numeric(); if(mult==F){mul=rep(1,nv)}
+        if(ballot==T){
+            for(iv in 1:nv){
+                x=strsplit(dat[[vdata[[iv]]]]," ")[[1]]
+               if(mult==T){mul[[iv]]=as.numeric(x[[1]]); x=x[2:length(x)]}
+               if(length(x)!=nc){cat("vote ",i," has length ",length(x))}
+                     vote[iv,]=as.numeric(x)
+            }}else{
+for(iv in 1:nv){
+x=strsplit(dat[[vdata[[iv]]]]," ")[[1]]
+nx0=length(x)
+mul[[iv]]=as.numeric(x[[1]])  # for pref format assume first element is mult
+if(x[[nx0]]!="0"){cat("check failure at vote no. ",iv,"\n")}
+if(nx0>2){
+x=x[2:(nx0-1)]; nx=length(x)   # actual vote
+pr=1; incr=1; pref=numeric()
+for(i in 1:nx){
+nch=nchar(x[[i]])
+if(substring(x[[i]],1,1)=="("){incr=0; x[[i]]=substring(x[[i]],2,nch)}
+if(substring(x[[i]],nch,nch)==")"){incr=1; x[[i]]=substring(x[[i]],1,(nch-1))}
+pref[[i]]=pr; pr=pr+incr
+}
+xn=as.numeric(x)
+vote[iv,xn]=pref
+}
+}}
 }else{m=0; v=0}   # uncontested case, recognised by nv=0
 }
-list(e=elecname,s=ns,c=nc,nv=nv,m=mult,v=vote,f=fname,n=name,n2=name2,p=party,col=colour)
+list(e=elecname,s=ns,c=nc,nv=nv,m=mul,v=vote,f=fname,n=name,n2=name2,p=party,col=colour)
 }
-# save(d,"elec.R")    # load(d,"elec.R")
+# save(d,file="elec.R")    # load(d,file="elec.R")
 
 
 abbrev=function(name,fname){

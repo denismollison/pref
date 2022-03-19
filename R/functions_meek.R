@@ -1,68 +1,72 @@
-# functions transfer, keep and share; and decision; and select for permutations used in share
+# functions transfer, keep and share; decision and decision_text; and select for permutations used in share, plural for grammar
 # keep calculates current vote totals vm from keep values 
 # vm a matrix - row = 1st pref, col = who with currently
 # case where equal prefs allowed
 # -> delegates sharing out of each vote to function ..
 # .. share which calculates details for a single vote
-#
 
-# apply(p17c$va,c(2,3),sum)
 
-# transfer.R
+transfer=function(k,iter,surplus,vote,mult,ns,ie,em,sel){
 # to transfer surpluses at each stage
-transfer=function(k,qa,inn,iter,surplus,vote,mult,ns,ie,em,sel){
-    nc=dim(vote)[[2]]; ic=1:nc
-    while(surplus>em){
-    vm=keep(k,ie,vote,mult,sel)
-#   vmp=vm
-    vc=apply(vm,2,sum)
-    qa=sum(vc[1:nc])/(ns+1)   # revise quota
-# calculate surplus of already-elected candidates
-    inn=ic[ie==1]
-    surplus=sum(vc[inn]-qa)
-    k[inn]=k[inn]*qa/vc[inn] 
-    iter=iter+1
-}
-d=list(k=k,vm=vm,vc=vc,qa=qa,inn=inn,iter=iter,sur=surplus)
-}
-
-
-keep=function(k,ie,vote,mult,sel){
 nv=dim(vote)[[1]]; nc=dim(vote)[[2]]; ic=1:nc
-vm=matrix(0,nrow=(nc+1),ncol=(nc+1))
-#
-# cycle looking at each vote
+je=ic[ie==1]; ne=length(je)
+v3=array(0,dim=c((nc+1),(nc+1),2^ne))
 for(iv in 1:nv){
-b=vote[iv,]
-# awkward bit, splitting vote if more than one first pref
-# not essential for calculating result, only for understanding transfers
-# if(length(b[b!=0])==0){cat(iv,"\n")}
-if(length(b[b!=0])==0){vm[(nc+1),(nc+1)]=vm[(nc+1),(nc+1)]+1}else{
-f=min(b[b!=0])
-e1=ic[b==f]
-# if(length(e1)==nc){cat(iv,"\n")}
-nf=length(e1)
+  b=vote[iv,]
+# split vote if more than one first pref (needed to audit transfers)
+  if(length(b[b!=0])==0){v3[(nc+1),(nc+1),1]=v3[(nc+1),(nc+1),1]+1  # (empty vote)
+    }else{
+  f=min(b[b!=0])
+  e1=ic[b==f]   # could pick out "all equal" votes here (length(e1)==nc)
+  nf=length(e1)
 for(j in e1){
-    bj=b; bj[b>0]=b[b>0]+1
-    bj[[j]]=1
+   bj=b; bj[b>0]=b[b>0]+1
+   bj[[j]]=1
 # deal with this (part of a) vote, going through choices in order of pref
-bj[ie==-1]=0     # ignore any preferences for excluded candidates
-vm[j,]=vm[j,]+share(k,ie,bj,sel)*mult[[iv]]/nf   # for share see below
+   bj[ie==-1]=0     # ignore any preferences for excluded candidates
+   v3[j,,]=v3[j,,]+share(ie,bj,sel)*mult[[iv]]/nf   # for share see below
 }}
 }
-vm
+if(ne==0){iter=iter+1
+    vm=v3[,,1]; vc=apply(vm,2,sum)
+    qa=sum(vc[1:nc])/(ns+1)   # revise quota
+}else{
+    perm=sel[[ne]]
+    v4=apply(v3,c(2,3),sum)
+i94=1
+    while(surplus>em | i94==1){
+    i94=0
+    t=1-k; te=t[je]; tr=te[ne:1]
+#   Calc vc from coefs using current val of t (=1-k)   
+    coef=numeric()
+    for(i in 1:2^ne){
+      coef[[i]]=prod(tr^perm[[i]])
+    }
+    vc=v4%*%coef
+    qa=sum(vc[1:nc])/(ns+1)   # revise quota
+# calculate surplus of already-elected candidates
+    surplus=sum(vc[je]-qa)
+    k[je]=k[je]*qa/vc[je]; te=1-k[je]
+    iter=iter+1
+    }
+    vm=matrix(0,nrow=(nc+1),ncol=(nc+1))
+    for(i in 1:(nc+1)){
+        for(j in 1:(nc+1)){
+            vm[i,j]=sum(v3[i,j,]*coef)}}
+}
+list(k=k,vm=vm,vc=vc,qa=qa,inn=je,iter=iter,sur=surplus)
 }
 
 
-# share - function to share out one vote, b (in ballot format) - 30 Mar 2020
-# when current keep values are k, and
+share=function(ie,b,sel){
+# share - function to share out one vote, b (in ballot format)
+# new version 10 Mar 2022 to save as polynomial coefficients
 # ie indicates candidate status = -1 if excl, 1 if elec, 0 if undecided
-# need:  library(binaryLogic)
-share=function(k,ie,b,sel){                                 #
 nc=length(b); ic=1:nc
-x=1   # = one single transferable vote
-sh=rep(0,nc)   # for shares of vote
-t=1-k
+jj=ic[ie==1]; ne=length(jj)
+code=rep(0,nc); code[jj]=2^(0:(ne-1))
+sh=matrix(0,nrow=(nc+1),ncol=2^ne)   # for shares of vote
+c0=1
 b[ie<0]=0   # treat excl candidates as though non-existent
 if(max(b)>0){
     prefs=as.numeric(names(table(b[b!=0])))   # pref values used, in order
@@ -74,43 +78,46 @@ if(max(b)>0){
 # separate into elec and undecided; elec trickier - they transfer surpluses
         je=ic[b==prefs[[ip]] & ie==1]; me=length(je)
         ju=ic[b==prefs[[ip]] & ie==0]; mu=length(ju)
-        if(me==1){sh[je]=k[je]/m}
+        if(me==1){sh[je,c0+c(0,code[[je]])]=c(1,-1)/m}
         if(me>1){
             z=sel[[me-1]]
             for(i in je){
-                t=1-k[je[je!=i]]
+                c1=code[je[je!=i]]
                 for(j in z){
                     j=as.logical(j)
-                    shj=k[[i]]*factorial(sum(j))*prod(t[j])/prod(m:(m-sum(j)))
-                    sh[[i]]=sh[[i]]+shj
+                    amt=factorial(sum(j))/prod(m:(m-sum(j)))
+                    coef=c0+sum(c1[j])+c(0,code[[i]])
+                  sh[i,coef]=sh[i,coef]+amt*c(1,-1)
                 }}
         }
         if(mu>0){
-            sh[ju]=(1-sum(sh[je]))/mu
+            d=rep(0,2^ne); d[[c0]]=1
+            if(me==1){d=d-sh[je,]}
+            if(me>1){d=d-apply(sh[je,],2,sum)}
+            for(jj in 1:mu){sh[ju[jj],]=d/mu}
         }
-        sh[jp]=x*sh[jp]; x=x-sum(sh[jp])
+        c0=c0+sum(code[je])
     }
-    }
-c(sh,x)   # anything left over (x) is non-transferable
+    sh[(nc+1),c0]={mu==0}
+    }else{sh[(nc+1),1]=1}
+sh
 }
 
 
-decision=function(nc,vc,qa,ie,surplus,k,em,stage,it,fin,vo,st){
+decision=function(nc,vc,qa,ie,surplus,k,em,stage,fin,vo,st){
 #   to make next decision (elect/exclude)
   x=order(-vc[1:nc]);  x=x[ie[x]==0]; elec=numeric(); xcl=numeric()
-  if(vc[x[[1]]]>=qa){
+    if(vc[x[[1]]]>=qa){
 # if exact order of elec important, need to check margin > surplus 
 # if margin <= surplus, need to reduce em and try again .. see spare.R#margin
     elec=x[vc[x]>=qa]
     surplus=surplus+sum(vc[elec])-qa*length(elec)
-#    cat("  elected: ",name[itn]); cat("\n")
   }else{
 # else exclude - first checking noone within em of quota
   if(vc[x[[1]]]<(qa-surplus)){
     x=order(vc[1:nc]);  xcl=x[ie[x]==0][[1]]   
     k[[xcl]]=0
-    surplus=surplus+vc[[xcl]]
-#    cat("  excluded: ",name[xcl]); cat("\n")
+    ic=1:nc
    }else{
    em=em*0.01	# should check for dead heat in case em->0?
    }
@@ -119,11 +126,10 @@ if(length(c(elec,xcl))>0){
     ie[elec]=1; ie[xcl]=-1
     stage=stage+1
 if(fin==0){
-vo=cbind(vo,vc); st=c(st,paste("stage",stage,sep=""))
+vo=cbind(vo,vc); st=c(st,paste("st",stage,sep=""))
 }}
-dn=list(k=k,ie=ie,elec=elec,xcl=xcl,surplus=surplus,stage=stage,vo=vo,st=st)
+list(k=k,ie=ie,elec=elec,xcl=xcl,surplus=surplus,stage=stage,vo=vo,st=st)
 }
-
 
 
 decision_text=function(stage,ne,ns,elec,xcl,name,dnext){
@@ -150,12 +156,14 @@ list(t=c(dec1,dec2),d=dnext)
 
 
 select=function(nmax){
-# the 2^n ways of selecting a subset from a set of n, for up to n=nmax
+# for use generating all subsets of a set of size n, for up to n=nmax
+# returns a list whose nth element is the binary representations of 0:(2^n-1)
+# needed for polynomial expression for transfer values
 # need for up to ns-1 for count, and ns for final keep value calculation
 # only need to use once (`sel=select(ns)') in preamble
 bi=list()
 bi[[1]]=list(0,1)
-for(n in 1:nmax){
+for(n in 1:(nmax-1)){
 bn=list()
 for(j in 1:2^n){
 bn[[j]]=c(0,bi[[n]][[j]])
@@ -164,4 +172,16 @@ bn[[2^n+j]]=c(1,bi[[n]][[j]])
 bi[[n+1]]=bn
 }
 bi
+}
+
+
+plural=function(names){
+# function plural - for grammatical detail of output
+n=length(names)
+outnames=paste(names[[n]])
+if(n>1){outnames=paste(names[[n-1]],"and",outnames)}
+if(n>2){
+  for(i in (n-2):1){outnames=paste(names[[i]],", ",outnames,sep="")}}
+  if(n==1){is="is"; has="has"; es=""}else{is="are"; has="have";es="es"}
+  list(out=outnames,is=is,has=has,es=es)
 }

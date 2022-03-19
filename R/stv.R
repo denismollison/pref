@@ -1,4 +1,4 @@
-# stv.count() - core of STV package, rewritten as a function from original stv20.R
+# stv() - core of STV package, rewritten as a function from original stv20.R
 
 #' STV election count
 #'
@@ -10,12 +10,13 @@
 #' @return A list containing votes and keep vals at each stage, + optional web pages
 #' @export
 #'
-#' @examples j02c=stv.count(j02)
-#' @examples hc12c=stv.count(hc12)
-#' @examples p17c=stv.count(p17)
+#' @examples j02c=stv(j02)
+#' @examples hc12c=stv(hc12)
+#' @examples p17c=stv(p17)
+#' @examples y12c=stv(y12)
 #'
-stv.count=function(elecdata,outdirec=tempdir(),verbose=T,plot=T){
-tim0=proc.time()    # to track computing time taken
+stv=function(elecdata,outdirec=tempdir(),verbose=T,plot=T){
+    tim0=proc.time()    # to track computing time taken
     x=outlines
 # read and unpack elecdata
 ed=elecdata; elecname=ed$e
@@ -29,7 +30,7 @@ if(verbose==T){cat(elecname); cat(paste("  (",ns," seats, ",nc," candidates)",se
     qa=q0
 k=rep(1,(nc+1))		# initial keep values (the +1 is for non-transferable)
 ks=numeric() 		# record keep value at each stage
-em=min(0.1,qa*0.005)	# initial error margin (will be decreased if necessary)
+em=min(0.01,qa*0.001)	# initial error margin (will be decreased if necessary)
 surplus=1		# to ensure calculation gets going
 it=numeric()		# it=elec(+) and excl(-) in order of being decided
 iter=0			# keeps track of number of iterations in count
@@ -50,11 +51,11 @@ trf=c("","t")
 # main cycle - to elect or exclude next candidate(s)
 while(ne<ns){
 # recalculate keep values and transfer surpluses
-    tr=transfer(k,qa,inn,iter,surplus,vote,mult,ns,ie,em,sel)
+    tr=transfer(k,iter,surplus,vote,mult,ns,ie,em,sel)
     k=tr$k; vm=tr$vm; vc=tr$vc; qa=tr$qa; inn=tr$inn
     iter=tr$iter; surplus=tr$sur
 # make next decision to elect or exclude
-    dn=decision(nc,vc,qa,ie,surplus,k,em,stage,it,fin,vo,st)
+    dn=decision(nc,vc,qa,ie,surplus,k,em,stage,fin,vo,st)
     k=dn$k; ie=dn$ie; elec=dn$elec; xcl=dn$xcl; it=c(it,elec,xcl*ie[xcl])
     surplus=dn$surplus; stage=dn$stage; vo=dn$vo; st=dn$st
     ne=length(ie[ie==1])
@@ -85,19 +86,19 @@ if(plot==T){
     cat(x$t,sep=", "); cat("\n\n")
 # .. and plot current state of votes if plot=T
     if(plot==T){plot_jpeg(plotfile,stage)}
-    readline("next? ")
+   readline("next? ")
   }
 }
 fin=1; nstages=stage;  qf=qa   # final values of count proper
 
 # extra stage to calculate final keep values
-tr=transfer(k,qa,inn,iter,surplus,vote,mult,ns,ie,em,sel)
+tr=transfer(k,iter,surplus,vote,mult,ns,ie,em,sel)
   k=tr$k; vmp=tr$vmp; vc=tr$vc; qa=tr$qa; inn=tr$inn; iter=tr$iter; surplus=tr$sur
 while(length(k[k>0])>(ns+2)){
-  dn=decision(nc,vc,qa,ie,surplus,k,em,stage,it,fin,vo,st)
+  dn=decision(nc,vc,qa,ie,surplus,k,em,stage,fin,vo,st)
     k=dn$k; ie=dn$ie; elec=dn$elec; xcl=dn$xcl; it=c(it,elec,xcl*ie[xcl])
     surplus=dn$surplus; stage=dn$stage; vo=dn$vo; st=dn$st
-  tr=transfer(k,qa,inn,iter,surplus,vote,mult,ns,ie,em,sel)
+  tr=transfer(k,iter,surplus,vote,mult,ns,ie,em,sel)
     k=tr$k; vmp=tr$vmp; vc=tr$vc; qa=tr$qa; inn=tr$inn; iter=tr$iter; surplus=tr$sur
   }
 tim=proc.time()-tim0;  pt=tim[[1]]

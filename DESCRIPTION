@@ -5,6 +5,7 @@ Authors@R:
     person("Denis", "Mollison", , "denis.mollison@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-4014-3431"))
 Description: Counts STV elections, especially Meek with equal preference allowed.
+URL: https://github.com/denismollison/stv
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -18,3 +19,6 @@ Imports:
 Depends:
     R (>= 2.10)
 LazyData: true
+Suggests: 
+    knitr
+VignetteBuilder: knitr

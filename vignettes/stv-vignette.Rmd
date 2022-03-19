@@ -1,0 +1,51 @@
+---
+title: "stv-vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{stv-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(stv)
+```
+## stv.count
+
+This is the core function of the package: it takes a list variable containing election data and outputs the result of the corresponding STV election count. It uses Meek's algorithm, the conceptually simplest version of STV, whose only drawback is that it requires electronic counting - which is not a drawback here, as that's what computer packages do! We also allow votes expressing equal preference.
+
+A typical use of the function is simply "edc=stv.count(ed)", with input ed and output edc. You can try this out with the 3 examples provided - just replace "ed" here with "hc12", "p17" or "j02" (and "edc" with a name of your choice, e.g. "hc12c".
+
+Input details: the election data list, ed say, should be in a file called ed.rda, and should consist of components:
+
+* e (in full ed\$e) = the election name
+* s = the number of seats (i.e. how many are to be elected)
+* c = the number of candidates
+* nv = the number of vote lines
+* m = how many votes each line represents (= 1 if there's just one vote per line).  [The total number of votes is sum(ed$m).]
+* v = an nv x c matrix containing the votes - thus v[i,j] indicates the ith vote's preference for candidate j
+* n and f = the names and first names of the candidates
+* n2 = abbreviated names of candidates
+
+The output edc is also a list, with components:
+
+* vo = a matrix showing the number of votes for each candidate at each stage of the count, plus their final keep values
+* keep = a matrix of the keep values at each stage (as %s)
+* va = an array, containing in-out matrices for each stage showing how votes have transferred
+* txt = list of text descriptions of what happens at each stage
+* itt = list (by by number) of candidates whose fate has been decided at each stage (+ if elected, - if excluded)
+
+Side effects: text and plots:  The default is to print text output (as in txt), how plots illustrating the progress of the count, at each stage, and finally to display webpages containing these.
+These can be suppressed with the options "verbose=F" and "plot=F" respectively. Alternatively, the plots can be permanently preserved by adding the option outdirec="path" where path is the desired output directory.
+
+## stv.data
+
+This is a function to convert election data into the required format for stv.count, i.e. a list with elements as above.
+

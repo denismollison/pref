@@ -4,22 +4,39 @@
 \alias{stv.data}
 \title{put election data in an R file (.rda)}
 \usage{
-stv.data(datafile, mult = F, parties = F, format = "ballot", details = T)
+stv.data(
+  datafile,
+  mult = F,
+  details = T,
+  parties = F,
+  ballot = F,
+  friendly = F
+)
 }
 \arguments{
 \item{datafile}{File with election data}
 
 \item{mult}{Whether includes aggregated votes (default F)}
 
+\item{details}{Whether full election detail (default) or just vote matrix}
+
 \item{parties}{File with party details (default F, i.e. omit)}
 
-\item{format}{Default "ballot"}
+\item{ballot}{Default F (meaning pref format)}
 
-\item{details}{Whether full election detail (default) or just vote matrix}
+\item{friendly}{Default F (meaning most details after votes)}
 }
 \value{
 A standardised list of election info to save in a .rda file
 }
 \description{
 put election data in an R file (.rda)
+}
+\examples{
+datafile=system.file("extdata","jmt2002.dat",package="stv")
+jmt02=stv.data(datafile)
+datafile=system.file("extdata","Partick2017.blt",package="stv")
+parties17=system.file("extdata","parties_SC2017.txt",package="stv")
+p17=stv.data(datafile,mult=TRUE,parties=parties17,ballot=TRUE,friendly=TRUE)
+# @examples y12=stv.data("inst/extdata/yale12.blt",details=F)
 }

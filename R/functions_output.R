@@ -1,16 +1,18 @@
 # output plotting functions voteplot & webpages, plot_jpeg
 # 
-voteplot=function(ns,vm,it,tx,name,party,colour,transf,elecname,cx=1){
+voteplot=function(ns,vm,qa,it,tx,name,party,colour,transf,elecname,cx=1){
 # consider getting rid of cx (regulates font scaling)
 margincolour="burlywood";  panelcolour="burlywood1"
 # convert vote variables to percentages
 b=sum(vm); nc=dim(vm)[[1]]-1
+    qa=100*qa/sum(vm)  # rely on its being given in fn call
 vm=vm*100/b
-vm0=vm;  diag(vm0)=0
-qa=sum(vm[1:nc,1:nc])/(ns+1)
+    vm0=vm;  diag(vm0)=0
+#   cat("qa= ",qa,"\n")
 # allocate x coords of cands. - with extra space before "n-t"
 x1=((1:nc)-1)*5; x1=c(x1,(nc+1)*5)
 x2=x1+4
+#  cat(rbind(x1,x2))
 vmax=max(qa+5,apply(vm,2,sum)*1.05)
 vmin=-5*max(1,0.1*max(vm))
 # abbreviate long names
@@ -26,9 +28,10 @@ graphics::par(mar=c(0,11,1,5),bg=margincolour)
 graphics::plot(0,0,axes=F,xlim=c(0,(nc+2)*5),ylim=c(vmin,yy),xlab="",ylab="",pch="")
 if(transf==1){graphics::rect(-1,tf0,(nc+2)*5,yy,col=panelcolour)}
 graphics::rect(-1,0,(nc+2)*5,vmax,col=panelcolour)
-spread=1+0.5*max(vmax/(qa+5)-1,0)
-graphics::mtext(elecname,side=2,line=9,at=-7*spread,adj=0,cex=cx*1.3,las=1)
-
+    spread=1+0.5*max(vmax/(qa+5)-1,0)
+#   cat(elecname,"\n")
+graphics::mtext(elecname,side=2,line=9,at=-9*spread,adj=0,cex=cx*1.3,las=1)
+    
 # axis and parallel lines for vote plot
 # abline(h=qa*(0:floor(vmax/qa)),lwd=2)
 graphics::abline(h=qa*(0:1),lwd=2)
@@ -109,8 +112,8 @@ graphics::text(xt1,y[[8]],pos=4,"amount of votes",cex=1.5)
 }
 
 
+webpages=function(elecdata,va,vo,qa,itt,outdirec,datafile=F,sys="meek"){
 # to make a pair of election web pages (without/with transfers) -
-webpages=function(elecdata,va,vo,itt,outdirec,datafile=F){
 # outlines, = non-varying lines of html, are available because in sysdata.rda
 space="&#160;&#160;"       # needed for formatting
 ed=elecdata
@@ -151,12 +154,14 @@ for(i in 11:48){
 }
     options(width=140,max.print=5000)
     print(round(vo,2)); cat("<p>")
-    tv0=sum(mult); q0=tv0/(ns+1)
+    tv0=sum(mult)
     if(nstages>1){
     qf=sum(va[1:nc,1:nc,nstages])/(ns+1)
-    }else{qf=q0}
-cat("Total votes ",tv0,", &#160;",sep="")
-cat("initial quota = ",round(q0,2),", final quota = ",round(qf,2),"\n",sep="")
+    }else{qf=qa}
+    cat("Total votes ",tv0,", &#160;",sep="")
+    if("sys"=="meek"){
+cat("initial quota = ",round(qa,2),", final quota = ",round(qf,2),"\n",sep="")
+}else{cat("quota = ",round(qa,2))}
 for(i in 49:60){
     cat(outlines[[i]],"\n",sep="")
 }

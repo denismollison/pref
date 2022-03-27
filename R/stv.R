@@ -32,8 +32,8 @@ k=rep(1,(nc+1))		# initial keep values (the +1 is for non-transferable)
 ks=numeric() 		# record keep value at each stage
 em=min(0.01,qa*0.001)	# initial error margin (will be decreased if necessary)
 surplus=1		# to ensure calculation gets going
-it=numeric()		# it=elec(+) and excl(-) in order of being decided
 iter=0			# keeps track of number of iterations in count
+it=numeric()		# it=elec(+) and excl(-) in order of being decided
 ie=rep(0,nc); ne=0	# indicator (ie=1 indicates elected, =-1 excluded)
 st=character()          # ? for stages
 vo=numeric()            # to record votes at each stage; note also vm, va
@@ -60,7 +60,7 @@ while(ne<ns){
     surplus=dn$surplus; stage=dn$stage; vo=dn$vo; st=dn$st
     ne=length(ie[ie==1])
     ks=cbind(ks,k)
-    x=decision_text(stage,ne,ns,elec,xcl,name,dnext)
+    x=decision_text(stage,ne,ns,elec,xcl,name2,dnext)
     dnext=x$d; txt=c(txt,x$t)
     if(stage==1){
       va=vm; itt=list(it)
@@ -77,7 +77,7 @@ if(plot==T){
   plotfile=paste(outdirec,paste("stage",trf[[i]],stage,".jpg",sep=""),sep="/")
   h=600+200*transf
   grDevices::jpeg(plotfile,width=w,height=h)
-    voteplot(ns,vm,it,x$t,name2,party,colour,transf,elecname)
+    voteplot(ns,vm,qa,it,x$t,name2,party,colour,transf,elecname)
   grDevices::dev.off()
 }}
 # print decision (if verbose=T)
@@ -122,7 +122,7 @@ if(length(party[party!=""])>0){dimnames(vo)=list(name=c(paste(name,", ",fname," 
 dimnames(vo)=list(name=c(paste(name,fname,sep=", "),"non-transferable"),stage=st)
 }
 # if plot=T make webpages to go with vote plots, and if verbose=T display them
-if(plot==T){wp=webpages(elecdata,va,vo,itt,outdirec)
+if(plot==T){wp=webpages(elecdata,va,vo,qa,itt,outdirec,sys="meek")
 if(verbose==T){grDevices::dev.off()
   utils::browseURL(wp[[1]],browser="open")}}
 txt=matrix(txt,nrow=2)   # store decision text as matrix

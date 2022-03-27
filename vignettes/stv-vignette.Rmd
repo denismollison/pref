@@ -19,7 +19,7 @@ library(stv)
 ```
 ## stv.count
 
-This is the core function of the package: it takes a list variable containing election data and outputs the result of the corresponding STV election count. It uses Meek's algorithm, the conceptually simplest version of STV, whose only drawback is that it requires electronic counting - which is not a drawback here, as that's what computer packages do! We also allow votes expressing equal preference.
+This the core function of the package: it takes a list variable containing election data and outputs the result of the corresponding STV election count. It uses Meek's algorithm, the conceptually simplest version of STV, whose only drawback is that it requires electronic counting - which is not a drawback here, as that's what computer packages do! We also allow votes expressing equal preference.
 
 A typical use of the function is simply "edc=stv.count(ed)", with input ed and output edc. You can try this out with the 3 examples provided - just replace "ed" here with "hc12", "p17" or "j02" (and "edc" with a name of your choice, e.g. "hc12c".
 

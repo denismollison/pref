@@ -1,5 +1,5 @@
 Package: stv
-Title: STV, especially Meek allowing equal preferences
+Title: STV, especially Meek allowing equal preferences but
 Version: 0.0.0.9000
 Authors@R:
     person("Denis", "Mollison", , "denis.mollison@gmail.com", role = c("aut", "cre"),

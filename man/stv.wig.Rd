@@ -2,24 +2,26 @@
 % Please edit documentation in R/stv_wig.R
 \name{stv.wig}
 \alias{stv.wig}
-\title{STV election count using WIG as for Scottish Council elections}
+\title{STV election count using WIG as for Scottish Council elections
+calculated to 5 places of decimals as used for those elections}
 \usage{
-stv.wig(elecdata, verbose = T, plot = T, outdirec = tempdir())
+stv.wig(elecdata, outdirec = tempdir(), verbose = T, plot = T)
 }
 \arguments{
 \item{elecdata}{File with vote data}
 
+\item{outdirec}{Directory for webpages (if produced)}
+
 \item{verbose}{Whether to report on each stage of the count}
 
 \item{plot}{Whether to produce web pages with plots of countcheck()}
-
-\item{outdirec}{Directory for webpages (if produced)}
 }
 \value{
 A list containing votes at each stage, + optional web pages
 }
 \description{
 STV election count using WIG as for Scottish Council elections
+calculated to 5 places of decimals as used for those elections
 }
 \examples{
 p17w=stv.wig(p17)

@@ -1,6 +1,6 @@
 # output plotting functions voteplot & webpages, plot_jpeg
 # 
-voteplot=function(ns,vm,qa,it,tx,name,party,colour,transf,elecname,cx=1){
+voteplot=function(ns,vm,qa,it,tx,name,party,colour,transf,elecname,cx=1,sys="meek"){
 # consider getting rid of cx (regulates font scaling)
 margincolour="burlywood";  panelcolour="burlywood1"
 # convert vote variables to percentages
@@ -8,6 +8,7 @@ b=sum(vm); nc=dim(vm)[[1]]-1
     qa=100*qa/sum(vm)  # rely on its being given in fn call
 vm=vm*100/b
     vm0=vm;  diag(vm0)=0
+ip={max(nchar(party))>0}
 #   cat("qa= ",qa,"\n")
 # allocate x coords of cands. - with extra space before "n-t"
 x1=((1:nc)-1)*5; x1=c(x1,(nc+1)*5)
@@ -29,8 +30,9 @@ graphics::plot(0,0,axes=F,xlim=c(0,(nc+2)*5),ylim=c(vmin,yy),xlab="",ylab="",pch
 if(transf==1){graphics::rect(-1,tf0,(nc+2)*5,yy,col=panelcolour)}
 graphics::rect(-1,0,(nc+2)*5,vmax,col=panelcolour)
     spread=1+0.5*max(vmax/(qa+5)-1,0)
-#   cat(elecname,"\n")
-graphics::mtext(elecname,side=2,line=9,at=-9*spread,adj=0,cex=cx*1.3,las=1)
+graphics::mtext(elecname,side=2,line=9,at=-(7+2*ip)*spread,adj=0,cex=cx*1.3,las=1)
+if(sys !="meek"){systext=paste("STV - sys =",sys)
+graphics::mtext(systext,side=2,line=9,at=-(9+2*ip)*spread,adj=0,font=3,cex=cx*1.3,las=1)}
     
 # axis and parallel lines for vote plot
 # abline(h=qa*(0:floor(vmax/qa)),lwd=2)
@@ -44,7 +46,7 @@ graphics::mtext(side=2,line=4,at=qa*0.5,text="votes %",cex=cx*2.2)
 graphics::mtext(side=2,line=3,at=qa,text="quota",font=3,las=1,cex=cx*2)
 #   name, party, whether elected by this stage
     elec=it[it>0]
-    y1=-vmax*(0.1+0.07*(0:2)); ip={max(nchar(party))>0}
+    y1=-vmax*(0.1+0.07*(0:2))
 graphics::text(x1+2,y1[[1]],c(name,"non-"),cex=cx*1.3)
 graphics::text(x1+2,y1[[2]],c(party,"transferable"),cex=cx*1.3)
 graphics::text(x1[elec]+2,y1[[2+ip]],"(elec)",cex=cx*1.3)

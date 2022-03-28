@@ -1,4 +1,5 @@
 #' STV election count using WIG as for Scottish Council elections
+#' calculated to 5 places of decimals as used for those elections
 #'
 #' @param elecdata File with vote data
 #' @param verbose Whether to report on each stage of the count
@@ -11,8 +12,9 @@
 #' @examples p17w=stv.wig(p17)
 #' @examples nws17w=stv.wig(nws17)
 #'
-stv.wig=function(elecdata,verbose=T,plot=T,outdirec=tempdir()){
+stv.wig=function(elecdata,outdirec=tempdir(),verbose=T,plot=T){
   tim0=proc.time()    # to track computing time taken
+sys="wig"
 # read and unpack elecdata
 ed=elecdata; elecname=ed$e
 ns=ed$s; nc=ed$c; vote=ed$v; mult=ed$m; nv=ed$nv
@@ -181,7 +183,7 @@ if(plot==T){
   plotfile=paste(outdirec,paste("stage",trf[[i]],stage,".jpg",sep=""),sep="/")
   h=600+200*transf
   grDevices::jpeg(plotfile,width=w,height=h)
-    voteplot(ns,vmp,qa,it,dec,name2,party,colour,transf,elecname)
+    voteplot(ns,vmp,qa,it,dec,name2,party,colour,transf,elecname,sys="wig")
   grDevices::dev.off()
 }}
 # print decision (if verbose=T)
@@ -204,7 +206,14 @@ dimnames(vo)=list(name=c(paste(name,fname,sep=", "),"non-transferable"),stage=st
 # if plot=T make webpages to go with vote plots, and if verbose=T display them
 if(plot==T){wp=webpages(elecdata,va,vo,qa,itt,outdirec,sys="wig")
 if(verbose==T){grDevices::dev.off()
-  utils::browseURL(wp[[1]],browser="open")}}
-txt=matrix(txt,nrow=2)   # store decision text as matrix
-list(votes=vo,va=va,txt=txt,itt=itt)
+    utils::browseURL(wp[[1]],browser="open")}}
+
+elec=it[it>0]; x=elec
+pp=paste(" (",party[elec],")",sep=""); if(pp[[1]]==" ( )"|pp[[1]]==" ()"){pp=""}
+elected=paste(fname[elec]," ",name[elec],pp,sep="",collapse=", ")
+result=paste("Elected:",elected,sep="  ")
+cat(result); cat("\n\n")
+  
+# txt=matrix(txt,nrow=2)   # store decision text as matrix
+list(elec=result,itt=itt,votes=vo,va=va)
 }   # to close function

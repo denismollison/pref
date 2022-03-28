@@ -106,12 +106,13 @@ tim=proc.time()-tim0;  pt=tim[[1]]
 if(verbose==T){cat("iteration ",iter,"    process time ",pt," secs"); cat("\n")
 cat("final keep values (%):"); cat("\n"); print(round(100*k[1:nc],2)); cat("\n")}
 # .. and final result
-cat("Elected:  ")
 elec=it[it>0]; x=elec
 if(np==F){pp=paste(" (",party,")",sep="")}else{pp=party}
 #   if(pp[[1]]==" ( )"|pp[[1]]==" ()"){pp=""}
-cat(paste(fname[x]," ",name[x],pp[x],sep="",collapse=", ")); cat("\n\n")
-# runner-up ? - might add this
+elected=paste(fname[x]," ",name[x],pp[x],sep="",collapse=", ")
+result=paste("Elected:",elected,sep="  ")
+cat(result); cat("\n\n")
+# Runner-up ? - might add this
 ic=1:nc; ru=ic[k[ic]==1]
 cat(paste("Runner-up: ",fname[ru]," ",name[ru],pp[ru],sep="",collapse=", ")); cat("\n")
 # finalise matrices of keep values and votes at each stage (ks, vo)
@@ -126,5 +127,5 @@ if(plot==T){wp=webpages(elecdata,va,vo,qa,itt,outdirec,sys="meek")
 if(verbose==T){grDevices::dev.off()
   utils::browseURL(wp[[1]],browser="open")}}
 txt=matrix(txt,nrow=2)   # store decision text as matrix
-list(votes=vo,keep=ks[1:nc,]*100,va=va,txt=txt,itt=itt)
+list(elec=result,itt=itt,votes=vo,va=va,keep=ks[1:nc,]*100)
 }

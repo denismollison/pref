@@ -17,11 +17,19 @@ handle votes expressing equal preference for some of the candidates.
 You can install the development version of stv from Github
 `r # install.packages("devtools") install_github("denismollison/stv")`
 
-Three examples are provided, drawn from real elections, hc12, p17 and
-j02. Two are from Scottish Council elections, one a very simple case and
-the second a more usual one. The third example is from a charity’s
-trustees election in which equal preferences were allowed. To run the
-first of these: `r # library(stv) hc12c=stv.count(hc12)`
+Five examples are provided, drawn from real elections, hc12, p17, nws17,
+yale and j02. Three are from Scottish Council elections, one a very
+simple case and the second a more usual one. The third example (nws17)
+is one where using the official counting method (stv.wig) no candidate
+achieves the fixed quota. The fourth, from a Yale faculty election, is
+an example with a large number of candidates (44 for 4 places). A
+simplified version, showing just the later stages of this election is
+provided as y12.
+
+The final example, j02, is from a charity’s trustees election in which
+equal preferences were allowed.
+
+To run the first of these: `r # library(stv) hc12c=stv(hc12)`
 
 This code produces a list of variables summarising the count and final
 outcome. With the default options `verbose=T' and`plot=T’ it also

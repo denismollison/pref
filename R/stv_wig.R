@@ -23,7 +23,7 @@ party=ed$p; colour=ed$col; np={party[[1]]==""}
 
 # quota (fixed) and housekeeping variables
 total_vote=sum(mult)
-qa=ceiling((total_vote+1)/(ns+1))
+q0=ceiling((total_vote+1)/(ns+1)); qa=q0
 inn=rep(0,nc)	# 0 indicates still in play (-1 elim, 1 elec, 2 elec & transf)
 ic=1:nc
 ne=0
@@ -204,7 +204,7 @@ if(length(party[party!=""])>0){dimnames(vo)=list(name=c(paste(name,", ",fname," 
 dimnames(vo)=list(name=c(paste(name,fname,sep=", "),"non-transferable"),stage=st)
 }
 # if plot=T make webpages to go with vote plots, and if verbose=T display them
-if(plot==T){wp=webpages(elecdata,va,vo,qa,itt,outdirec,sys="wig")
+if(plot==T){wp=webpages(elecdata,va,vo,q0,itt,outdirec,sys="wig")
 if(verbose==T){grDevices::dev.off()
     utils::browseURL(wp[[1]],browser="open")}}
 

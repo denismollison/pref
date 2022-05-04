@@ -11,13 +11,12 @@
 #' @export
 #'
 #' @examples j02c=stv(j02)
-#' @examples hc12c=stv(hc12)
+# #' @examples hc12c=stv(hc12)
 #' @examples p17c=stv(p17)
 #' @examples y12c=stv(y12)
 #'
 stv=function(elecdata,outdirec=tempdir(),verbose=T,plot=T){
     tim0=proc.time()    # to track computing time taken
-    x=outlines
 # read and unpack elecdata
 ed=elecdata; elecname=ed$e
 ns=ed$s; nc=ed$c; vote=ed$v; mult=ed$m; nv=ed$nv
@@ -30,7 +29,8 @@ if(verbose==T){cat(elecname); cat(paste("  (",ns," seats, ",nc," candidates)",se
     qa=q0
 k=rep(1,(nc+1))		# initial keep values (the +1 is for non-transferable)
 ks=numeric() 		# record keep value at each stage
-em=min(0.01,qa*0.001)	# initial error margin (will be decreased if necessary)
+ems=c(min(0.01,qa*0.001),0.0000001)	# initial error margin will be decreased ..
+hp=1 		        # .. if close call (when hp is changed from 1 to 2)
 surplus=1		# to ensure calculation gets going
 iter=0			# keeps track of number of iterations in count
 it=numeric()		# it=elec(+) and excl(-) in order of being decided
@@ -44,23 +44,26 @@ dnext=""                # text carried over from one stage to next
 txt=character()         # text describing decisions at each stage
 itt=list()              # cand nos in order of elec/excl for each stage
 trf=c("","t")
-
     if(plot==T & !dir.exists(outdirec)){dir.create(outdirec)}
 # system(paste("mkdir",outdirec))}
 
 # main cycle - to elect or exclude next candidate(s)
 while(ne<ns){
+    em=ems[[hp]]
 # recalculate keep values and transfer surpluses
-    tr=transfer(k,iter,surplus,vote,mult,ns,ie,em,sel)
+tr=transfer(k,iter,vote,mult,ns,ie,em,surplus,sel)
     k=tr$k; vm=tr$vm; vc=tr$vc; qa=tr$qa; inn=tr$inn
     iter=tr$iter; surplus=tr$sur
 # make next decision to elect or exclude
-    dn=decision(nc,vc,qa,ie,surplus,k,em,stage,fin,vo,st)
+    hp0=hp
+    dn=decision(nc,vc,qa,ie,k,stage,fin,vo,st,surplus,hp)
+hp=dn$hp
+if(hp!=hp0){if(verbose==T){cat("close call - need high precision"); cat("\n\n")}}else{    
     k=dn$k; ie=dn$ie; elec=dn$elec; xcl=dn$xcl; it=c(it,elec,xcl*ie[xcl])
-    surplus=dn$surplus; stage=dn$stage; vo=dn$vo; st=dn$st
+    stage=dn$stage; vo=dn$vo; st=dn$st
     ne=length(ie[ie==1])
-    ks=cbind(ks,k)
-    x=decision_text(stage,ne,ns,elec,xcl,name2,dnext)
+    ks=cbind(ks,k)    
+x=decision_text(stage,ne,ns,elec,xcl,name2,dnext)
     dnext=x$d; txt=c(txt,x$t)
     if(stage==1){
       va=vm; itt=list(it)
@@ -68,6 +71,10 @@ while(ne<ns){
       va=array(c(va,vm),dim=c((nc+1),(nc+1),stage))
       itt=append(itt,list(it))
     }
+    print(round(apply(vm,2,sum),4))
+    print(round(k,4))
+    cat("qa",qa,", em",em,", surplus",surplus,"\n")
+    cat(em,"\n")
     tim=proc.time()-tim0;  pt=tim[[1]]
 # make permanent plots of stage (if plot=T)
 if(plot==T){
@@ -88,20 +95,23 @@ if(plot==T){
     if(plot==T){plot_jpeg(plotfile,stage)}
    readline("next? ")
   }
-}
+}}
 fin=1; nstages=stage;  qf=qa   # final values of count proper
 
 # extra stage to calculate final keep values
-tr=transfer(k,iter,surplus,vote,mult,ns,ie,em,sel)
+if(length(ie[ie>=0])>ns){
+    tr=transfer(k,iter,vote,mult,ns,ie,em,surplus,sel)
   k=tr$k; vmp=tr$vmp; vc=tr$vc; qa=tr$qa; inn=tr$inn; iter=tr$iter; surplus=tr$sur
 while(length(k[k>0])>(ns+2)){
-  dn=decision(nc,vc,qa,ie,surplus,k,em,stage,fin,vo,st)
+  dn=decision(nc,vc,qa,ie,k,stage,fin,vo,st,surplus,hp)
     k=dn$k; ie=dn$ie; elec=dn$elec; xcl=dn$xcl; it=c(it,elec,xcl*ie[xcl])
     surplus=dn$surplus; stage=dn$stage; vo=dn$vo; st=dn$st
-  tr=transfer(k,iter,surplus,vote,mult,ns,ie,em,sel)
+  tr=transfer(k,iter,vote,mult,ns,ie,em,surplus,sel)
     k=tr$k; vmp=tr$vmp; vc=tr$vc; qa=tr$qa; inn=tr$inn; iter=tr$iter; surplus=tr$sur
   }
-tim=proc.time()-tim0;  pt=tim[[1]]
+    tim=proc.time()-tim0;  pt=tim[[1]]
+}
+   
 # print final keep values if verbose=T
 if(verbose==T){cat("iteration ",iter,"    process time ",pt," secs"); cat("\n")
 cat("final keep values (%):"); cat("\n"); print(round(100*k[1:nc],2)); cat("\n")}
@@ -123,7 +133,7 @@ if(length(party[party!=""])>0){dimnames(vo)=list(name=c(paste(name,", ",fname," 
 dimnames(vo)=list(name=c(paste(name,fname,sep=", "),"non-transferable"),stage=st)
 }
 # if plot=T make webpages to go with vote plots, and if verbose=T display them
-if(plot==T){wp=webpages(elecdata,va,vo,qa,itt,outdirec,sys="meek")
+if(plot==T){wp=webpages(elecdata,va,vo,q0,itt,outdirec,sys="meek")
 if(verbose==T){grDevices::dev.off()
   utils::browseURL(wp[[1]],browser="open")}}
 txt=matrix(txt,nrow=2)   # store decision text as matrix

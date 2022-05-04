@@ -6,10 +6,10 @@
 # .. share which calculates details for a single vote
 
 
-transfer=function(k,iter,surplus,vote,mult,ns,ie,em,sel){
+transfer=function(k,iter,vote,mult,ns,ie,em,surplus,sel){
 # to transfer surpluses at each stage
 nv=dim(vote)[[1]]; nc=dim(vote)[[2]]; ic=1:nc
-je=ic[ie==1]; ne=length(je)
+    je=ic[ie==1]; ne=length(je)
 v3=array(0,dim=c((nc+1),(nc+1),2^ne))
 for(iv in 1:nv){
   b=vote[iv,]
@@ -33,7 +33,7 @@ if(ne==0){iter=iter+1
 }else{
     perm=sel[[ne]]
     v4=apply(v3,c(2,3),sum)
-i94=1
+    i94=1
     while(surplus>em | i94==1){
     i94=0
     t=1-k; te=t[je]; tr=te[ne:1]
@@ -104,31 +104,37 @@ sh
 }
 
 
-decision=function(nc,vc,qa,ie,surplus,k,em,stage,fin,vo,st){
+decision=function(nc,vc,qa,ie,k,stage,fin,vo,st,surplus,hp){
 #   to make next decision (elect/exclude)
-  x=order(-vc[1:nc]);  x=x[ie[x]==0]; elec=numeric(); xcl=numeric()
+    x=order(-vc[1:nc]);  x=x[ie[x]==0]; elec=numeric(); xcl=numeric(); hp0=hp
+# will switch to `high precision' if a close call
+# 1 is there another clearly elec?    
     if(vc[x[[1]]]>=qa){
 # if exact order of elec important, need to check margin > surplus 
 # if margin <= surplus, need to reduce em and try again .. see spare.R#margin
     elec=x[vc[x]>=qa]
     surplus=surplus+sum(vc[elec])-qa*length(elec)
   }else{
-# else exclude - first checking noone within em of quota
-  if(vc[x[[1]]]<(qa-surplus)){
-    x=order(vc[1:nc]);  xcl=x[ie[x]==0][[1]]   
-    k[[xcl]]=0
-    ic=1:nc
-   }else{
-   em=em*0.01	# should check for dead heat in case em->0?
-   }
-  }
-if(length(c(elec,xcl))>0){
+# 2 if at low precision, is there another within surplus of election?
+if(hp==1 & vc[x[[1]]]>=(qa-surplus)){hp=2}else{
+# 3 if at low precision
+x=order(vc[1:nc]); x=x[ie[x]==0]
+if(hp==1 & vc[[x[[1]]]]>(vc[[x[[2]]]]-surplus)){hp=2}else{
+# 4 exclude lowest
+xcl=x[[1]]   
+k[[xcl]]=0
+ic=1:nc
+}
+}}    
+# skip output if have gone to high precn  (hp!=hp0)
+if(hp==hp0){
+    if(length(c(elec,xcl))>0){
     ie[elec]=1; ie[xcl]=-1
     stage=stage+1
 if(fin==0){
 vo=cbind(vo,vc); st=c(st,paste("st",stage,sep=""))
-}}
-list(k=k,ie=ie,elec=elec,xcl=xcl,surplus=surplus,stage=stage,vo=vo,st=st)
+}}}
+list(k=k,ie=ie,elec=elec,xcl=xcl,stage=stage,vo=vo,st=st,surplus=surplus,hp=hp)
 }
 
 

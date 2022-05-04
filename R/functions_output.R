@@ -114,7 +114,7 @@ graphics::text(xt1,y[[8]],pos=4,"amount of votes",cex=1.5)
 }
 
 
-webpages=function(elecdata,va,vo,qa,itt,outdirec,datafile=F,sys="meek"){
+webpages=function(elecdata,va,vo,q0,itt,outdirec,datafile=F,sys="meek"){
 # to make a pair of election web pages (without/with transfers) -
 # outlines, = non-varying lines of html, are available because in sysdata.rda
 space="&#160;&#160;"       # needed for formatting
@@ -159,11 +159,11 @@ for(i in 11:48){
     tv0=sum(mult)
     if(nstages>1){
     qf=sum(va[1:nc,1:nc,nstages])/(ns+1)
-    }else{qf=qa}
+    }else{qf=q0}
     cat("Total votes ",tv0,", &#160;",sep="")
-    if("sys"=="meek"){
-cat("initial quota = ",round(qa,2),", final quota = ",round(qf,2),"\n",sep="")
-}else{cat("quota = ",round(qa,2))}
+    if(sys=="meek"){
+cat("initial quota = ",round(q0,2),", final quota = ",round(qf,2),"\n",sep="")
+}else{cat("quota = ",round(q0,2))}
 for(i in 49:60){
     cat(outlines[[i]],"\n",sep="")
 }

@@ -43,7 +43,7 @@ ns=as.numeric(readline("number to elect?"))
 #
 # detailed case: details=T - elecname, ns, nc, names - option of parties
 dat=base::readLines(datafile)
-name=character(); fname=character()
+name=character(); fname=character(); mul=numeric(); vote=numeric()
 if(friendly==T){    # user-friendly file order, with details first, then votes
 elecname=dat[[1]]
 x=as.numeric(strsplit(dat[[2]]," ")[[1]])
@@ -76,31 +76,34 @@ name2=abbrev(name,fname)
 # parties and party colours if specified
 if(parties!=F){
     ip=ic[party!=""]
-    cat("5a ",party,"\n\n")
+#   cat("5a ",party,"\n\n")
 if(length(ip)>0){
     colour=rep("white",nc)
+#    cat(parties,"\n")
     colour[ip]=party_colour(party[ip],parties)}
 else{cat("recommend re-run with party colours file if available\n\n")}
-     cat("6 ",colour[1:3],"\n")
+#     cat("6 ",colour[1:3],"\n")
 }else{colour=grDevices::rainbow(nc)}
 # and last but not least - the votes
 if(nv>0){
   vote=matrix(0,nrow=nv,ncol=nc)
-  mul=numeric(); if(mult==F){mul=rep(1,nv)}
-        if(ballot==T){
-            for(iv in 1:nv){
-                x=strsplit(dat[[vdata[[iv]]]]," ")[[1]]
-               if(mult==T){mul[[iv]]=as.numeric(x[[1]]); x=x[2:length(x)]}
-               if(length(x)!=nc){cat("vote ",i," has length ",length(x))}
-                     vote[iv,]=as.numeric(x)
-            }}else{
+  if(mult==F){mul=rep(1,nv)}
+  if(ballot==T){
+    for(iv in 1:nv){
+      x=strsplit(dat[[vdata[[iv]]]]," ")[[1]]
+      if(mult==T){mul[[iv]]=as.numeric(x[[1]]); x=x[2:length(x)]}
+      if(length(x)!=nc){cat("vote ",i," has length ",length(x))}
+        vote[iv,]=as.numeric(x)
+    }}else{
 for(iv in 1:nv){
-x=strsplit(dat[[vdata[[iv]]]]," ")[[1]]
+    x=strsplit(dat[[vdata[[iv]]]]," ")[[1]] # ; cat(x,"\n")
+    x=x[x!=""] # ; cat(x, "\n")
 nx0=length(x)
 mul[[iv]]=as.numeric(x[[1]])  # for pref format assume first element is mult
 if(x[[nx0]]!="0"){cat("check failure at vote no. ",iv,"\n")}
 if(nx0>2){
-x=x[2:(nx0-1)]; nx=length(x)   # actual vote
+    x=x[2:(nx0-1)]; nx=length(x)   # actual vote
+    # cat(x,"\n\n")
 pr=1; incr=1; pref=numeric()
 for(i in 1:nx){
 nch=nchar(x[[i]])

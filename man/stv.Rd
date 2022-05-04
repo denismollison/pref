@@ -23,7 +23,6 @@ STV election count
 }
 \examples{
 j02c=stv(j02)
-hc12c=stv(hc12)
 p17c=stv(p17)
 y12c=stv(y12)
 

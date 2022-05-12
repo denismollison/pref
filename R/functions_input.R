@@ -119,7 +119,7 @@ vote[iv,xn]=pref
 }
 list(e=elecname,s=ns,c=nc,nv=nv,m=mul,v=vote,f=fname,n=name,n2=name2,p=party,col=colour)
 }
-# save(d,file="elec.R")    # load(d,file="elec.R")
+# save(d,file="elec.rda")    # load(d,file="elec.R")
 
 
 abbrev=function(name,fname){
@@ -133,13 +133,13 @@ if(length(dn)>0){
     for(idn in 1:length(dn)){
       dnc=ic[name==dn[[idn]]]
       fname[dnc]=capwords(fname[dnc],T)
-cat("warning - duplicate surname -",dn,"\n",fname[dnc],"\n")
-	tfn=table(fname[dnc])
-	kc=0; while(max(table(name2[dnc]))>1 & kc<2){
-		kc=kc+1
-		for(jc in ic[name==dn[[idn]]]){
-			name2[[jc]]=paste(name[[jc]],",",substring(fname[[jc]],1,kc),sep="")
-	}}
+cat("warning - duplicate surname -",dn[[idn]],"\n",fname[dnc],"\n")
+    tfn=table(fname[dnc])
+    kc=0; while(max(table(name2[dnc]))>1 & kc<2){
+      kc=kc+1
+      for(jc in ic[name==dn[[idn]]]){
+        name2[[jc]]=paste(name[[jc]],",",substring(fname[[jc]],1,kc),sep="")
+    }}
 # but if they also have same first two letters of first name, try initials ..
 	tnc=table(name2[dnc])
 	if(max(table(name2[dnc]))>1){

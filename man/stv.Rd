@@ -4,12 +4,23 @@
 \alias{stv}
 \title{STV election count}
 \usage{
-stv(elecdata, outdirec = tempdir(), verbose = T, plot = T)
+stv(
+  elecdata,
+  outdirec = tempdir(),
+  electitle = character(),
+  map = F,
+  verbose = T,
+  plot = T
+)
 }
 \arguments{
 \item{elecdata}{File with vote data}
 
 \item{outdirec}{Directory for webpages (if produced)}
+
+\item{electitle}{for web page heading links if appropriate}
+
+\item{map}{link to a map or other URL associated with election}
 
 \item{verbose}{Whether to report on each stage of the count}
 

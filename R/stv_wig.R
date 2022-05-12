@@ -5,6 +5,8 @@
 #' @param verbose Whether to report on each stage of the count
 #' @param plot Whether to produce web pages with plots of countcheck()
 #' @param outdirec Directory for webpages (if produced)
+#' @param electitle for web page heading links if appropriate
+#' @param map link to a map or other URL associated with election
 #'
 #' @return A list containing votes at each stage, + optional web pages
 #' @export
@@ -12,7 +14,7 @@
 #' @examples p17w=stv.wig(p17)
 #' @examples nws17w=stv.wig(nws17)
 #'
-stv.wig=function(elecdata,outdirec=tempdir(),verbose=T,plot=T){
+stv.wig=function(elecdata,outdirec=tempdir(),map=FALSE,electitle=character(),verbose=T,plot=T){
   tim0=proc.time()    # to track computing time taken
 sys="wig"
 # read and unpack elecdata
@@ -203,8 +205,9 @@ vo[nc+1,]=total_vote-apply(as.matrix(vo[1:nc,]),2,sum)
 if(length(party[party!=""])>0){dimnames(vo)=list(name=c(paste(name,", ",fname," (",party,") ",sep=""),"non-transferable"),stage=st)}else{
 dimnames(vo)=list(name=c(paste(name,fname,sep=", "),"non-transferable"),stage=st)
 }
+#  cat(electitle,"\n",map,"\n")
 # if plot=T make webpages to go with vote plots, and if verbose=T display them
-if(plot==T){wp=webpages(elecdata,va,vo,q0,itt,outdirec,sys="wig")
+if(plot==T){wp=webpages(elecdata,va,vo,q0,itt,outdirec,sys="wig",map,electitle)
 if(verbose==T){grDevices::dev.off()
     utils::browseURL(wp[[1]],browser="open")}}
 

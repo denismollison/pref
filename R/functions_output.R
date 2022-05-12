@@ -114,12 +114,17 @@ graphics::text(xt1,y[[8]],pos=4,"amount of votes",cex=1.5)
 }
 
 
-webpages=function(elecdata,va,vo,q0,itt,outdirec,datafile=F,sys="meek"){
+webpages=function(elecdata,va,vo,q0,itt,outdirec,sys="meek",map=FALSE,electitle=character()){
 # to make a pair of election web pages (without/with transfers) -
 # outlines, = non-varying lines of html, are available because in sysdata.rda
-space="&#160;&#160;"       # needed for formatting
+space="&#160;&#160;"; space5="&#160;&#160;&#160;&#160;&#160;"      # needed for formatting
 ed=elecdata
-elecname=ed$e; ns=ed$s; nc=ed$c; mult=ed$m; fname=ed$f; name=ed$n; party=ed$p
+    elecname=ed$e; ns=ed$s; nc=ed$c; mult=ed$m; fname=ed$f; name=ed$n; party=ed$p
+    elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
+    electitle=c(electitle,elecname)
+    if(map!=F){
+        electitle=c(electitle,paste0('<a href="',ed$map,'">(map)</a>'))
+        }
 if(length(dim(va))==3){nstages=dim(va)[[3]]}else{nstages=1}
 it=itt[[nstages]]
 tra=c("","t"); tra1=c("t",""); hide=c("Show","Hide")
@@ -134,7 +139,7 @@ sink(out_html)
 for(i in 1:7){
     cat(outlines[[i]],"\n",sep="")
 }
-cat('<h3><a href="../../index.html">',elecname,"</a>",sep="")
+cat("<h3>"); cat(electitle,sep=space5)
 cat(outlines[[8]],"\n",sep="")
 cat("<p><b><em>Elected: </em></b>",space)
     elec=it[it>0]; x=elec
@@ -151,9 +156,12 @@ cat('</div>\n<div>')
 for(i in 1:nstages){
     cat('<img class="mySlides" src="stage',tra[[j]],i,'.jpg" style="width:100%">\n',sep='')
 }
-for(i in 11:48){
+for(i in 11:46){
     cat(outlines[[i]],"\n",sep="")
 }
+# cat("<p><b><em>Download vote data file: </em></b>&#160;<a href=../",elecfile,".txt>ballot format</a>\n",sep="")
+    cat(outlines[47:48],"\n",sep="")
+    
     options(width=140,max.print=5000)
     print(round(vo,2)); cat("<p>")
     tv0=sum(mult)
@@ -167,8 +175,13 @@ cat("initial quota = ",round(q0,2),", final quota = ",round(qf,2),"\n",sep="")
 for(i in 49:60){
     cat(outlines[[i]],"\n",sep="")
 }
-if(datafile!=F){
-cat("<p><b><em>Vote data file: </em></b>&#160;<a href=../",datafile,">",datafile,"</a>\n",sep="")}
+    cat("</div>"); cat("\n")
+    cat("<p><b><em>Downloads:</em></b>",
+        paste0("<b>Result </b><a href=",elecfile,"_",sys,".rda>in R list format</a>"),"",
+        "<b>Vote data file:</b>",
+paste0("<a href=../",elecfile,".txt>ballot format</a>"),
+sep="&#160;&#160;"); cat("\n")
+
     for(i in 61:62){
     cat(outlines[[i]],"\n",sep="")
 }
@@ -190,3 +203,5 @@ plot_jpeg=function(plotfile,stage)
   graphics::plot(1,1,xlim=c(1,res[1]),ylim=c(1,res[2]),type='n',xaxs='i',yaxs='i',xaxt='n',yaxt='n',xlab='',ylab='',bty='n')
   graphics::rasterImage(jpg,1,1,res[1],res[2])
 }
+
+

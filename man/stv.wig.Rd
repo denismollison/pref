@@ -5,12 +5,23 @@
 \title{STV election count using WIG as for Scottish Council elections
 calculated to 5 places of decimals as used for those elections}
 \usage{
-stv.wig(elecdata, outdirec = tempdir(), verbose = T, plot = T)
+stv.wig(
+  elecdata,
+  outdirec = tempdir(),
+  map = FALSE,
+  electitle = character(),
+  verbose = T,
+  plot = T
+)
 }
 \arguments{
 \item{elecdata}{File with vote data}
 
 \item{outdirec}{Directory for webpages (if produced)}
+
+\item{map}{link to a map or other URL associated with election}
+
+\item{electitle}{for web page heading links if appropriate}
 
 \item{verbose}{Whether to report on each stage of the count}
 

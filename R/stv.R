@@ -6,6 +6,8 @@
 #' @param verbose Whether to report on each stage of the count
 #' @param plot Whether to produce web pages with plots of countcheck()
 #' @param outdirec Directory for webpages (if produced)
+#' @param electitle for web page heading links if appropriate
+#' @param map link to a map or other URL associated with election
 #'
 #' @return A list containing votes and keep vals at each stage, + optional web pages
 #' @export
@@ -15,7 +17,7 @@
 #' @examples p17c=stv(p17)
 #' @examples y12c=stv(y12)
 #'
-stv=function(elecdata,outdirec=tempdir(),verbose=T,plot=T){
+stv=function(elecdata,outdirec=tempdir(),electitle=character(),map=F,verbose=T,plot=T){
     tim0=proc.time()    # to track computing time taken
 # read and unpack elecdata
 ed=elecdata; elecname=ed$e
@@ -133,7 +135,7 @@ if(length(party[party!=""])>0){dimnames(vo)=list(name=c(paste(name,", ",fname," 
 dimnames(vo)=list(name=c(paste(name,fname,sep=", "),"non-transferable"),stage=st)
 }
 # if plot=T make webpages to go with vote plots, and if verbose=T display them
-if(plot==T){wp=webpages(elecdata,va,vo,q0,itt,outdirec,sys="meek")
+if(plot==T){wp=webpages(elecdata,va,vo,q0,itt,outdirec,sys="meek",map,electitle)
 if(verbose==T){grDevices::dev.off()
   utils::browseURL(wp[[1]],browser="open")}}
 txt=matrix(txt,nrow=2)   # store decision text as matrix

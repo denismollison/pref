@@ -43,6 +43,7 @@ ns=as.numeric(readline("number to elect?"))
 #
 # detailed case: details=T - elecname, ns, nc, names - option of parties
 dat=base::readLines(datafile)
+id=1:length(dat)
 name=character(); fname=character(); mul=numeric(); vote=numeric()
 if(friendly==T){    # user-friendly file order, with details first, then votes
 elecname=dat[[1]]
@@ -50,25 +51,27 @@ x=as.numeric(strsplit(dat[[2]]," ")[[1]])
 ns=x[[1]]; nc=x[[2]]; ic=1:nc
 cdata=2+ic
 # what if no contest, therefore no vote data? (need to cover for batch mode)
-nv=length(dat)-(nc+2)
-vdata=(nc+3):length(dat)
+if(ballot==TRUE){nv=length(dat)-(nc+2)}else{nv=length(dat)-(nc+3)}
+if(nv>0){vdata=(nc+3):length(dat)}
 }else{   # user-unfriendly file order, with most details at end (Hill's format)
 x=as.numeric(strsplit(dat[[1]]," ")[[1]])
 nc=x[[1]]; ns=x[[2]]
-i=1:length(dat)
-nv=i[substring(dat[i],1,1)=="0"]-2
-vdata=2:(nv+1)
+nv=id[substring(dat[id],1,1)=="0"]-2
+if(nv>0){vdata=2:(nv+1)}
 cdata=(nv+3):(nv+nc+2)
 elecname=dat[[nv+nc+3]]
 }
 # for either input order, can now extract details and votes
 # candidate names, calculate a short-form unique version, name2
+# modify for 2022 SC data
 party=rep("",nc); fname=rep("",nc); name=rep("",nc)
 for(i in cdata){
   j=i+1-cdata[[1]]
   x=strsplit(dat[[i]],",")[[1]]
-  if(length(x)>1){party[[j]]=x[[2]]}
-  y=strsplit(x[[1]]," ")[[1]]; z=length(y)
+  if(length(x)>1){
+      party[[j]]=x[[2]]
+  }
+    y=strsplit(x[[1]]," ")[[1]]; z=length(y)
   name[[j]]=y[[z]]
   if(z>1){fname[[j]]=paste(y[1:(z-1)],collapse=" ")}
 }
@@ -76,13 +79,10 @@ name2=abbrev(name,fname)
 # parties and party colours if specified
 if(parties!=F){
     ip=ic[party!=""]
-#   cat("5a ",party,"\n\n")
 if(length(ip)>0){
     colour=rep("white",nc)
-#    cat(parties,"\n")
     colour[ip]=party_colour(party[ip],parties)}
 else{cat("recommend re-run with party colours file if available\n\n")}
-#     cat("6 ",colour[1:3],"\n")
 }else{colour=grDevices::rainbow(nc)}
 # and last but not least - the votes
 if(nv>0){
@@ -96,8 +96,8 @@ if(nv>0){
         vote[iv,]=as.numeric(x)
     }}else{
 for(iv in 1:nv){
-    x=strsplit(dat[[vdata[[iv]]]]," ")[[1]] # ; cat(x,"\n")
-    x=x[x!=""] # ; cat(x, "\n")
+    x=strsplit(dat[[vdata[[iv]]]]," ")[[1]]
+    x=x[x!=""]
 nx0=length(x)
 mul[[iv]]=as.numeric(x[[1]])  # for pref format assume first element is mult
 if(x[[nx0]]!="0"){cat("check failure at vote no. ",iv,"\n")}
@@ -115,7 +115,7 @@ xn=as.numeric(x)
 vote[iv,xn]=pref
 }
 }}
-}else{m=0; v=0}   # uncontested case, recognised by nv=0
+}else{mul=numeric(); vote=numeric()}   # uncontested case, recognised by nv=0
 }
 list(e=elecname,s=ns,c=nc,nv=nv,m=mul,v=vote,f=fname,n=name,n2=name2,p=party,col=colour)
 }
@@ -133,7 +133,7 @@ if(length(dn)>0){
     for(idn in 1:length(dn)){
       dnc=ic[name==dn[[idn]]]
       fname[dnc]=capwords(fname[dnc],T)
-cat("warning - duplicate surname -",dn[[idn]],"\n",fname[dnc],"\n")
+cat("warning - duplicate surname -",dn[[idn]]," (",fname[dnc],")\n")
     tfn=table(fname[dnc])
     kc=0; while(max(table(name2[dnc]))>1 & kc<2){
       kc=kc+1

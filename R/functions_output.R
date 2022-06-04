@@ -1,11 +1,13 @@
 # output plotting functions voteplot & webpages, plot_jpeg
 # 
-voteplot=function(ns,vm,qa,it,tx,name,party,colour,transf,elecname,cx=1,sys="meek"){
+voteplot=function(ns,vm,qpc,it,tx,name,party,colour,transf,elecname,cx=1,sys="meek"){
+#     cat("in voteplot line 4 - vm =]n")
+#     cat(round(vm,2))
+qa=qpc  # qa is quota as %age
 # consider getting rid of cx (regulates font scaling)
 margincolour="burlywood";  panelcolour="burlywood1"
 # convert vote variables to percentages
 b=sum(vm); nc=dim(vm)[[1]]-1
-    qa=100*qa/sum(vm)  # rely on its being given in fn call
 vm=vm*100/b
     vm0=vm;  diag(vm0)=0
 ip={max(nchar(party))>0}
@@ -117,7 +119,8 @@ graphics::text(xt1,y[[8]],pos=4,"amount of votes",cex=1.5)
 webpages=function(elecdata,va,vo,q0,itt,outdirec,sys="meek",map=FALSE,electitle=character()){
 # to make a pair of election web pages (without/with transfers) -
 # outlines, = non-varying lines of html, are available because in sysdata.rda
-space="&#160;&#160;"; space5="&#160;&#160;&#160;&#160;&#160;"      # needed for formatting
+#   cat("in webpage\n")
+    space="&#160;&#160;"; space5="&#160;&#160;&#160;&#160;&#160;"      # needed for formatting
 ed=elecdata
     elecname=ed$e; ns=ed$s; nc=ed$c; mult=ed$m; fname=ed$f; name=ed$n; party=ed$p
     elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
@@ -125,9 +128,17 @@ ed=elecdata
     if(map!=F){
         electitle=c(electitle,paste0('<a href="',ed$map,'">(map)</a>'))
         }
-if(length(dim(va))==3){nstages=dim(va)[[3]]}else{nstages=1}
-it=itt[[nstages]]
-tra=c("","t"); tra1=c("t",""); hide=c("Show","Hide")
+if(ed$nv>0){
+ if(length(dim(va))==3){nstages=dim(va)[[3]]}else{nstages=1}
+ it=itt[[nstages]]
+ unc=""
+}else{
+cat("in webpages line 134 - uncontested\n")
+ unc="(uncontested)"
+ it=1:ed$c
+}
+    
+tra=c("","t"); tra1=c("t",""); hide=c("Show","Hide")    
 webpp=character()
     
 for(j in 1:2){
@@ -135,17 +146,21 @@ for(j in 1:2){
     indext=paste("index",tra[[j]],".html",sep="")
     out_html=paste(outdirec,indext,sep="/")
     webpp=c(webpp,out_html)
-sink(out_html)
+#   cat("about to make webpage",out_html,"\n")
+    sink(out_html)
 for(i in 1:7){
     cat(outlines[[i]],"\n",sep="")
 }
 cat("<h3>"); cat(electitle,sep=space5)
 cat(outlines[[8]],"\n",sep="")
-cat("<p><b><em>Elected: </em></b>",space)
+cat("<p><b><em>Elected",unc,": </em></b>",space,sep="")
     elec=it[it>0]; x=elec
-    pp=paste(" (",party[x],")",sep=""); if(pp[[1]]==" ( )"|pp[[1]]==" ()"){pp=""}
-cat(paste(fname[x]," ",name[x],pp,sep="",collapse=paste(", ","&#160;"))); cat("\n")
-cat(outlines[[9]],"\n",sep="")
+pp=paste(" (",party[x],")",sep=""); if(pp[[1]]==" ( )"|pp[[1]]==" ()"){pp=""}
+cat(paste(fname[x]," ",name[x],pp,sep="",collapse=paste(", ","&#160;")))
+ if(ed$c<ed$s){for(i in 1:(ed$s-ed$c)){cat(", &#160;<em>vacancy</em>")}}
+cat("\n"); cat(outlines[[9]],"\n",sep="")
+
+if(ed$nv>0){ 
 cat(outlines[[10]],"\n",sep="")
 cat('<table bgcolor="red"><tr height=30><td width=5></td><td><a href="index',tra1[[j]],'.html">',hide[[j]],' transfers</a></td><td width=5></td></tr></table>\n',sep='')
 cat("Count stage",space,"\n",sep="")
@@ -176,10 +191,14 @@ for(i in 49:60){
     cat(outlines[[i]],"\n",sep="")
 }
     cat("</div>"); cat("\n")
-    cat("<p><b><em>Downloads:</em></b>",
-        paste0("<b>Result </b><a href=",elecfile,"_",sys,".rda>in R list format</a>"),"",
+}else{cat("<br><br><br><br><br>\n")}
+    
+    cat("<p>&#160;&#160;<b><em>Downloads:</em></b>",
+        paste0("<b>Result </b><a href=",elecfile,"_",sys,".rda>as an R list</a>"),"",
         "<b>Vote data file:</b>",
-paste0("<a href=../",elecfile,".txt>ballot format</a>"),
+paste0("<a href=../",elecfile,".dat>ballot format</a>"),
+paste0("<a href=../",elecfile,".blt>preference format</a>"),
+paste0("<a href=../",elecfile,".rda>as an R list</a>"),
 sep="&#160;&#160;"); cat("\n")
 
     for(i in 61:62){
@@ -205,3 +224,13 @@ plot_jpeg=function(plotfile,stage)
 }
 
 
+plural=function(names){
+# function plural - for grammatical detail of output
+n=length(names)
+outnames=paste(names[[n]])
+if(n>1){outnames=paste(names[[n-1]],"and",outnames)}
+if(n>2){
+  for(i in (n-2):1){outnames=paste(names[[i]],", ",outnames,sep="")}}
+  if(n==1){is="is"; has="has"; es=""}else{is="are"; has="have";es="es"}
+  list(out=outnames,is=is,has=has,es=es)
+}

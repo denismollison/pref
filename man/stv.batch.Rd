@@ -7,10 +7,9 @@
 stv.batch(
   election,
   indirec,
-  parties = F,
   outdirec = tempdir(),
-  verbose = T,
-  plot = F
+  plot = TRUE,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -18,13 +17,11 @@ stv.batch(
 
 \item{indirec}{Directory with vote data}
 
-\item{parties}{File with party acronyms and colours}
-
 \item{outdirec}{Directory for webpages (if produced)}
 
-\item{verbose}{Whether to report on each stage of the count}
-
 \item{plot}{Whether to produce web pages with plots of countcheck()}
+
+\item{verbose}{Whether to report on each stage of the count}
 }
 \value{
 A list containing votes and keep vals at each stage, + optional web pages

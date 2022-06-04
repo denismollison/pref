@@ -179,15 +179,3 @@ bi[[n+1]]=bn
 }
 bi
 }
-
-
-plural=function(names){
-# function plural - for grammatical detail of output
-n=length(names)
-outnames=paste(names[[n]])
-if(n>1){outnames=paste(names[[n-1]],"and",outnames)}
-if(n>2){
-  for(i in (n-2):1){outnames=paste(names[[i]],", ",outnames,sep="")}}
-  if(n==1){is="is"; has="has"; es=""}else{is="are"; has="have";es="es"}
-  list(out=outnames,is=is,has=has,es=es)
-}

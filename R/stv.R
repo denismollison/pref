@@ -60,11 +60,11 @@ tr=transfer(k,iter,vote,mult,ns,ie,em,surplus,sel)
     hp0=hp
     dn=decision(nc,vc,qa,ie,k,stage,fin,vo,st,surplus,hp)
 hp=dn$hp
-if(hp!=hp0){if(verbose==T){cat("close call - need high precision"); cat("\n\n")}}else{    
+if(hp!=hp0){if(verbose==T){cat("close call - need high precision"); cat("\n\n")}}else{
     k=dn$k; ie=dn$ie; elec=dn$elec; xcl=dn$xcl; it=c(it,elec,xcl*ie[xcl])
     stage=dn$stage; vo=dn$vo; st=dn$st
     ne=length(ie[ie==1])
-    ks=cbind(ks,k)    
+    ks=cbind(ks,k)
 x=decision_text(stage,ne,ns,elec,xcl,name2,dnext)
     dnext=x$d; txt=c(txt,x$t)
     if(stage==1){
@@ -75,8 +75,8 @@ x=decision_text(stage,ne,ns,elec,xcl,name2,dnext)
     }
     print(round(apply(vm,2,sum),4))
     print(round(k,4))
-    cat("qa",qa,", em",em,", surplus",surplus,"\n")
-    cat(em,"\n")
+    cat("qa",qa,", em",em,", surplus",surplus,"\n"); cat(em,"\n")
+    qpc=100*qa/sum(mult)
     tim=proc.time()-tim0;  pt=tim[[1]]
 # make permanent plots of stage (if plot=T)
 if(plot==T){
@@ -86,7 +86,7 @@ if(plot==T){
   plotfile=paste(outdirec,paste("stage",trf[[i]],stage,".jpg",sep=""),sep="/")
   h=600+200*transf
   grDevices::jpeg(plotfile,width=w,height=h)
-    voteplot(ns,vm,qa,it,x$t,name2,party,colour,transf,elecname)
+    voteplot(ns,vm,qpc,it,x$t,name2,party,colour,transf,elecname)
   grDevices::dev.off()
 }}
 # print decision (if verbose=T)
@@ -113,7 +113,7 @@ while(length(k[k>0])>(ns+2)){
   }
     tim=proc.time()-tim0;  pt=tim[[1]]
 }
-   
+
 # print final keep values if verbose=T
 if(verbose==T){cat("iteration ",iter,"    process time ",pt," secs"); cat("\n")
 cat("final keep values (%):"); cat("\n"); print(round(100*k[1:nc],2)); cat("\n")}

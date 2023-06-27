@@ -1,5 +1,5 @@
 # stvfunctions_input.R
-# main function stv.data
+# main function pref.data
 # uses abbrev, party_colour and capwords for tidying up
 # for either .blt format with full details
 # or minimal format - vote matrix with candidate names/codes
@@ -19,14 +19,14 @@
 #'
 #' @return A standardised list of election info to save in a .rda file
 #' @export
-#' @examples datafile=system.file("extdata","jmt2002.dat",package="stv")
-#' @examples jmt02=stv.data(datafile)
-#' @examples datafile=system.file("extdata","Partick2017.blt",package="stv")
-#' @examples parties17=system.file("extdata","parties_SC2017.txt",package="stv")
-#' @examples p17=stv.data(datafile,mult=TRUE,parties=parties17,ballot=TRUE,friendly=TRUE)
-#' # @examples y12=stv.data("inst/extdata/yale12.blt",details=F)
+#' @examples datafile=system.file("extdata","jmt2002.dat",package="pref")
+#' @examples jmt02=pref.data(datafile)
+#' @examples datafile=system.file("extdata","Partick2017.blt",package="pref")
+#' @examples parties17=system.file("extdata","parties_SC2017.txt",package="pref")
+#' @examples p17=pref.data(datafile,mult=TRUE,parties=parties17,ballot=TRUE,friendly=TRUE)
+#' # @examples y12=pref.data("inst/extdata/yale12.blt",details=F)
 
-stv.data=function(datafile,mult=F,details=T,parties=F,ballot=F,friendly=F){
+pref.data=function(datafile,mult=F,details=T,parties=F,ballot=F,friendly=F){
 #
 # first: minimal case - data a vote matrix with header of candidate names
 if(details==F){     # minimal case with abbrev names and vote matrix only

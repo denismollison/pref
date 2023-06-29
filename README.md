@@ -6,16 +6,17 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-There’s a full manual stv_pkg_manual.pdf
+There’s a full manual pref_pkg_manual.pdf
 
-The goal of stv is to count votes from an STV election, together with
-clear explanatory graphics. Its core option is Meek STV, which is the
-purest expression of <a href="https://www.macs.hw.ac.uk/~denis/stv/">the
-simple principles of STV</a>, but requires electronic counting. It can
-handle votes expressing equal preference for some of the candidates.
+The goal of the function stv is to count votes from an STV election,
+together with clear explanatory graphics. Its core option is Meek STV,
+which is the purest expression of
+<a href="https://www.macs.hw.ac.uk/~denis/stv/">the simple principles of
+STV</a>, but requires electronic counting. It can handle votes
+expressing equal preference for some of the candidates.
 
-You can install the development version of stv from Github
-`r # install.packages("devtools") install_github("denismollison/stv")`
+You can install the development version of pref from Github
+`r # install.packages("devtools") install_github("denismollison/pref")`
 
 Five examples are provided, drawn from real elections, hc12, p17, nws17,
 yale and j02. Three are from Scottish Council elections, one a very
@@ -29,7 +30,7 @@ provided as y12.
 The final example, j02, is from a charity’s trustees election in which
 equal preferences were allowed.
 
-To run the first of these: `r # library(stv) hc12c=stv(hc12)`
+To run the first of these: `r # library(pref) hc12c=stv(hc12)`
 
 This code produces a list of variables summarising the count and final
 outcome. With the default options `verbose=T' and`plot=T’ it also

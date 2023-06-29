@@ -6,6 +6,8 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
+Preference voting
+
 There’s a full manual pref_pkg_manual.pdf
 
 The goal of the function stv is to count votes from an STV election,

@@ -16,7 +16,8 @@
 #'
 stv.wig=function(elecdata,outdirec=tempdir(),map=FALSE,electitle=character(),verbose=T,plot=T){
   tim0=proc.time()    # to track computing time taken
-sys="wig"
+# sys="wig"
+
 # read and unpack elecdata
 ed=elecdata; elecname=ed$e
 ns=ed$s; nc=ed$c; vote=ed$v; mult=ed$m; nv=ed$nv

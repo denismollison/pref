@@ -1,4 +1,4 @@
-# stvfunctions_input.R
+# stvfunctions_input.R - last revised 28 june 2023
 # main function pref.data
 # uses abbrev, party_colour and capwords for tidying up
 # for either .blt format with full details
@@ -40,7 +40,6 @@ colour=grDevices::rainbow(nc)
 elecname=readline("election name?")
 ns=as.numeric(readline("number to elect?"))
 }else{
-#
 # detailed case: details=T - elecname, ns, nc, names - option of parties
 dat=base::readLines(datafile)
 id=1:length(dat)
@@ -50,10 +49,11 @@ elecname=dat[[1]]
 x=as.numeric(strsplit(dat[[2]]," ")[[1]])
 ns=x[[1]]; nc=x[[2]]; ic=1:nc
 cdata=2+ic
-# what if no contest, therefore no vote data? (need to cover for batch mode)
+# what if no contest, therefore no vote data? (need to cover this case for batch mode)
 if(ballot==TRUE){nv=length(dat)-(nc+2)}else{nv=length(dat)-(nc+3)}
 if(nv>0){vdata=(nc+3):length(dat)}
-}else{   # user-unfriendly file order, with most details at end (Hill's format)
+}else{
+# if friendly=F, i.e. data in user-unfriendly file order, with most details at end (Hill's format)
 x=as.numeric(strsplit(dat[[1]]," ")[[1]])
 nc=x[[1]]; ns=x[[2]]
 nv=id[substring(dat[id],1,1)=="0"]-2
@@ -69,19 +69,19 @@ for(i in cdata){
   j=i+1-cdata[[1]]
   x=strsplit(dat[[i]],",")[[1]]
   if(length(x)>1){
-      party[[j]]=x[[2]]
+    party[[j]]=x[[2]]
   }
-    y=strsplit(x[[1]]," ")[[1]]; z=length(y)
+  y=strsplit(x[[1]]," ")[[1]]; z=length(y)
   name[[j]]=y[[z]]
   if(z>1){fname[[j]]=paste(y[1:(z-1)],collapse=" ")}
 }
 name2=abbrev(name,fname)
 # parties and party colours if specified
 if(parties!=F){
-    ip=ic[party!=""]
+  ip=ic[party!=""]
 if(length(ip)>0){
-    colour=rep("white",nc)
-    colour[ip]=party_colour(party[ip],parties)}
+  colour=rep("white",nc)
+  colour[ip]=party_colour(party[ip],parties)}
 else{cat("recommend re-run with party colours file if available\n\n")}
 }else{colour=grDevices::rainbow(nc)}
 # and last but not least - the votes
@@ -90,20 +90,20 @@ if(nv>0){
   if(mult==F){mul=rep(1,nv)}
   if(ballot==T){
     for(iv in 1:nv){
-      x=strsplit(dat[[vdata[[iv]]]]," ")[[1]]
-      if(mult==T){mul[[iv]]=as.numeric(x[[1]]); x=x[2:length(x)]}
-      if(length(x)!=nc){cat("vote ",i," has length ",length(x))}
-        vote[iv,]=as.numeric(x)
-    }}else{
-for(iv in 1:nv){
     x=strsplit(dat[[vdata[[iv]]]]," ")[[1]]
-    x=x[x!=""]
+    if(mult==T){mul[[iv]]=as.numeric(x[[1]]); x=x[2:length(x)]}
+    if(length(x)!=nc){cat("vote ",i," has length ",length(x))}
+      vote[iv,]=as.numeric(x)
+  }}else{
+# if ballot=F
+for(iv in 1:nv){
+x=strsplit(dat[[vdata[[iv]]]]," ")[[1]]
+x=x[x!=""]
 nx0=length(x)
 mul[[iv]]=as.numeric(x[[1]])  # for pref format assume first element is mult
 if(x[[nx0]]!="0"){cat("check failure at vote no. ",iv,"\n")}
 if(nx0>2){
-    x=x[2:(nx0-1)]; nx=length(x)   # actual vote
-    # cat(x,"\n\n")
+  x=x[2:(nx0-1)]; nx=length(x)   # actual vote
 pr=1; incr=1; pref=numeric()
 for(i in 1:nx){
 nch=nchar(x[[i]])
@@ -119,7 +119,8 @@ vote[iv,xn]=pref
 }
 list(e=elecname,s=ns,c=nc,nv=nv,m=mul,v=vote,f=fname,n=name,n2=name2,p=party,col=colour)
 }
-# save(d,file="elec.rda")    # load(d,file="elec.R")
+# end of function prefdata; may want to save result, d say, using`save(d,file="elec.rda")'
+# .. and later `load(d,file="elec.rda")'
 
 
 abbrev=function(name,fname){
@@ -130,26 +131,26 @@ name2=name; ic=1:length(name)
 tn=table(name)
 dn=dimnames(tn)$name[tn>1]
 if(length(dn)>0){
-    for(idn in 1:length(dn)){
-      dnc=ic[name==dn[[idn]]]
-      fname[dnc]=capwords(fname[dnc],T)
+  for(idn in 1:length(dn)){
+  dnc=ic[name==dn[[idn]]]
+  fname[dnc]=capwords(fname[dnc],T)
 cat("warning - duplicate surname -",dn[[idn]]," (",fname[dnc],")\n")
-    tfn=table(fname[dnc])
-    kc=0; while(max(table(name2[dnc]))>1 & kc<2){
-      kc=kc+1
-      for(jc in ic[name==dn[[idn]]]){
-        name2[[jc]]=paste(name[[jc]],",",substring(fname[[jc]],1,kc),sep="")
-    }}
+  tfn=table(fname[dnc])
+  kc=0; while(max(table(name2[dnc]))>1 & kc<2){
+    kc=kc+1
+    for(jc in ic[name==dn[[idn]]]){
+    name2[[jc]]=paste(name[[jc]],",",substring(fname[[jc]],1,kc),sep="")
+  }}
 # but if they also have same first two letters of first name, try initials ..
-	tnc=table(name2[dnc])
-	if(max(table(name2[dnc]))>1){
-            for(jc in dnc){
-			inits=paste(substring(strsplit(fname[[jc]]," ")[[1]],1,1),collapse="")
-		name2[[jc]]=paste(name[[jc]],inits,sep=",")
-	}}
-    }}
+tnc=table(name2[dnc])
+if(max(table(name2[dnc]))>1){
+  for(jc in dnc){
+  inits=paste(substring(strsplit(fname[[jc]]," ")[[1]],1,1),collapse="")
+  name2[[jc]]=paste(name[[jc]],inits,sep=",")
+}}
+}}
 name2
-}
+} # end of function abbrev
 
 
 # party_colour calculates party colour from parties file

@@ -1,15 +1,15 @@
-Package: stv
-Title: STV, especially Meek allowing equal preferences
+Package: pref
+Title: Preference voting
 Version: 0.1.0
 Authors@R:
     person("Denis", "Mollison", , "denis.mollison@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-4014-3431"))
-Description: Counts STV elections, especially Meek with equal preference allowed.
-URL: https://github.com/denismollison/stv
+Description: Inputs preference voting data; counts STV elections, especially Meek with equal preference allowed; aims to add Condorcet.
+URL: https://github.com/denismollison/pref
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Imports:
     base,
     graphics,
@@ -17,7 +17,7 @@ Imports:
     jpeg,
     utils
 Depends:
-    R (>= 2.10)
+    R (>= 3.5)
 LazyData: true
 Suggests: 
     knitr

@@ -1,7 +1,8 @@
-^stv\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^data-raw$
 ^out$
 ^README\.Rmd$
 ^\.Rhistory
+^pref_pkg_manual\.pdf$
+^pref\.Rproj$

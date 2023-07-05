@@ -1,7 +1,6 @@
 # functions_meek.R - last revised 28 june 2023
 # functions transfer and share; decision and decision_text;
-#   function select for permutations used in share
-# keep calculates current vote totals vm from keep values 
+# function select for permutations used in share
 # vm a matrix - row = 1st pref, col = who with currently
 # case where equal prefs allowed
 # -> delegates sharing out of each vote to function ..
@@ -144,13 +143,13 @@ decision_text=function(stage,ne,ns,elec,xcl,name,dnext){
 # not expecting to elect and exclude at same stage
 # and only expect one exclusion at a time
 if(ne==ns){final=" - final result"}else{final=""}
- dec2=""
+dec2=""
 if(stage==1){dec1=paste("first preferences - ",final,sep="")}else{
  dec1=paste("stage ",stage,final," - ",dnext,sep="")
- }
+}
 if(length(elec)>0){
  x=plural(name[elec])
- dec2=paste(x$out,x$has,"achieved the quota, so",x$is,"elected")# }
+ dec2=paste(x$out,x$has,"achieved the quota, so",x$is,"elected")
  dnext=paste("after transfer of surplus",x$es," of ",x$out,sep="")
 }
 if(length(elec)==0){

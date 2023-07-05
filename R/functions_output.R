@@ -168,7 +168,6 @@ if(ed$nv>0){
  for(i in 11:46){
   cat(outlines[[i]],"\n",sep="")
  }
-# cat("<p><b><em>Download vote data file: </em></b>&#160;<a href=../",elecfile,".txt>ballot format</a>\n",sep="")
  cat(outlines[47:48],"\n",sep="")
  options(width=140,max.print=5000)
  print(round(vo,2)); cat("<p>")
@@ -187,11 +186,11 @@ if(ed$nv>0){
 }else{cat("<br><br><br><br><br>\n")}
 
 cat("<p>&#160;&#160;<b><em>Downloads:</em></b>",
-    paste0("<b>Result </b><a href=../",elecfile,"_",sys,".rda>as an R list</a>"),"",
-    "<b>Vote data file:</b>",
-paste0("<a href=../",elecfile,".dat>ballot format</a>"),
-paste0("<a href=../",elecfile,".blt>preference format</a>"),
-paste0("<a href=../",elecfile,".rda>as an R list</a>"),
+paste0("<b>Result </b><a href=",elecfile,"_",sys,".rda>as an R list</a>"),"",
+ "<b>Vote data file:</b>",
+# paste0("<a href=../",elecfile,".dat>ballot format</a>"),
+# paste0("<a href=../",elecfile,".blt>preference format</a>"),
+paste0("<a href=",elecfile,".rda>as an R list</a>"),
 sep="&#160;&#160;"); cat("\n")
 
 for(i in 61:62){

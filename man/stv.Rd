@@ -24,7 +24,7 @@ stv(
 
 \item{verbose}{Whether to report on each stage of the count}
 
-\item{plot}{Whether to produce web pages with plots of countcheck()}
+\item{plot}{Whether to produce web pages with plots of count}
 }
 \value{
 A list containing votes and keep vals at each stage, + optional web pages

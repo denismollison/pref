@@ -60,7 +60,7 @@ list(k=k,vm=vm,vc=vc,qa=qa,inn=je,iter=iter,sur=surplus)
 
 share=function(ie,b,sel){
 # share - function to share out one vote, b (in ballot format)
-# new version 10 Mar 2022 to save as polynomial coefficients
+# new version 10 Mar 2022 to save as (nc+1) x 2^ne matrix of polynomial coefficients
 # ie indicates candidate status = -1 if excl, 1 if elec, 0 if undecided
 nc=length(b); ic=1:nc
 jj=ic[ie==1]; ne=length(jj)
@@ -99,7 +99,7 @@ if(max(b)>0){
   c0=c0+sum(code[je])
  }
  sh[(nc+1),c0]={mu==0}
- }else{sh[(nc+1),1]=1}
+}else{sh[(nc+1),1]=1}
 sh
 }
 

@@ -9,7 +9,8 @@ stv.batch(
   indirec,
   outdirec = tempdir(),
   plot = TRUE,
-  verbose = FALSE
+  verbose = FALSE,
+  map = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ stv.batch(
 \item{plot}{Whether to produce web pages with plots of countcheck()}
 
 \item{verbose}{Whether to report on each stage of the count}
+
+\item{map}{Whether to include ward maps (when available)}
 }
 \value{
 A list containing votes and keep vals at each stage, + optional web pages

@@ -53,7 +53,7 @@ trf=c("","t")
 
 if(verbose==T){cat(elecname)
   cat(paste("  (",ns," seats, ",nc," candidates)",sep="")); cat("\n")
-  cat("total votes ",sum(mult),",  initial quota ",qa); cat("\n")
+  cat("total votes ",sum(mult),", quota ",qa); cat("\n")
   cat("first prefs",ff,"\n\n")
 }
 if(plot==T & !dir.exists(outdirec)){dir.create(outdirec)}

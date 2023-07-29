@@ -17,20 +17,20 @@
 #' @examples p17c=stv(p17)
 #' @examples y12c=stv(y12)
 #'
-stv=function(elecdata,outdirec=tempdir(),electitle=character(),map=F,verbose=T,plot=T){
+stv=function(elecdata,outdirec=tempdir(),electitle=character(),map=F,verbose=T,plot=T,timing=F){
 sys="meek"
 tim0=proc.time()    # to track computing time taken
 # read and unpack elecdata
 ed=elecdata; elecname=ed$e
-ns=ed$s; nc=ed$c; vote=ed$v; mult=ed$m; nv=ed$nv
+ns=ed$s; nc=ed$c; vote=ed$v; nv=ed$nv; mult=ed$m; totalvotes=sum(mult)
 name=ed$n; fname=ed$f; name2=ed$n2
 party=ed$p; colour=ed$col; np={party[[1]]==""}
 # initial quota, keep values (=1), and housekeeping variables
-q0=sum(mult)/(ns+1)	# initial quota
+q0=totalvotes/(ns+1)	# initial quota
 # if(verbose==T){
 cat(elecname)
-cat(paste("  (",ns," seats, ",nc," candidates)",sep="")); cat("\n")
-if(verbose==T){cat("total votes ",sum(mult),",  initial quota ",round(q0,2)); cat("\n\n")}
+cat(paste("  (",ns," seats, ",nc," candidates, ",totalvotes," votes)",sep="")); cat("\n")
+if(verbose==T){cat("initial quota ",round(q0,2)); cat("\n\n")}
 qa=q0
 k=rep(1,(nc+1))		# initial keep values (the +1 is for non-transferable)
 ks=numeric() 		# record keep value at each stage
@@ -76,19 +76,22 @@ while(ne<ns){
    va=array(c(va,vm),dim=c((nc+1),(nc+1),stage))
    itt=append(itt,list(it))
   }
-  qpc=100*qa/sum(mult)
+  qpc=100*qa/totalvotes
   tim=proc.time()-tim0;  pt=tim[[1]]
 # if plot=T : make permanent plots of stage
   if(plot==T){
    wi=(nc+4.5); w=wi*120   # plot width in (approx) inches, and in pixels
+#  cat(stage)   # if include, need spaces and return after last stage
    for(i in 2:1){
     transf=i-1
     plotfile=paste(outdirec,paste("stage",trf[[i]],stage,".jpg",sep=""),sep="/")
     h=600+200*transf
     grDevices::jpeg(plotfile,width=w,height=h)
-    voteplot(ns,vm,qpc,it,dtext,name2,party,colour,transf,elecname)
+    voteplot(ns,vm,qpc,it,dtext,name2,party,colour,transf,elecname,sys="meek")
     grDevices::dev.off()
   }}
+    if(timing==T){cat(stage,"    process time ",pt," secs    "); cat("\n")}
+
 # if verbose=T : print decision
   if(verbose==T){
   if(stage==1){cat(dtext,sep="")}else{cat(dtext,sep=", ")}; cat("\n\n")
@@ -145,9 +148,10 @@ elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
 save(result,file=paste0(outdirec,"/",elecfile,"_",sys,".rda"))
 save(elecdata,file=paste0(outdirec,"/",elecfile,".rda"))
 # if plot=T make webpages to go with vote plots, and if verbose=T display them
-if(plot==T){wp=webpages(elecdata,va,vo,q0,itt,outdirec,sys,map,electitle)
- if(verbose==T){grDevices::dev.off()
-  utils::browseURL(wp[[1]],browser="open")}}
+if(plot==T){
+    wp=webpages(elecdata,va,vo,q0,itt,outdirec,sys,map,electitle)
+ if(verbose==T){grDevices::dev.off()}
+  utils::browseURL(wp[[1]],browser="open")}
 # txt=matrix(txt,nrow=2)   # store decision text as matrix ??
 result
 }

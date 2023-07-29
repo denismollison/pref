@@ -14,9 +14,9 @@
 #' @examples p17w=stv.wig(p17)
 #' @examples nws17w=stv.wig(nws17)
 #'
-stv.wig=function(elecdata,outdirec=tempdir(),map=FALSE,electitle=character(),verbose=T,plot=T){
+stv.wig=function(elecdata,outdirec=tempdir(),map=FALSE,electitle=character(),verbose=T,plot=T,timing=F){
   tim0=proc.time()    # to track computing time taken
-sys="wig"
+  sys="wig"
 # read and unpack elecdata
 ed=elecdata; elecname=ed$e
 ns=ed$s; nc=ed$c; vote=ed$v; mult=ed$m; nv=ed$nv
@@ -24,11 +24,11 @@ name=ed$n; fname=ed$f; name2=ed$n2
 party=ed$p; colour=ed$col; np={party[[1]]==""}
 
 # quota (fixed) and housekeeping variables
-total_vote=sum(mult)
-q0=ceiling((total_vote+1)/(ns+1)); qa=q0
+totalvotes=sum(mult)
+qa=ceiling((totalvotes+1)/(ns+1))
 inn=rep(0,nc)	# 0 indicates still in play (-1 elim, 1 elec, 2 elec & transf)
 ic=1:nc
-ne=0
+  ne=0
 it=numeric(); ite=numeric(); backlog=numeric(); ann=rep(0,nc); elec=numeric()
 f=numeric()           # first preferences
 ff=rep(0,nc)
@@ -50,12 +50,12 @@ dnext=""                # text carried over from one stage to next
 txt=character()         # text describing decisions at each stage
 itt=list()              # cand nos in order of elec/excl for each stage
 trf=c("","t")
+  
+cat(elecname)
+cat(paste("  (",ns," seats, ",nc," candidates, ",totalvotes," votes)",sep="")); cat("\n")
+if(verbose==T){cat("quota ",round(qa,2)); cat("\n\n")}
 
-if(verbose==T){cat(elecname)
-  cat(paste("  (",ns," seats, ",nc," candidates)",sep="")); cat("\n")
-  cat("total votes ",sum(mult),",  initial quota ",qa); cat("\n\n")
-}
-if(plot==T & !dir.exists(outdirec)){dir.create(outdirec)}
+if(!dir.exists(outdirec)){dir.create(outdirec)}
 
 # Transfer step - start of specifically wig stuff
 while(ne<ns){
@@ -176,8 +176,10 @@ if(final != ""){
     dec2=paste(dec2,x$out,x$is,"elected")}
 }
     dec=c(dec1,dec2)
+    qpc=100*qa/sum(mult)
     tim=proc.time()-tim0;  pt=tim[[1]]
 # make permanent plots of stage (if plot=T)
+# if(verbose==F){cat(stage," "); if(final != ""){cat("\n")}}
 if(plot==T){
     wi=(nc+4.5); w=wi*120   # plot width in (approx) inches, and in pixels
     for(i in 2:1){
@@ -185,37 +187,42 @@ if(plot==T){
   plotfile=paste(outdirec,paste("stage",trf[[i]],stage,".jpg",sep=""),sep="/")
   h=600+200*transf
   grDevices::jpeg(plotfile,width=w,height=h)
-    voteplot(ns,vmp,qa,it,dec,name2,party,colour,transf,elecname,sys="wig")
+    voteplot(ns,vmp,qpc,it,dec,name2,party,colour,transf,elecname,sys="wig")
   grDevices::dev.off()
 }}
+    if(timing==T){cat(stage,"    process time ",pt," secs    "); cat("\n")}
 # print decision (if verbose=T)
     if(verbose==T){
-    cat("iteration ",iter,"    process time ",pt," secs    "); cat("\n")
     cat(dec,sep=", "); cat("\n")
-   cat(round(v,1),"\n\n")
 # .. and plot current state of votes if plot=T
     if(plot==T){plot_jpeg(plotfile,stage)}
-   readline("next? ")
+   if(final==""){readline("next? ")}
   }
 ann[je]=1
 }          # closes stages loop, i.e. end of this ward's count
 
-vo[nc+1,]=total_vote-apply(as.matrix(vo[1:nc,]),2,sum)
+vo[nc+1,]=totalvotes-apply(as.matrix(vo[1:nc,]),2,sum)
 # fudge to get "non-transferred" into line
 if(length(party[party!=""])>0){dimnames(vo)=list(name=c(paste(name,", ",fname," (",party,") ",sep=""),"non-transferable"),stage=st)}else{
 dimnames(vo)=list(name=c(paste(name,fname,sep=", "),"non-transferable"),stage=st)
 }
 #  cat(electitle,"\n",map,"\n")
 # if plot=T make webpages to go with vote plots, and if verbose=T display them
-if(plot==T){wp=webpages(elecdata,va,vo,q0,itt,outdirec,sys="wig",map,electitle)
-if(verbose==T){grDevices::dev.off()
-    utils::browseURL(wp[[1]],browser="open")}}
+  if(plot==T){
+      wp=webpages(elecdata,va,vo,qa,itt,outdirec,sys="wig",map,electitle)
+if(verbose==T){grDevices::dev.off()}
+    utils::browseURL(wp[[1]],browser="open")}
 
 elec=it[it>0]; x=elec
 pp=paste(" (",party[elec],")",sep=""); if(pp[[1]]==" ( )"|pp[[1]]==" ()"){pp=""}
 elected=paste(fname[elec]," ",name[elec],pp,sep="",collapse=", ")
 result=paste("Elected:",elected,sep="  ")
-cat(result); cat("\n\n")
+  cat(result); cat("\n\n")
+# save data and result to outdirec
+result=list(elec=elected,itt=itt,votes=vo,va=va)
+elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
+save(result,file=paste0(outdirec,"/",elecfile,"_",sys,".rda"))
+save(elecdata,file=paste0(outdirec,"/",elecfile,".rda"))
   
 # txt=matrix(txt,nrow=2)   # store decision text as matrix
 list(elec=result,itt=itt,votes=vo,va=va)

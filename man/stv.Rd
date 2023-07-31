@@ -9,8 +9,9 @@ stv(
   outdirec = tempdir(),
   electitle = character(),
   map = F,
-  verbose = T,
-  plot = T
+  verbose = F,
+  plot = T,
+  timing = F
 )
 }
 \arguments{
@@ -18,13 +19,15 @@ stv(
 
 \item{outdirec}{Directory for webpages (if produced)}
 
-\item{electitle}{for web page heading links if appropriate}
+\item{electitle}{For web page heading links if appropriate}
 
-\item{map}{link to a map or other URL associated with election}
+\item{map}{Link to a map or other URL associated with election}
 
 \item{verbose}{Whether to report on each stage of the count}
 
 \item{plot}{Whether to produce web pages with plots of count}
+
+\item{timing}{Whether to report computing time at each stage}
 }
 \value{
 A list containing votes and keep vals at each stage, + optional web pages
@@ -33,8 +36,9 @@ A list containing votes and keep vals at each stage, + optional web pages
 STV election count
 }
 \examples{
-j02c=stv(j02)
-p17c=stv(p17)
-y12c=stv(y12)
+hc12m=stv(hc12,plot=FALSE)
+j02m=stv(j02,plot=FALSE)
+nws17m=stv(nws17,plot=FALSE)
+y12m=stv(y12,plot=FALSE)
 
 }

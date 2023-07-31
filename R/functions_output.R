@@ -163,7 +163,7 @@ if(ed$nv>0){
  }
  cat('</div>\n<div>')
  for(i in 1:nstages){
-    cat('<img class="mySlides" src="stage',tra[[j]],i,'.jpg" style="width:100%">\n',sep='')
+     cat('<img class="mySlides" src="stage',tra[[j]],i,'.jpg" style="width:100%">\n',sep='')
  }
  for(i in 11:46){
   cat(outlines[[i]],"\n",sep="")
@@ -188,8 +188,6 @@ if(ed$nv>0){
 cat("<p>&#160;&#160;<b><em>Downloads:</em></b>",
 paste0("<b>Result </b><a href=",elecfile,"_",sys,".rda>as an R list</a>"),"",
  "<b>Vote data file:</b>",
-# paste0("<a href=../",elecfile,".dat>ballot format</a>"),
-# paste0("<a href=../",elecfile,".blt>preference format</a>"),
 paste0("<a href=",elecfile,".rda>as an R list</a>"),
 sep="&#160;&#160;"); cat("\n")
 
@@ -208,7 +206,7 @@ plot_jpeg=function(plotfile,stage)
   res = dim(jpg)[2:1] # get the resolution, [x, y]
   w=res[[1]]/dpi; h=res[[2]]/dpi
 # if at stage 1 initialize plot of right size
-#  (will be closed in stv.count when web pages are written)
+#  (will be closed in stv when web pages are written)
   if(stage==1){grDevices::dev.new(width=w,height=h,noRStudioGD = TRUE)}
   graphics::par(mar=rep(0,4))
   graphics::plot(1,1,xlim=c(1,res[1]),ylim=c(1,res[2]),type='n',xaxs='i',yaxs='i',xaxt='n',yaxt='n',xlab='',ylab='',bty='n')

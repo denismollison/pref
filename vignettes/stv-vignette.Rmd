@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(pref)
 ```
-## stv.count
+## stv
 
 This is the core function of the package: it takes a list variable containing election data and outputs the result of the corresponding STV election count. It uses Meek's algorithm, the conceptually simplest version of STV, whose only drawback is that it requires electronic counting - which is not a drawback here, as that's what computer packages do! We also allow votes expressing equal preference.
 
@@ -45,7 +45,7 @@ The output edc is also a list, with components:
 Side effects: text and plots:  The default is to print text output (as in txt), how plots illustrating the progress of the count, at each stage, and finally to display webpages containing these.
 These can be suppressed with the options "verbose=F" and "plot=F" respectively. Alternatively, the plots can be permanently preserved by adding the option outdirec="path" where path is the desired output directory.
 
-## stv.data
+## pref.data
 
 This is a function to convert election data into the required format for stv.count, i.e. a list with elements as above.
 

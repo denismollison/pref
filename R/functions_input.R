@@ -19,12 +19,13 @@
 #'
 #' @return A standardised list of election info to save in a .rda file
 #' @export
-#' @examples datafile=system.file("extdata","jmt2002.dat",package="pref")
-#' @examples jmt02=pref.data(datafile)
-#' @examples datafile=system.file("extdata","Partick2017.blt",package="pref")
-#' @examples parties17=system.file("extdata","parties_SC2017.txt",package="pref")
+# #' @examples datafile=system.file("extdata","jmt2002.dat",package="pref")
+# #' @examples jmt02=pref.data(datafile)
+#' @examples
+#' datafile=system.file("extdata","Partick2017.blt",package="pref")
+#' parties17=system.file("extdata","parties_SC2017.txt",package="pref")
 #' @examples p17=pref.data(datafile,mult=TRUE,parties=parties17,ballot=TRUE,friendly=TRUE)
-#' # @examples y12=pref.data("inst/extdata/yale12.blt",details=F)
+# #' @examples y12=pref.data("inst/extdata/yale12.blt",details=F)
 
 pref.data=function(datafile,mult=F,details=T,parties=F,ballot=F,friendly=F){
 #

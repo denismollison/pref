@@ -10,8 +10,9 @@ stv.wig(
   outdirec = tempdir(),
   map = FALSE,
   electitle = character(),
-  verbose = T,
-  plot = T
+  verbose = F,
+  plot = T,
+  timing = F
 )
 
 stv.wig(
@@ -19,8 +20,9 @@ stv.wig(
   outdirec = tempdir(),
   map = FALSE,
   electitle = character(),
-  verbose = T,
-  plot = T
+  verbose = F,
+  plot = T,
+  timing = F
 )
 }
 \arguments{
@@ -28,13 +30,15 @@ stv.wig(
 
 \item{outdirec}{Directory for webpages (if produced)}
 
-\item{map}{link to a map or other URL associated with election}
+\item{map}{Link to a map or other URL associated with election}
 
-\item{electitle}{for web page heading links if appropriate}
+\item{electitle}{For web page heading links if appropriate}
 
 \item{verbose}{Whether to report on each stage of the count}
 
 \item{plot}{Whether to produce web pages with plots of countcheck()}
+
+\item{timing}{Whether to report computing time at each stage}
 }
 \value{
 A list containing votes at each stage, + optional web pages
@@ -52,7 +56,7 @@ calculated to 5 places of decimals as used for those elections
 p17w=stv.wig(p17)
 nws17w=stv.wig(nws17)
 
-p17w=stv.wig(p17)
-nws17w=stv.wig(nws17)
+nws17w=stv.wig(nws17,plot=FALSE)
+p17w=stv.wig(p17,plot=FALSE)
 
 }

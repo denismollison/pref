@@ -33,7 +33,9 @@ A standardised list of election info to save in a .rda file
 put election data in an R file (.rda)
 }
 \examples{
-datafile=system.file("extdata","Partick2017.blt",package="pref")
-parties17=system.file("extdata","parties_SC2017.txt",package="pref")
-p17=pref.data(datafile,mult=TRUE,parties=parties17,ballot=TRUE,friendly=TRUE)
+datafile=system.file("extdata","yale12.blt",package="pref")
+y12=pref.data(datafile,details=FALSE)
+datafile=system.file("extdata","Jedburgh2012.dat",package="pref")
+parties12=system.file("extdata","parties_SC2012.txt",package="pref")
+jed12=pref.data(datafile,mult=TRUE,parties=parties12,ballot=TRUE,friendly=TRUE)
 }

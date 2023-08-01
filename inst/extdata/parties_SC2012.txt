@@ -1,0 +1,29 @@
+ASJH	purple	Action to Save St John's Hospital
+Bdrs	purple	Borders Party
+Bri	purple	Britannica
+ChrP	purple	Christian Peoples
+Com	purple	Communist
+Con	blue	Conservative
+CICA	purple	Cumbernauld Independent Councillors Alliance
+EKA	purple	East Kilbride Alliance
+EDIA	purple	East Dunbartonshire Independent Alliance
+GF	purple	Glasgow First
+Ind	white	Independent
+Lab	pink	Labour
+Lib	purple	Liberal
+MRL	purple	Monster Raving Loony
+NF	purple	National Front
+Anon	white	<em>No label</em>
+PICP	white	Perth Independent Candidates Party
+Pir	purple	Pirate
+SC	purple	Scottish Christian
+Grn	green	Scottish Green
+SLD	orange	Scottish Liberal Democrats
+SSC	purple	Scottish Senior Citizens
+SSP	purple	Scottish Socialist
+SU	purple	Scottish Unionist
+SNP	yellow	Scottish National Party
+SL	purple	Socialist Labour
+Sol	purple	Solidarity
+TUSC	purple	Trade Unionist and Socialist Coalition
+UKIP	purple	United Kingdom Independence Party

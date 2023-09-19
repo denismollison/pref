@@ -164,7 +164,6 @@ for(i in 1:np){
 z=strsplit(ps[[i]],"\t")[[1]]
 pna[[i]]=z[[1]]; pcolour[[i]]=z[[2]] # ; pn[[i]]=z[[3]]
 }
-print(pa)
 colour=character()
 i=1:np
 n=length(pa)

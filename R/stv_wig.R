@@ -15,7 +15,7 @@
 #' @examples nws17w=stv.wig(nws17,plot=FALSE)
 #' @examples p17w=stv.wig(p17,plot=FALSE)
 #'
-stv.wig=function(elecdata,outdirec=tempdir(),map=FALSE,electitle=character(),verbose=F,plot=T,timing=F){
+stv.wig=function(elecdata,outdirec=tempdir(),map=FALSE,electitle=character(),verbose=F,plot=F,timing=F){
 sys="wig"
 cat(plot,"\n\n")
 tim0=proc.time()    # to track computing time taken (use timing=T to print for each stage)

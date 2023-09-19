@@ -11,7 +11,7 @@ stv.wig(
   map = FALSE,
   electitle = character(),
   verbose = F,
-  plot = T,
+  plot = F,
   timing = F
 )
 
@@ -21,7 +21,7 @@ stv.wig(
   map = FALSE,
   electitle = character(),
   verbose = F,
-  plot = T,
+  plot = F,
   timing = F
 )
 }

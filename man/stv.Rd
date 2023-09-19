@@ -11,6 +11,7 @@ stv(
   map = F,
   verbose = F,
   plot = T,
+  webdisplay = F,
   timing = F
 )
 }
@@ -25,7 +26,9 @@ stv(
 
 \item{verbose}{Whether to report on each stage of the count}
 
-\item{plot}{Whether to produce web pages with plots of count}
+\item{plot}{Whether to produceplots of count}
+
+\item{webdisplay}{Whether to display plotsand statistics as web pages}
 
 \item{timing}{Whether to report computing time at each stage}
 }

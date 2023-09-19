@@ -3,7 +3,7 @@
 #' Votes are in a ballot-format matrix
 #'
 #' @format A list with 10 variables, largest the vote matrix (1168 x 10)
-#' \describe{
+#' \describe{q()
 #'   \item{s}{number of seats}
 #'   \item{c}{number of candidates}
 #'   ...

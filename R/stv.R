@@ -4,7 +4,8 @@
 #'
 #' @param elecdata File with vote data
 #' @param verbose Whether to report on each stage of the count
-#' @param plot Whether to produce web pages with plots of count
+#' @param plot Whether to produceplots of count
+#' @param webdisplay Whether to display plotsand statistics as web pages
 #' @param outdirec Directory for webpages (if produced)
 #' @param electitle For web page heading links if appropriate
 #' @param map Link to a map or other URL associated with election
@@ -18,7 +19,7 @@
 #' @examples nws17m=stv(nws17,plot=FALSE)
 #' @examples y12m=stv(y12,plot=FALSE)
 #'
-stv=function(elecdata,outdirec=tempdir(),electitle=character(),map=F,verbose=F,plot=T,timing=F){
+stv=function(elecdata,outdirec=tempdir(),electitle=character(),map=F,verbose=F,plot=T,webdisplay=F,timing=F){
 sys="meek"
 tim0=proc.time()    # to track computing time taken (use timing=T to print for each stage)
 # read and unpack elecdata
@@ -151,6 +152,7 @@ save(elecdata,file=paste0(outdirec,"/",elecfile,".rda"))
 if(plot==T){
  wp=webpages(elecdata,va,vo,q0,itt,outdirec,sys,map,electitle)
  if(verbose==T){grDevices::dev.off()}
- utils::browseURL(wp[[1]],browser="open")}
+ if(webdisplay==T){utils::browseURL(wp[[1]],browser="open")}
+ }
 result
 }

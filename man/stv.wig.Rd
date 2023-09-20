@@ -30,17 +30,18 @@ stv.wig(
 \arguments{
 \item{elecdata}{File with vote data}
 
-\item{outdirec}{Directory for webpages (if produced)}
+\item{outdirec}{Needs to be set for permanent record of results}
 
 \item{electitle}{For web page heading links if appropriate}
 
 \item{map}{Link to a map or other URL associated with election}
 
-\item{verbose}{Whether to report on each stage of the count}
+\item{verbose}{If =T reports and pauses at each stage of the count
+(press return to continue to next stage)}
 
-\item{plot}{Whether to produceplots of count}
+\item{plot}{If =T (default) produces plots of count and webpages in outdirec}
 
-\item{webdisplay}{Whether to display plots and statistics as web pages}
+\item{webdisplay}{If =T displays plots and statistics as web pages}
 
 \item{timing}{Whether to report computing time at each stage}
 }
@@ -60,7 +61,7 @@ calculated to 5 places of decimals as used for those elections
 p17w=stv.wig(p17)
 nws17w=stv.wig(nws17)
 
-nws17w=stv.wig(nws17,plot=FALSE)
+nws17w=stv.wig(nws17)
 p17w=stv.wig(p17,plot=FALSE)
 
 }

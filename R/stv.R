@@ -3,10 +3,11 @@
 #' STV election count
 #'
 #' @param elecdata File with vote data
-#' @param verbose Whether to report on each stage of the count
-#' @param plot Whether to produceplots of count
-#' @param webdisplay Whether to display plots and statistics as web pages
-#' @param outdirec Directory for webpages (if produced)
+#' @param outdirec Needs to be set for permanent record of results
+#' @param verbose If =T reports and pauses at each stage of the count
+#' (press return to continue to next stage)
+#' @param plot If =T (default) produces plots of count and webpages in outdirec
+#' @param webdisplay If =T displays plots and statistics as web pages
 #' @param electitle For web page heading links if appropriate
 #' @param map Link to a map or other URL associated with election
 #' @param timing Whether to report computing time at each stage

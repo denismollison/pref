@@ -2,10 +2,11 @@
 #' calculated to 5 places of decimals as used for those elections
 #'
 #' @param elecdata File with vote data
-#' @param verbose Whether to report on each stage of the count
-#' @param plot Whether to produceplots of count
-#' @param webdisplay Whether to display plots and statistics as web pages
-#' @param outdirec Directory for webpages (if produced)
+#' @param outdirec Needs to be set for permanent record of results
+#' @param verbose If =T reports and pauses at each stage of the count
+#' (press return to continue to next stage)
+#' @param plot If =T (default) produces plots of count and webpages in outdirec
+#' @param webdisplay If =T displays plots and statistics as web pages
 #' @param electitle For web page heading links if appropriate
 #' @param map Link to a map or other URL associated with election
 #' @param timing Whether to report computing time at each stage
@@ -13,12 +14,11 @@
 #' @return A list containing votes at each stage, + optional web pages
 #' @export
 #'
-#' @examples nws17w=stv.wig(nws17,plot=FALSE)
+#' @examples nws17w=stv.wig(nws17)
 #' @examples p17w=stv.wig(p17,plot=FALSE)
 #'
 stv.wig=function(elecdata,outdirec=tempdir(),electitle=character(),map=F,verbose=F,plot=T,webdisplay=F,timing=F){
 sys="wig"
-cat(plot,"\n\n")
 tim0=proc.time()    # to track computing time taken (use timing=T to print for each stage)
 # read and unpack elecdata
 ed=elecdata; elecname=ed$e

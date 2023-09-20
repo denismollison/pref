@@ -8,20 +8,22 @@ calculated to 5 places of decimals as used for those elections}
 stv.wig(
   elecdata,
   outdirec = tempdir(),
-  map = FALSE,
   electitle = character(),
+  map = F,
   verbose = F,
-  plot = F,
+  plot = T,
+  webdisplay = F,
   timing = F
 )
 
 stv.wig(
   elecdata,
   outdirec = tempdir(),
-  map = FALSE,
   electitle = character(),
+  map = F,
   verbose = F,
-  plot = F,
+  plot = T,
+  webdisplay = F,
   timing = F
 )
 }
@@ -30,13 +32,15 @@ stv.wig(
 
 \item{outdirec}{Directory for webpages (if produced)}
 
-\item{map}{Link to a map or other URL associated with election}
-
 \item{electitle}{For web page heading links if appropriate}
+
+\item{map}{Link to a map or other URL associated with election}
 
 \item{verbose}{Whether to report on each stage of the count}
 
-\item{plot}{Whether to produce web pages with plots of countcheck()}
+\item{plot}{Whether to produceplots of count}
+
+\item{webdisplay}{Whether to display plots and statistics as web pages}
 
 \item{timing}{Whether to report computing time at each stage}
 }

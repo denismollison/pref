@@ -3,7 +3,8 @@
 #'
 #' @param elecdata File with vote data
 #' @param verbose Whether to report on each stage of the count
-#' @param plot Whether to produce web pages with plots of countcheck()
+#' @param plot Whether to produceplots of count
+#' @param webdisplay Whether to display plots and statistics as web pages
 #' @param outdirec Directory for webpages (if produced)
 #' @param electitle For web page heading links if appropriate
 #' @param map Link to a map or other URL associated with election
@@ -15,7 +16,7 @@
 #' @examples nws17w=stv.wig(nws17,plot=FALSE)
 #' @examples p17w=stv.wig(p17,plot=FALSE)
 #'
-stv.wig=function(elecdata,outdirec=tempdir(),map=FALSE,electitle=character(),verbose=F,plot=F,timing=F){
+stv.wig=function(elecdata,outdirec=tempdir(),electitle=character(),map=F,verbose=F,plot=T,webdisplay=F,timing=F){
 sys="wig"
 cat(plot,"\n\n")
 tim0=proc.time()    # to track computing time taken (use timing=T to print for each stage)
@@ -210,7 +211,7 @@ if(length(party[party!=""])>0){
 if(plot==T){
  wp=webpages(elecdata,va,vo,qa,itt,outdirec,sys="wig",map,electitle)
  if(verbose==T){grDevices::dev.off()}
- utils::browseURL(wp[[1]],browser="open")
+ if(webdisplay==T){utils::browseURL(wp[[1]],browser="open")}
 }
 
 elec=it[it>0]; x=elec

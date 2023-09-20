@@ -5,7 +5,7 @@
 #' @param elecdata File with vote data
 #' @param verbose Whether to report on each stage of the count
 #' @param plot Whether to produceplots of count
-#' @param webdisplay Whether to display plotsand statistics as web pages
+#' @param webdisplay Whether to display plots and statistics as web pages
 #' @param outdirec Directory for webpages (if produced)
 #' @param electitle For web page heading links if appropriate
 #' @param map Link to a map or other URL associated with election

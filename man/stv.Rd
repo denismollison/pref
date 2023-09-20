@@ -28,7 +28,7 @@ stv(
 
 \item{plot}{Whether to produceplots of count}
 
-\item{webdisplay}{Whether to display plotsand statistics as web pages}
+\item{webdisplay}{Whether to display plots and statistics as web pages}
 
 \item{timing}{Whether to report computing time at each stage}
 }

@@ -1,6 +1,6 @@
-# stv() - core of STV package - last revised 29 july 2023
+# stv() - core of STV package - last revised 19 nov 2023
 
-#' STV election count
+#' STV election count - uses Meek STV, allows equal preferences
 #'
 #' @param elecdata File with vote data
 #' @param outdirec Needs to be set for permanent record of results
@@ -17,17 +17,31 @@
 #'
 #' @examples hc12m=stv(hc12,plot=FALSE)
 #' @examples j02m=stv(j02,plot=FALSE)
-#' @examples nws17m=stv(nws17,plot=FALSE)
+#' @examples cnc17m=stv(cnc17,plot=FALSE)
 #' @examples y12m=stv(y12,plot=FALSE)
 #'
-stv=function(elecdata,outdirec=tempdir(),electitle=character(),map=F,verbose=F,plot=T,webdisplay=F,timing=F){
+stv=function(elecdata,outdirec="out_stv",electitle=character(),map=F,verbose=F,plot=T,webdisplay=F,timing=F){
 sys="meek"
 tim0=proc.time()    # to track computing time taken (use timing=T to print for each stage)
-# read and unpack elecdata
-ed=elecdata; elecname=ed$e
-ns=ed$s; nc=ed$c; vote=ed$v; nv=ed$nv; mult=ed$m; totalvotes=sum(mult)
-name=ed$n; fname=ed$f; name2=ed$n2
-party=ed$p; colour=ed$col; np={party[[1]]==""}
+# read and unpack elecdata - only essential component is vote matrix ed$v
+ed=elecdata; vote=ed$v
+ned=names(ed)
+if("s" %in% ned){ns=ed$s}else{ns=as.numeric(readline("number of seats? "))}
+nv0=dim(vote)[[1]]; nc0=dim(vote)[[2]]
+if("e" %in% ned){elecname=ed$e}else{elecname="election"}
+if("c" %in% ned){nc=ed$c}else{nc=nc0}
+if("nv" %in% ned){nv=ed$nv}else{nv=nv0}
+if("m" %in% ned){mult=ed$m}else{mult=rep(1,nv)}
+na2=dimnames(vote)[[2]]
+if(is.null(na2)){na2=LETTERS[1:nc]}
+if("n" %in% ned){name=ed$n}else{if("n2" %in% ned){name=ed$n2}else{name=na2}}
+if("n2" %in% ned){name2=ed$n2}else{name2=name}
+if("f" %in% ned){fname=ed$f}else{fname=rep("",nc)}
+if("p" %in% ned){party=ed$p}else{party=rep("",nc)}; np={party[[1]]==""}
+if("col" %in% ned){colour=ed$col}else{colour=grDevices::rainbow(nc)}
+ed=list(e=elecname,s=ns,c=nc,nv=nv,m=mult,v=vote,f=fname,n=name,n2=name2,p=party,col=colour)
+
+totalvotes=sum(mult)
 q0=totalvotes/(ns+1)	# initial quota
 
 # print election name and basic statistics

@@ -2,11 +2,11 @@
 % Please edit documentation in R/stv.R
 \name{stv}
 \alias{stv}
-\title{STV election count}
+\title{STV election count - uses Meek STV, allows equal preferences}
 \usage{
 stv(
   elecdata,
-  outdirec = tempdir(),
+  outdirec = "out_stv",
   electitle = character(),
   map = F,
   verbose = F,
@@ -37,12 +37,12 @@ stv(
 A list containing votes and keep vals at each stage, + optional web pages
 }
 \description{
-STV election count
+STV election count - uses Meek STV, allows equal preferences
 }
 \examples{
 hc12m=stv(hc12,plot=FALSE)
 j02m=stv(j02,plot=FALSE)
-nws17m=stv(nws17,plot=FALSE)
+cnc17m=stv(cnc17,plot=FALSE)
 y12m=stv(y12,plot=FALSE)
 
 }

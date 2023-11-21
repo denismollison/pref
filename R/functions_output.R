@@ -146,7 +146,7 @@ sink(out_html)
 for(i in 1:7){
 cat(outlines[[i]],"\n",sep="")
 }
-cat("<h3>"); cat(electitle,sep=space5)
+cat("<h3>"); cat(electitle,sep=space5); cat("</h3>\n")
 cat(outlines[[8]],"\n",sep="")
 cat("<p><b><em>Elected",unc,": </em></b>",space,sep="")
 elec=it[it>0]; x=elec

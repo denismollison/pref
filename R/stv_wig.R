@@ -1,3 +1,5 @@
+# stv.wig(() - last revised 19 nov 2023
+
 #' STV election count using WIG as for Scottish Council elections
 #' calculated to 5 places of decimals as used for those elections
 #'
@@ -15,16 +17,30 @@
 #' @export
 #'
 #' @examples nws17w=stv.wig(nws17)
-#' @examples p17w=stv.wig(p17,plot=FALSE)
+#' @examples p17w=stv.wig(p17,plot=FALSE) 
 #'
-stv.wig=function(elecdata,outdirec=tempdir(),electitle=character(),map=F,verbose=F,plot=T,webdisplay=F,timing=F){
+stv.wig=function(elecdata,outdirec="out_wig",electitle=character(),map=F,verbose=F,plot=T,webdisplay=F,timing=F){
 sys="wig"
 tim0=proc.time()    # to track computing time taken (use timing=T to print for each stage)
-# read and unpack elecdata
-ed=elecdata; elecname=ed$e
-ns=ed$s; nc=ed$c; vote=ed$v; nv=ed$nv; mult=ed$m; totalvotes=sum(mult)
-name=ed$n; fname=ed$f; name2=ed$n2
-party=ed$p; colour=ed$col; np={party[[1]]==""}
+# read and unpack elecdata - only essential component is vote matrix ed$v
+ed=elecdata; vote=ed$v
+ned=names(ed)
+if("s" %in% ned){ns=ed$s}else{ns=as.numeric(readline("number of seats? "))}
+nv0=dim(vote)[[1]]; nc0=dim(vote)[[2]]
+if("e" %in% ned){elecname=ed$e}else{elecname="election"}
+if("c" %in% ned){nc=ed$c}else{nc=nc0}
+if("nv" %in% ned){nv=ed$nv}else{nv=nv0}
+if("m" %in% ned){mult=ed$m}else{mult=rep(1,nv)}
+na2=dimnames(vote)[[2]]
+if(is.null(na2)){na2=LETTERS[1:nc]}
+if("n" %in% ned){name=ed$n}else{if("n2" %in% ned){name=ed$n2}else{name=na2}}
+if("n2" %in% ned){name2=ed$n2}else{name2=name}
+if("f" %in% ned){fname=ed$f}else{fname=rep("",nc)}
+if("p" %in% ned){party=ed$p}else{party=rep("",nc)}
+if("col" %in% ned){colour=ed$col}else{colour=grDevices::rainbow(nc)}
+ed=list(e=elecname,s=ns,c=nc,nv=nv,m=mult,v=vote,f=fname,n=name,n2=name2,p=party,col=colour)
+
+totalvotes=sum(mult)
 qa=ceiling((totalvotes+1)/(ns+1))  # quota (fixed)
 qpc=100*qa/totalvotes
 
@@ -75,7 +91,6 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
    f0=min(b[b!=0]); fp=ic[b==f0]
    vm[f[[iv]],fp]=vm[f[[iv]],fp]+mult[[iv]]*rem[[iv]]
  }}
-
  vm[,nc+1]=c(ff,0)-apply(vm,1,sum)   # assumes no n-t fps
  v=apply(vm,2,sum)
  vmp=vm   # save values of vm for plotting at end of stage
@@ -97,7 +112,6 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
   if(length(inn[inn>0])==ns){
    i2=ic[inn[ic]==1]; it=c(it,i2[order(-v[i2])])
   }else{
-
 # decide whether surplus or elimination next
   if(length(je)>0){
    jm=je[[1]]   # deal for now with largest of these
@@ -188,7 +202,8 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
    grDevices::jpeg(plotfile,width=w,height=h)
   voteplot(ns,vmp,qpc,it,dec,name2,party,colour,transf,elecname,sys="wig")
    grDevices::dev.off()
- }}
+  }}
+
 if(timing==T){cat(stage,"    process time ",pt," secs    "); cat("\n")}
 # print decision (if verbose=T)
  if(verbose==T){
@@ -207,13 +222,13 @@ if(length(party[party!=""])>0){
 }else{
  dimnames(vo)=list(name=c(paste(name,fname,sep=", "),"non-transferable"),stage=st)
 }
+
 # if plot=T make webpages to go with vote plots, and if verbose=T display them
 if(plot==T){
- wp=webpages(elecdata,va,vo,qa,itt,outdirec,sys="wig",map,electitle)
+ wp=webpages(ed,va,vo,qa,itt,outdirec,sys="wig",map,electitle)
  if(verbose==T){grDevices::dev.off()}
  if(webdisplay==T){utils::browseURL(wp[[1]],browser="open")}
 }
-
 elec=it[it>0]; x=elec
 txt=matrix(txt,nrow=2)
 pp=paste(" (",party[elec],")",sep=""); if(pp[[1]]==" ( )"|pp[[1]]==" ()"){pp=""}

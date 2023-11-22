@@ -16,6 +16,7 @@
 #' @param ballot Default F (meaning pref format)
 #' @param friendly Default F (meaning most details after votes)
 #' @param details Whether full election detail (default) or just vote matrix
+#' @param header Whether a vote matrix has a header
 #'
 #' @return A standardised list of election info to save in a .rda file
 #' @export
@@ -28,19 +29,24 @@
 #' jed12=pref.data(datafile,mult=TRUE,parties=parties12,ballot=TRUE,friendly=TRUE)
                                         #
 
-pref.data=function(datafile,mult=F,details=T,parties=F,ballot=F,friendly=F){
+pref.data=function(datafile,mult=F,details=T,parties=F,ballot=F,friendly=F,header=T){
 #
-# first: minimal case - data a vote matrix with header of candidate names
+# first: minimal case - data a vote matrix - if header=T with candidate names
 if(details==F){     # minimal case with abbrev names and vote matrix only
- vote=as.matrix(utils::read.table(datafile,header=T,row.names=NULL,sep=" "))
+ vote=as.matrix(utils::read.table(datafile,header=header,row.names=NULL,sep=" "))
  vote[vote==""]=0
+ LET=paste0(LETTERS,rep(c("","2","3","4"),rep(26,4)))
+# names for anonymous candidates - allow up to nc=104
  if(mult==T){mul=vote[,1]; vote=vote[,2:dim(vote)[[2]]]}else{
   mul=rep(1,dim(vote)[[1]])}
- nv=dim(vote)[[1]]; nc=dim(vote)[[2]]; name2=dimnames(vote)[[2]]
+ nv=dim(vote)[[1]]; nc=dim(vote)[[2]]
+ if(header==T){name2=dimnames(vote)[[2]]}else{name2=LET[1:nc]}
  fname=rep("",nc); name=name2; party=rep("",nc)
  colour=grDevices::rainbow(nc)
- elecname=readline("election name?")
- ns=as.numeric(readline("number to elect?"))
+ elecname = readline("election name?")
+ ns = readline("number to elect?"); if(is.na(ns)){ns=4}else{ns=as.numeric(ns)}
+ if(elecname==""){elecname="Election data"}
+ if(is.na(ns) | ns==0){ns=4}
 }else{
 # detailed case: details=T - elecname, ns, nc, names - option of parties
  dat=base::readLines(datafile)

@@ -21,13 +21,14 @@ Scottish council elections, is also provided, and with the same options,
 as described below.
 
 You can install the development version of pref from Github
-`r # install.packages("devtools") install_github("denismollison/pref")`
+`r q() install.packages("devtools") install_github("denismollison/pref")`
 
-Five examples are provided, drawn from real elections, hc12, p17, nws17,
-yale and j02. The first three are from Scottish Council elections, the
-first a very simple case and the second a more usual one. The third
+Six examples are provided, drawn from real elections, hc12, p17, nws17,
+cnc17, yale and j02. The first four are from Scottish Council elections,
+the first a very simple case and the second a more usual one. The third
 example (nws17) is one where using the official counting method
-(stv.wig) no candidate achieves the fixed quota. The fourth, from a Yale
+(stv.wig) no candidate achieves the fixed quota. The fourth is one where
+Meek and WIG STV produce different outcomes. The fifth, from a Yale
 faculty election, is an example with a large number of candidates (44
 for 4 places). A simplified version, showing just the later stages of
 this election is provided as y12.

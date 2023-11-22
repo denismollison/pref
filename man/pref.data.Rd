@@ -10,7 +10,8 @@ pref.data(
   details = T,
   parties = F,
   ballot = F,
-  friendly = F
+  friendly = F,
+  header = T
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ pref.data(
 \item{ballot}{Default F (meaning pref format)}
 
 \item{friendly}{Default F (meaning most details after votes)}
+
+\item{header}{Whether a vote matrix has a header}
 }
 \value{
 A standardised list of election info to save in a .rda file

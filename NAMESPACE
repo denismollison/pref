@@ -2,5 +2,4 @@
 
 export(pref.data)
 export(stv)
-export(stv.batch)
 export(stv.wig)

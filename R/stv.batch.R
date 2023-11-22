@@ -13,7 +13,7 @@
 #' @param election Name of election
 #' @param map Whether to include ward maps (when available)
 #' @return A list containing votes and keep vals at each stage, + optional web pages
-#' @export
+# #' @export
 #'
 # #' @examples indirec=system.file("extdata","SC2007x",package="pref",mustWork=TRUE)
 # #' @examples sc07x=stv.batch(indirec)

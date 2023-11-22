@@ -17,7 +17,7 @@
 #' @export
 #'
 #' @examples nws17w=stv.wig(nws17)
-#' @examples p17w=stv.wig(p17,plot=FALSE) 
+#' @examples p17w=stv.wig(p17,plot=FALSE)
 #'
 stv.wig=function(elecdata,outdirec="out_wig",electitle=character(),map=F,verbose=F,plot=T,webdisplay=F,timing=F){
 sys="wig"

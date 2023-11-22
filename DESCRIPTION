@@ -4,7 +4,7 @@ Version: 0.1.3
 Authors@R:
     person("Denis", "Mollison", , "denis.mollison@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-4014-3431"))
-Description: Inputs preference voting data; counts STV elections, especially Meek with equal preference allowed; aims to add Condorcet.
+Description: Inputs preference voting data; counts STV elections, especially Meek with equal preference allowed.
 URL: https://github.com/denismollison/pref
 License: MIT + file LICENSE
 Encoding: UTF-8

@@ -13,7 +13,7 @@
 #' @param map Link to a map or other URL associated with election
 #' @param timing Whether to report computing time at each stage
 #'
-#' @return A list containing votes at each stage, + optional web pages
+#' @return A list containing votes at each stage, + optional web pages; for details see manual pref_pkg_manual.pdf
 #' @export
 #'
 #' @examples nws17w=stv.wig(nws17)

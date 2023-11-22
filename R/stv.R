@@ -12,7 +12,7 @@
 #' @param map Link to a map or other URL associated with election
 #' @param timing Whether to report computing time at each stage
 #'
-#' @return A list containing votes and keep vals at each stage, + optional web pages
+#' @return A list containing votes and keep vals at each stage, + optional web pages; for details see manual pref_pkg_manual.pdf
 #' @export
 #'
 #' @examples hc12m=stv(hc12,plot=FALSE)
@@ -162,7 +162,7 @@ elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
 save(result,file=paste0(outdirec,"/",elecfile,"_",sys,".rda"))
 save(elecdata,file=paste0(outdirec,"/",elecfile,".rda"))
 
-# if plot=T make webpages to go with vote plots, 
+# if plot=T make webpages to go with vote plots,
 #   and if verbose=T display them
 if(plot==T){
  wp=webpages(elecdata,va,vo,q0,itt,outdirec,sys,map,electitle)

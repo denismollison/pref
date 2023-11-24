@@ -4,7 +4,7 @@
 
 abbrev=function(name,fname){
 # adds name2, abbreviated names for output - need to check don't have 2 same
-# for 2012 suffices to have 2 letters of first name, or initials
+# (for 2012 data suffices to have 2 letters of first name, or initials)
 name2=name; ic=1:length(name)
 # check for duplicate names
 tn=table(name)
@@ -33,7 +33,7 @@ name2
 
 
 # party_colour calculates party colour from parties file
-# file parties also contains full party names (pn) - not used at mo
+# file parties also contains full party names (pn) - not used currently
 party_colour=function(pa,parties){
 ps=base::readLines(parties); np=length(ps)
 pna=character(); pcolour=character() # ; pn=character()
@@ -48,7 +48,7 @@ for(j in 1:n){
 colour[[j]]=pcolour[[i[pna==pa[[j]]]]]
 }
 colour
-}
+} # end of function party_colour
 
 
 # function capwords - to tidy upper/lower case names

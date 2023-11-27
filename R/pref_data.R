@@ -21,17 +21,20 @@
 #' @return A standardised list of election info to save in a .rda file; for details see manual pref_pkg_manual.pdf (section 4)
 #' @export
 #' @examples
-#' datafile=system.file("extdata","yale12.blt",package="pref")
+#' datafile=system.file("extdata","yale12.dat",package="pref")
 #' y12=pref.data(datafile,details=FALSE)
 #' @examples
-#' datafile=system.file("extdata","Jedburgh2012.dat",package="pref")
+#' datafile=system.file("extdata","Jedburgh2012.blt",package="pref")
 #' parties12=system.file("extdata","parties_SC2012.txt",package="pref")
-#' jed12=pref.data(datafile,mult=TRUE,parties=parties12,ballot=TRUE,friendly=TRUE)
+#' jed12=pref.data(datafile,mult=TRUE,parties=parties12)
+#' @examples
+#' datafile=system.file("extdata","jmt2002.blt",package="pref")
+#' j02=pref.data(datafile,friendly=TRUE)
                                         #
 pref.data=function(datafile,mult=F,details=T,parties=F,ballot=F,friendly=F,header=T){
 #
 # first: minimal case - data a vote matrix - if header=T with candidate names
-if(details==F){     # minimal case with abbrev names and vote matrix only
+    if(details==F){     # minimal case with abbrev names and vote matrix only
  vote=as.matrix(utils::read.table(datafile,header=header,row.names=NULL,sep=" "))
  vote[vote==""]=0
  LET=paste0(LETTERS,rep(c("","2","3","4"),rep(26,4)))
@@ -62,7 +65,7 @@ if(details==F){     # minimal case with abbrev names and vote matrix only
  }else{
 # if friendly=F, i.e. data in user-unfriendly file order, with most details at end (Hill's format)
   x=as.numeric(strsplit(dat[[1]]," ")[[1]])
-  nc=x[[1]]; ns=x[[2]]
+  nc=x[[1]]; ns=x[[2]]; ic=1:nc
   nv=id[substring(dat[id],1,1)=="0"]-2
   if(nv>0){vdata=2:(nv+1)}
   cdata=(nv+3):(nv+nc+2)

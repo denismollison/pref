@@ -14,10 +14,10 @@ Description: Implements the Single Transferable Vote (STV) electoral system, wit
     is as an R list: a function pref.data is provided to transform some commonly
     used data formats into this format.
     References for methodology:
-    Hill, Wichmann and Woodall (1987) <doi.org/10.1093/comjnl/30.3.277>
-    Hill, David (2006) <https://www.votingmatters.org.uk/ISSUE22/I22P2.pdf>
-    Mollison, Denis (2023) <https://arxiv.org/abs/2303.15310>
-    (see also the package manual pref_pkg_manual.pdf)
+    Hill, Wichmann and Woodall (1987) <doi.org/10.1093/comjnl/30.3.277>,
+    Hill, David (2006) <https://www.votingmatters.org.uk/ISSUE22/I22P2.pdf>,
+    Mollison, Denis (2023) <https://arxiv.org/abs/2303.15310>,
+    (see also the package manual pref_pkg_manual.pdf).
 URL: https://github.com/denismollison/pref
 License: MIT + file LICENSE
 Encoding: UTF-8

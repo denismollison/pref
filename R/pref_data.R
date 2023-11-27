@@ -1,4 +1,4 @@
-# main input function pref.data - put in this separate file 22 nov 2023
+# main input function pref.data - put in this separate file 22 nov 2023, revised 25 nov 2023
 # uses abbrev, party_colour and capwords (in functions_input.R) for tidying up
 #
 # handles vote data  with full details whether in pref or ballot format
@@ -18,7 +18,7 @@
 #' @param details Whether full election detail (default) or just vote matrix
 #' @param header Whether a vote matrix has a header
 #'
-#' @return A standardised list of election info to save in a .rda file; for details see manual pref_pkg_manual.pdf
+#' @return A standardised list of election info to save in a .rda file; for details see manual pref_pkg_manual.pdf (section 4)
 #' @export
 #' @examples
 #' datafile=system.file("extdata","yale12.blt",package="pref")

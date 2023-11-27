@@ -8,3 +8,4 @@
 ^pref_pkg_manual\.pdf$
 ^pref\.Rproj$
 ^cran-comments\.md$
+^\.github$

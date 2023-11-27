@@ -8,5 +8,5 @@
 #'   \item{c}{number of candidates}
 #'   ...
 #'}
-#' @source \url{https://cran.r-project.org/web/packages/STV/}
+#' @source \url{https://cran.r-project.org/package=STV}
 "y12"

@@ -34,7 +34,7 @@ stv(
 \item{timing}{Whether to report computing time at each stage}
 }
 \value{
-A list containing votes and keep vals at each stage, + optional web pages; for details see manual pref_pkg_manual.pdf
+A list containing votes and keep vals at each stage, + optional web pages; for details see manual pref_pkg_manual.pdf (section 3)
 }
 \description{
 STV election count - uses Meek STV, allows equal preferences

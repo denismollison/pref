@@ -30,7 +30,7 @@ pref.data(
 \item{header}{Whether a vote matrix has a header}
 }
 \value{
-A standardised list of election info to save in a .rda file; for details see manual pref_pkg_manual.pdf
+A standardised list of election info to save in a .rda file; for details see manual pref_pkg_manual.pdf (section 4)
 }
 \description{
 put election data in an R file (.rda)

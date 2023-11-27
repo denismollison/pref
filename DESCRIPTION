@@ -1,10 +1,23 @@
 Package: pref
-Title: Preference Voting with graphics
-Version: 0.1.3
+Title: Preference Voting with Explanatory Graphics
+Version: 0.2.0
 Authors@R:
-    person("Denis", "Mollison", , "denis.mollison@gmail.com", role = c("aut", "cre"),
+    person("Denis", "Mollison", , "denis.mollison@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-4014-3431"))
-Description: Runs election counts using the Single Transferable Vote with an emphasis on providing explanations of the results, particularly graphics incorporating explanatory comments. Uses Meek's STV algorithm (widely regarded as the optimal form of STV), in a form allowing equal preferences; or alternatively WIG (Weighted Inclusive Gregory) STV as used for Scottish Council elections and elsewhere. Provides a function to convert common vote data formats into a standard R list.
+Description: Implements the Single Transferable Vote (STV) electoral system, with
+    clear explanatory graphics. The core function is Meek's method, the purest
+    expression of the simple principles of STV, but which requires electronic
+    counting. It can handle votes expressing equal preferences for subsets of
+    the candidates. A function stv.wig implementing the Weighted Inclusive
+    Gregory method, as used in Scottish council elections, is also provided,
+    and with the same options, as described below. The required vote data format
+    is as an R list: a function pref.data is provided to transform some commonly
+    used data formats into this format.
+    References for methodology:
+    Hill, Wichmann and Woodall (1987) <doi.org/10.1093/comjnl/30.3.277>
+    Hill, David (2006) <https://www.votingmatters.org.uk/ISSUE22/I22P2.pdf>
+    Mollison, Denis (2023) <https://arxiv.org/abs/2303.15310>
+    (see also the package manual pref_pkg_manual.pdf)
 URL: https://github.com/denismollison/pref
 License: MIT + file LICENSE
 Encoding: UTF-8

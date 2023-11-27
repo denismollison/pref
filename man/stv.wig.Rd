@@ -35,7 +35,7 @@ stv.wig(
 \item{timing}{Whether to report computing time at each stage}
 }
 \value{
-A list containing votes at each stage, + optional web pages; for details see manual pref_pkg_manual.pdf
+A list containing votes at each stage, + optional web pages; for details see manual pref_pkg_manual.pdf (section 3)
 }
 \description{
 STV election count using WIG as for Scottish Council elections

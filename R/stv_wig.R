@@ -1,4 +1,4 @@
-# stv.wig(() - last revised 19 nov 2023
+# stv.wig(() - last revised 25 nov 2023
 
 #' STV election count using WIG as for Scottish Council elections
 #' calculated to 5 places of decimals as used for those elections
@@ -13,7 +13,7 @@
 #' @param map Link to a map or other URL associated with election
 #' @param timing Whether to report computing time at each stage
 #'
-#' @return A list containing votes at each stage, + optional web pages; for details see manual pref_pkg_manual.pdf
+#' @return A list containing votes at each stage, + optional web pages; for details see manual pref_pkg_manual.pdf (section 3)
 #' @export
 #'
 #' @examples nws17w=stv.wig(nws17)

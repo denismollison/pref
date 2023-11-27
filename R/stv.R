@@ -1,4 +1,4 @@
-# stv() - core of STV package - last revised 19 nov 2023
+# stv() - core of STV package - last revised 25 nov 2023
 
 #' STV election count - uses Meek STV, allows equal preferences
 #'
@@ -12,7 +12,7 @@
 #' @param map Link to a map or other URL associated with election
 #' @param timing Whether to report computing time at each stage
 #'
-#' @return A list containing votes and keep vals at each stage, + optional web pages; for details see manual pref_pkg_manual.pdf
+#' @return A list containing votes and keep vals at each stage, + optional web pages; for details see manual pref_pkg_manual.pdf (section 3)
 #' @export
 #'
 #' @examples hc12m=stv(hc12,plot=FALSE)

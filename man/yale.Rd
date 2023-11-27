@@ -13,7 +13,7 @@ A list with 10 variables, largest the vote matrix (479 x 44)
 }
 }
 \source{
-\url{https://cran.r-project.org/web/packages/STV/}
+\url{https://cran.r-project.org/package=STV}
 }
 \usage{
 yale

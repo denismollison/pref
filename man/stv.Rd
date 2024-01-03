@@ -6,7 +6,7 @@
 \usage{
 stv(
   elecdata,
-  outdirec = "out_stv",
+  outdirec = tempdir(),
   electitle = character(),
   map = F,
   verbose = F,
@@ -24,12 +24,12 @@ stv(
 
 \item{map}{Link to a map or other URL associated with election}
 
-\item{verbose}{If =T reports and pauses at each stage of the count
+\item{verbose}{If =TRUE reports and pauses at each stage of the count
 (press return to continue to next stage)}
 
-\item{plot}{If =T (default) produces plots of count and webpages in outdirec}
+\item{plot}{If =TRUE (default) produces plots of count and webpages in outdirec}
 
-\item{webdisplay}{If =T displays plots and statistics as web pages}
+\item{webdisplay}{If =TRUE displays plots and statistics as web pages}
 
 \item{timing}{Whether to report computing time at each stage}
 }
@@ -40,9 +40,8 @@ A list containing votes and keep vals at each stage, + optional web pages; for d
 STV election count - uses Meek STV, allows equal preferences
 }
 \examples{
-hc12m=stv(hc12,plot=FALSE)
-j02m=stv(j02,plot=FALSE)
-cnc17m=stv(cnc17,plot=FALSE)
-y12m=stv(y12,plot=FALSE)
+cnc17meek=stv(cnc17,plot=FALSE)
+lms99result=stv(lms99,plot=FALSE)
+y12meek=stv(y12,plot=FALSE)
 
 }

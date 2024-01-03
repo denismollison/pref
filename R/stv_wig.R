@@ -1,14 +1,14 @@
-# stv.wig(() - last revised 25 nov 2023
+# stv.wig(() - last revised 1jan2024
 
 #' STV election count using WIG as for Scottish Council elections
 #' calculated to 5 places of decimals as used for those elections
 #'
 #' @param elecdata File with vote data
 #' @param outdirec Needs to be set for permanent record of results
-#' @param verbose If =T reports and pauses at each stage of the count
+#' @param verbose If =TRUE reports and pauses at each stage of the count
 #' (press return to continue to next stage)
-#' @param plot If =T (default) produces plots of count and webpages in outdirec
-#' @param webdisplay If =T displays plots and statistics as web pages
+#' @param plot If =TRUE (default) produces plots of count and webpages in outdirec
+#' @param webdisplay If =TRUE displays plots and statistics as web pages
 #' @param electitle For web page heading links if appropriate
 #' @param map Link to a map or other URL associated with election
 #' @param timing Whether to report computing time at each stage
@@ -16,10 +16,13 @@
 #' @return A list containing votes at each stage, + optional web pages; for details see manual pref_pkg_manual.pdf (section 3)
 #' @export
 #'
-#' @examples nws17w=stv.wig(nws17)
-#' @examples p17w=stv.wig(p17,plot=FALSE)
+#' @examples hc12result=stv.wig(hc12)
+#' @examples nws17result=stv.wig(nws17)
+#' @examples p17result=stv.wig(p17,plot=FALSE)
+#' @examples cnc17result=stv.wig(cnc17,plot=FALSE)
+# #' @examples yale_wig=stv.wig(yale) # omitted because takes over 5 secs
 #'
-stv.wig=function(elecdata,outdirec="out_wig",electitle=character(),map=F,verbose=F,plot=T,webdisplay=F,timing=F){
+stv.wig=function(elecdata,outdirec=tempdir(),electitle=character(),map=FALSE,verbose=FALSE,plot=TRUE,webdisplay=FALSE,timing=FALSE){
 sys="wig"
 tim0=proc.time()    # to track computing time taken (use timing=T to print for each stage)
 # read and unpack elecdata - only essential component is vote matrix ed$v
@@ -31,7 +34,7 @@ if("e" %in% ned){elecname=ed$e}else{elecname="election"}
 if("c" %in% ned){nc=ed$c}else{nc=nc0}
 if("nv" %in% ned){nv=ed$nv}else{nv=nv0}
 if("m" %in% ned){mult=ed$m}else{mult=rep(1,nv)}
-na2=dimnames(vote)[[2]]
+totalvotes=sum(mult); na2=dimnames(vote)[[2]]
 if(is.null(na2)){na2=LETTERS[1:nc]}
 if("n" %in% ned){name=ed$n}else{if("n2" %in% ned){name=ed$n2}else{name=na2}}
 if("n2" %in% ned){name2=ed$n2}else{name2=name}
@@ -40,14 +43,13 @@ if("p" %in% ned){party=ed$p}else{party=rep("",nc)}
 if("col" %in% ned){colour=ed$col}else{colour=grDevices::rainbow(nc)}
 ed=list(e=elecname,s=ns,c=nc,nv=nv,m=mult,v=vote,f=fname,n=name,n2=name2,p=party,col=colour)
 
-totalvotes=sum(mult)
 qa=ceiling((totalvotes+1)/(ns+1))  # quota (fixed)
 qpc=100*qa/totalvotes
 
 # print election name and basic statistics
-cat(elecname)
+cat("\n"); cat(elecname)
 cat(paste("  (",ns," seats, ",nc," candidates, ",totalvotes," votes)",sep="")); cat("\n")
-if(verbose==T){cat("quota ",qa); cat("\n\n")}
+if(verbose==TRUE){cat("quota ",qa); cat("\n\n")}
 
 # quota (fixed) and quota (fixed) andhousekeeping variables
 inn=rep(0,nc)	# 0 indicates still in play (-1 elim, 1 elec, 2 elec & transf)
@@ -190,10 +192,11 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
    dec2=paste(dec2,x$out,x$is,"elected")
  }}
  dec=c(dec1,dec2)
+ txt=cbind(txt,dec)
  tim=proc.time()-tim0;  pt=tim[[1]]
 
 # make permanent plots of stage (if plot=T)
- if(plot==T){
+ if(plot==TRUE){
   wi=(nc+4.5); w=wi*120   # plot width in (approx) inches, and in pixels
   for(i in 2:1){
    transf=i-1
@@ -204,12 +207,12 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
    grDevices::dev.off()
   }}
 
-if(timing==T){cat(stage,"    process time ",pt," secs    "); cat("\n")}
+if(timing==TRUE){cat(stage,"    process time ",pt," secs    "); cat("\n")}
 # print decision (if verbose=T)
- if(verbose==T){
+ if(verbose==TRUE){
   cat(dec,sep=", "); cat("\n")
 # .. and plot current state of votes if plot=T
-  if(plot==T){plot_jpeg(plotfile,stage)}
+  if(plot==TRUE){plot_jpeg(plotfile,stage)}
   if(final==""){readline("next? ")}
  }
 ann[je]=1
@@ -223,21 +226,22 @@ if(length(party[party!=""])>0){
  dimnames(vo)=list(name=c(paste(name,fname,sep=", "),"non-transferable"),stage=st)
 }
 
-# if plot=T make webpages to go with vote plots, and if verbose=T display them
-if(plot==T){
- wp=webpages(ed,va,vo,qa,itt,outdirec,sys="wig",map,electitle)
- if(verbose==T){grDevices::dev.off()}
- if(webdisplay==T){utils::browseURL(wp[[1]],browser="open")}
-}
 elec=it[it>0]; x=elec
 txt=matrix(txt,nrow=2)
+qtxt=paste0("Total votes ",totalvotes,",  quota = ",qa)
 pp=paste(" (",party[elec],")",sep=""); if(pp[[1]]==" ( )"|pp[[1]]==" ()"){pp=""}
 elected=paste(fname[elec]," ",name[elec],pp,sep="",collapse=", ")
-result=paste("Elected:",elected,sep="  ")
-cat(result); cat("\n\n")
+cat(paste0("Elected:",elected)); cat("\n\n")
 
-# save data and result to outdirec
-result=list(elec=elected,itt=itt,txt=txt,votes=vo,va=va)
+# if plot=T make webpages to go with vote plots, and if verbose=T display them
+if(plot==TRUE){
+ wp=webpages(ed,va,vo,qa,itt,qtxt,outdirec,sys,map,electitle)
+ if(verbose==TRUE){grDevices::dev.off()}
+ if(webdisplay==TRUE){utils::browseURL(wp[[1]],browser="open")}
+}
+
+# save result details and elecdata in R data files
+result=list(elecname=elecname,sys="wig",elec=elected,itt=itt,counttext=txt,votes=vo,quotatext=qtxt,va=va)
 elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
 save(result,file=paste0(outdirec,"/",elecfile,"_",sys,".rda"))
 save(elecdata,file=paste0(outdirec,"/",elecfile,".rda"))

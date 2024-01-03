@@ -2,4 +2,5 @@
 
 export(pref.data)
 export(stv)
+export(stv.result)
 export(stv.wig)

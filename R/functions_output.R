@@ -1,6 +1,8 @@
 # functions_output.R - last revised 28 june 2023
 # output plotting functions voteplot, webpages, plot_jpeg; also plural (for grammatical output)
-# 
+
+
+# voteplot - makes plots of a stage of the count with and without transfer plot
 voteplot=function(ns,vm,qpc,it,tx,name,party,colour,transf,elecname,cx=1,sys="meek"){
 # 
 qa=qpc  # qa is quota as %age
@@ -112,7 +114,7 @@ graphics::text(xt1,y[[8]],pos=4,"amount of votes",cex=1.5)
 } # end of function voteplot
 
 
-webpages=function(elecdata,va,vo,q0,itt,outdirec,sys="meek",map=FALSE,electitle=character()){
+webpages=function(elecdata,va,vo,q0,itt,qtxt,outdirec,sys="meek",map=FALSE,electitle=character()){
 # outlines=readLines("outlines.txt")   # needed if not in RStudio
 # to make a pair of election web pages (without/with transfers) -
 # outlines, = non-varying lines of html, are available because in sysdata.rda
@@ -122,7 +124,7 @@ ed=elecdata
 elecname=ed$e; ns=ed$s; nc=ed$c; mult=ed$m; fname=ed$f; name=ed$n; party=ed$p
 elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
 electitle=c(electitle,elecname)
-if(map!=F){
+if(map!=FALSE){
  electitle=c(electitle,paste0('<a href="',ed$map,'">(map)</a>'))
  }
 if(ed$nv>0){
@@ -159,26 +161,20 @@ if(ed$nv>0){
  cat('<table bgcolor="red"><tr height=30><td width=5></td><td><a href="index',tra1[[j]],'.html">',hide[[j]],' transfers</a></td><td width=5></td></tr></table>\n',sep='')
  cat("Count stage",space,"\n",sep="")
  for(i in 1:nstages){
-    cat('<button class="w3-button demo" onclick="currentDiv(',i,')">',i,'</button>\n',sep='')
+  cat('<button class="w3-button demo" onclick="currentDiv(',i,')">',i,'</button>\n',sep='')
  }
  cat('</div>\n<div>')
  for(i in 1:nstages){
-     cat('<img class="mySlides" src="stage',tra[[j]],i,'.jpg" style="width:100%">\n',sep='')
+  cat('<img class="mySlides" src="stage',tra[[j]],i,'.jpg" style="width:100%">\n',sep='')
  }
  for(i in 11:46){
   cat(outlines[[i]],"\n",sep="")
  }
  cat(outlines[47:48],"\n",sep="")
  options(width=140,max.print=5000)
- print(round(vo,2)); cat("<p>")
- tv0=sum(mult)
- if(nstages>1){
-  qf=sum(va[1:nc,1:nc,nstages])/(ns+1)
- }else{qf=q0}
- cat("Total votes ",tv0,", &#160;",sep="")
- if(sys=="meek"){
-  cat("initial quota = ",round(q0,2),", final quota = ",round(qf,2),"\n",sep="")
- }else{cat("quota = ",round(q0,2))}
+ print(round(vo,2))
+ cat("<p>")
+ cat(qtxt)
  for(i in 49:60){
   cat(outlines[[i]],"\n",sep="")
  }

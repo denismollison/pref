@@ -6,26 +6,26 @@
 \usage{
 pref.data(
   datafile,
-  mult = F,
-  details = T,
-  parties = F,
-  ballot = F,
-  friendly = F,
-  header = T
+  mult = FALSE,
+  details = TRUE,
+  parties = FALSE,
+  ballot = FALSE,
+  friendly = FALSE,
+  header = TRUE
 )
 }
 \arguments{
 \item{datafile}{File with election data}
 
-\item{mult}{Whether includes aggregated votes (default F)}
+\item{mult}{Whether includes aggregated votes (default FALSE)}
 
 \item{details}{Whether full election detail (default) or just vote matrix}
 
-\item{parties}{File with party details (default F, i.e. omit)}
+\item{parties}{File with party details (default FALSE, i.e. omit)}
 
-\item{ballot}{Default F (meaning pref format)}
+\item{ballot}{Default FALSE (meaning pref format)}
 
-\item{friendly}{Default F (meaning most details after votes)}
+\item{friendly}{Default FALSE (meaning most details after votes)}
 
 \item{header}{Whether a vote matrix has a header}
 }

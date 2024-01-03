@@ -4,10 +4,10 @@
 #'
 #' @param elecdata File with vote data
 #' @param outdirec Needs to be set for permanent record of results
-#' @param verbose If =T reports and pauses at each stage of the count
+#' @param verbose If =TRUE reports and pauses at each stage of the count
 #' (press return to continue to next stage)
-#' @param plot If =T (default) produces plots of count and webpages in outdirec
-#' @param webdisplay If =T displays plots and statistics as web pages
+#' @param plot If =TRUE (default) produces plots of count and webpages in outdirec
+#' @param webdisplay If =TRUE displays plots and statistics as web pages
 #' @param electitle For web page heading links if appropriate
 #' @param map Link to a map or other URL associated with election
 #' @param timing Whether to report computing time at each stage
@@ -15,12 +15,11 @@
 #' @return A list containing votes and keep vals at each stage, + optional web pages; for details see manual pref_pkg_manual.pdf (section 3)
 #' @export
 #'
-#' @examples hc12m=stv(hc12,plot=FALSE)
-#' @examples j02m=stv(j02,plot=FALSE)
-#' @examples cnc17m=stv(cnc17,plot=FALSE)
-#' @examples y12m=stv(y12,plot=FALSE)
+#' @examples cnc17meek=stv(cnc17,plot=FALSE)
+#' @examples lms99result=stv(lms99,plot=FALSE)
+#' @examples y12meek=stv(y12,plot=FALSE)
 #'
-stv=function(elecdata,outdirec="out_stv",electitle=character(),map=F,verbose=F,plot=T,webdisplay=F,timing=F){
+stv=function(elecdata,outdirec=tempdir(),electitle=character(),map=F,verbose=F,plot=T,webdisplay=F,timing=F){
 sys="meek"
 tim0=proc.time()    # to track computing time taken (use timing=T to print for each stage)
 # read and unpack elecdata - only essential component is vote matrix ed$v
@@ -32,7 +31,7 @@ if("e" %in% ned){elecname=ed$e}else{elecname="election"}
 if("c" %in% ned){nc=ed$c}else{nc=nc0}
 if("nv" %in% ned){nv=ed$nv}else{nv=nv0}
 if("m" %in% ned){mult=ed$m}else{mult=rep(1,nv)}
-na2=dimnames(vote)[[2]]
+totalvotes=sum(mult); na2=dimnames(vote)[[2]]
 if(is.null(na2)){na2=LETTERS[1:nc]}
 if("n" %in% ned){name=ed$n}else{if("n2" %in% ned){name=ed$n2}else{name=na2}}
 if("n2" %in% ned){name2=ed$n2}else{name2=name}
@@ -41,13 +40,12 @@ if("p" %in% ned){party=ed$p}else{party=rep("",nc)}; np={party[[1]]==""}
 if("col" %in% ned){colour=ed$col}else{colour=grDevices::rainbow(nc)}
 ed=list(e=elecname,s=ns,c=nc,nv=nv,m=mult,v=vote,f=fname,n=name,n2=name2,p=party,col=colour)
 
-totalvotes=sum(mult)
 q0=totalvotes/(ns+1)	# initial quota
 
 # print election name and basic statistics
 cat(elecname)
 cat(paste("  (",ns," seats, ",nc," candidates, ",totalvotes," votes)",sep="")); cat("\n")
-if(verbose==T){cat("initial quota ",round(q0,2)); cat("\n\n")}
+if(verbose==TRUE){cat("initial quota ",round(q0,2)); cat("\n\n")}
 
 # initial quota, keep values (=1), and housekeeping variables
 qa=q0
@@ -81,7 +79,7 @@ while(ne<ns){
  hp0=hp
  dn=decision(nc,vc,qa,ie,k,stage,fin,vo,st,surplus,hp)
  hp=dn$hp
- if(hp!=hp0){if(verbose==T){cat("close call - need high precision"); cat("\n\n")}
+ if(hp!=hp0){if(verbose==TRUE){cat("close call - need high precision"); cat("\n\n")}
  }else{
   k=dn$k; ie=dn$ie; elec=dn$elec; xcl=dn$xcl; it=c(it,elec,xcl*ie[xcl])
   stage=dn$stage; vo=dn$vo; st=dn$st
@@ -98,7 +96,7 @@ while(ne<ns){
   qpc=100*qa/totalvotes
   tim=proc.time()-tim0;  pt=tim[[1]]
 # if plot=T : make permanent plots of stage
-  if(plot==T){
+  if(plot==TRUE){
    wi=(nc+4.5); w=wi*120   # plot width in (approx) inches, and in pixels
    for(i in 2:1){  # 2 plots, with/without separate transfers plot
        transf=i-1
@@ -108,13 +106,13 @@ while(ne<ns){
     voteplot(ns,vm,qpc,it,dtext,name2,party,colour,transf,elecname,sys="meek")
     grDevices::dev.off()
   }}
-if(timing==T){cat(stage,"    process time ",pt," secs    "); cat("\n")}
+if(timing==TRUE){cat(stage,"    process time ",pt," secs    "); cat("\n")}
 
-# if verbose=T : print decision, require interaction (CR) at each stage
-  if(verbose==T){
+# if verbose=TRUE : print decision, require interaction (CR) at each stage
+  if(verbose==TRUE){
   if(stage==1){cat(dtext,sep="")}else{cat(dtext,sep=", ")}; cat("\n\n")
 # .. and plot current state of votes if plot=T
-  if(plot==T){plot_jpeg(plotfile,stage)}
+  if(plot==TRUE){plot_jpeg(plotfile,stage)}
    readline("next? ")
   }
  }}
@@ -136,13 +134,13 @@ if(length(ie[ie>=0])>ns){
 
 # print final result
 elec=it[it>0]; x=elec
-if(np==F){pp=paste(" (",party,")",sep="")}else{pp=party}
+if(np==FALSE){pp=paste(" (",party,")",sep="")}else{pp=party}
 elected=paste(fname[x]," ",name[x],pp[x],sep="",collapse=", ")
 eleclist=paste("Elected:",elected,sep="  ")
 cat(eleclist); cat("\n\n")
 # Runner-up
 ic=1:nc; ru=ic[k[ic]==1]
-if(verbose==T){cat(paste("Runner-up: ",fname[ru]," ",name[ru],pp[ru],sep="",collapse=", ")); cat("\n")}
+if(verbose==TRUE){cat(paste("Runner-up: ",fname[ru]," ",name[ru],pp[ru],sep="",collapse=", ")); cat("\n")}
 
 # finalise matrices of keep values and votes at each stage (ks, vo)
 ks=cbind(ks,k)
@@ -153,21 +151,25 @@ if(length(party[party!=""])>0){dimnames(vo)=list(name=c(paste(name,", ",fname," 
 }else{
  dimnames(vo)=list(name=c(paste(name,fname,sep=", "),"non-transferable"),stage=st)
 }
+if(nstages>1){qf=sum(va[1:nc,1:nc,nstages])/(ns+1)}else{qf=q0}
+qtxt=paste0("Total votes ",totalvotes,",  initial quota = ",round(q0,2),", final quota = ",round(qf,2))
 if(verbose==T){cat("\nVotes at each stage and final keep values:\n")
-print(round(vo,2))}
+    print(round(vo,2))
+    cat("\n",qtxt,"\n")
+}
 
 # save result details and elecdata in R data files
-result=list(elec=elected,itt=itt,txt=txt,votes=vo,va=va,keep=ks[1:nc,]*100)
+result=list(elecname=elecname,sys="meek",elec=elected,itt=itt,counttext=txt,votes=vo,quotatext=qtxt,va=va,keep=ks[1:nc,]*100)
 elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
 save(result,file=paste0(outdirec,"/",elecfile,"_",sys,".rda"))
 save(elecdata,file=paste0(outdirec,"/",elecfile,".rda"))
 
 # if plot=T make webpages to go with vote plots,
 #   and if verbose=T display them
-if(plot==T){
- wp=webpages(elecdata,va,vo,q0,itt,outdirec,sys,map,electitle)
- if(verbose==T){grDevices::dev.off()}
- if(webdisplay==T){utils::browseURL(wp[[1]],browser="open")}
+if(plot==TRUE){
+ wp=webpages(elecdata,va,vo,q0,itt,qtxt,outdirec,sys,map,electitle)
+ if(verbose==TRUE){grDevices::dev.off()}
+ if(webdisplay==TRUE){utils::browseURL(wp[[1]],browser="open")}
  }
 result
 }

@@ -11,10 +11,10 @@
 #' put election data in an R file (.rda)
 #'
 #' @param datafile File with election data
-#' @param mult Whether includes aggregated votes (default F)
-#' @param parties File with party details (default F, i.e. omit)
-#' @param ballot Default F (meaning pref format)
-#' @param friendly Default F (meaning most details after votes)
+#' @param mult Whether includes aggregated votes (default FALSE)
+#' @param parties File with party details (default FALSE, i.e. omit)
+#' @param ballot Default FALSE (meaning pref format)
+#' @param friendly Default FALSE (meaning most details after votes)
 #' @param details Whether full election detail (default) or just vote matrix
 #' @param header Whether a vote matrix has a header
 #'
@@ -31,15 +31,16 @@
 #' datafile=system.file("extdata","jmt2002.blt",package="pref")
 #' j02=pref.data(datafile,friendly=TRUE)
                                         #
-pref.data=function(datafile,mult=F,details=T,parties=F,ballot=F,friendly=F,header=T){
-#
+pref.data=function(datafile,mult=FALSE,details=TRUE,parties=FALSE,ballot=FALSE,friendly=FALSE,header=TRUE){
+# note: defaults are format used for (inter alia) Scottish Council elections
+
 # first: minimal case - data a vote matrix - if header=T with candidate names
-    if(details==F){     # minimal case with abbrev names and vote matrix only
+    if(details==FALSE){     # minimal case with abbrev names and vote matrix only
  vote=as.matrix(utils::read.table(datafile,header=header,row.names=NULL,sep=" "))
  vote[vote==""]=0
  LET=paste0(LETTERS,rep(c("","2","3","4"),rep(26,4)))
 # names for anonymous candidates - allow up to nc=104
- if(mult==T){mul=vote[,1]; vote=vote[,2:dim(vote)[[2]]]}else{
+ if(mult==TRUE){mul=vote[,1]; vote=vote[,2:dim(vote)[[2]]]}else{
   mul=rep(1,dim(vote)[[1]])}
  nv=dim(vote)[[1]]; nc=dim(vote)[[2]]
  if(header==T){name2=dimnames(vote)[[2]]}else{name2=LET[1:nc]}
@@ -54,7 +55,7 @@ pref.data=function(datafile,mult=F,details=T,parties=F,ballot=F,friendly=F,heade
  dat=base::readLines(datafile)
  id=1:length(dat)
  name=character(); fname=character(); mul=numeric(); vote=numeric()
- if(friendly==T){    # user-friendly file order, with details first, then votes
+ if(friendly==TRUE){    # user-friendly file order, with details first, then votes
   elecname=dat[[1]]
   x=as.numeric(strsplit(dat[[2]]," ")[[1]])
   ns=x[[1]]; nc=x[[2]]; ic=1:nc
@@ -63,7 +64,7 @@ pref.data=function(datafile,mult=F,details=T,parties=F,ballot=F,friendly=F,heade
   if(ballot==TRUE){nv=length(dat)-(nc+2)}else{nv=length(dat)-(nc+3)}
   if(nv>0){vdata=(nc+3):length(dat)}
  }else{
-# if friendly=F, i.e. data in user-unfriendly file order, with most details at end (Hill's format)
+# if friendly=FALSE, i.e. data in user-unfriendly file order, with most details at end (Hill's format)
   x=as.numeric(strsplit(dat[[1]]," ")[[1]])
   nc=x[[1]]; ns=x[[2]]; ic=1:nc
   nv=id[substring(dat[id],1,1)=="0"]-2

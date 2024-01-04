@@ -4,11 +4,29 @@
 # pref
 
 <!-- badges: start -->
+<!-- badges: end -->
 
-[![R-CMD-check](https://github.com/denismollison/pref/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/denismollison/pref/actions/workflows/R-CMD-check.yaml)
-<!-- badges: end --> Preference voting with explanatory graphics
+Preference voting with explanatory graphics
 
 There is a full manual pref_pkg_manual.pdf
+
+## Installation
+
+You can install pref from [CRAN](https://cran.r-project.org/) with:
+
+``` r
+# install.packages("pref")
+```
+
+You can install the development version of pref from
+[GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("denismollison/pref")
+```
+
+## Usage
 
 The main functions count votes from a Single Transferable Vote (STV)
 election, and illustrate the count with clear explanatory graphics. The
@@ -23,6 +41,9 @@ is a vote data matrix, but which can contain details such as an election
 title, and candidates’ parties and party colours. The function pref.data
 can translate various standard data formats into the required R list
 format.
+
+Graphical output includes expository web pages; the function stv.result
+prints a summary of the election count and result.
 
 Six examples are provided, drawn from real elections, hc12, p17, nws17,
 cnc17, yale and j02. The first four are from Scottish Council elections,

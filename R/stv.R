@@ -19,7 +19,7 @@
 #' @examples lms99result=stv(lms99,plot=FALSE)
 #' @examples y12meek=stv(y12,plot=FALSE)
 #'
-stv=function(elecdata,outdirec=tempdir(),electitle=character(),map=F,verbose=F,plot=T,webdisplay=F,timing=F){
+stv=function(elecdata,outdirec=tempdir(),electitle=character(),map=FALSE,verbose=FALSE,plot=TRUE,webdisplay=FALSE,timing=FALSE){
 sys="meek"
 tim0=proc.time()    # to track computing time taken (use timing=T to print for each stage)
 # read and unpack elecdata - only essential component is vote matrix ed$v
@@ -95,7 +95,7 @@ while(ne<ns){
   }
   qpc=100*qa/totalvotes
   tim=proc.time()-tim0;  pt=tim[[1]]
-# if plot=T : make permanent plots of stage
+# if plot=TRUE : make permanent plots of stage
   if(plot==TRUE){
    wi=(nc+4.5); w=wi*120   # plot width in (approx) inches, and in pixels
    for(i in 2:1){  # 2 plots, with/without separate transfers plot
@@ -111,7 +111,7 @@ if(timing==TRUE){cat(stage,"    process time ",pt," secs    "); cat("\n")}
 # if verbose=TRUE : print decision, require interaction (CR) at each stage
   if(verbose==TRUE){
   if(stage==1){cat(dtext,sep="")}else{cat(dtext,sep=", ")}; cat("\n\n")
-# .. and plot current state of votes if plot=T
+# .. and plot current state of votes if plot=TRUE
   if(plot==TRUE){plot_jpeg(plotfile,stage)}
    readline("next? ")
   }
@@ -153,7 +153,7 @@ if(length(party[party!=""])>0){dimnames(vo)=list(name=c(paste(name,", ",fname," 
 }
 if(nstages>1){qf=sum(va[1:nc,1:nc,nstages])/(ns+1)}else{qf=q0}
 qtxt=paste0("Total votes ",totalvotes,",  initial quota = ",round(q0,2),", final quota = ",round(qf,2))
-if(verbose==T){cat("\nVotes at each stage and final keep values:\n")
+if(verbose==TRUE){cat("\nVotes at each stage and final keep values:\n")
     print(round(vo,2))
     cat("\n",qtxt,"\n")
 }
@@ -164,7 +164,7 @@ elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
 save(result,file=paste0(outdirec,"/",elecfile,"_",sys,".rda"))
 save(elecdata,file=paste0(outdirec,"/",elecfile,".rda"))
 
-# if plot=T make webpages to go with vote plots,
+# if plot=TRUE make webpages to go with vote plots,
 #   and if verbose=T display them
 if(plot==TRUE){
  wp=webpages(elecdata,va,vo,q0,itt,qtxt,outdirec,sys,map,electitle)

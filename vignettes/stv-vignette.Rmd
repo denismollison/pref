@@ -23,9 +23,9 @@ This is the core function of the package: it takes a list variable containing el
 
 A typical use of the function is simply "edc=stv.count(ed)", with input ed and output edc. You can try this out with the 3 examples provided - just replace "ed" here with "hc12", "p17" or "j02" (and "edc" with a name of your choice, e.g. "hc12c".
 
-Input details: the election data list, ed say, should be in a file called ed.rda, and should consist of components:
+Input details: the election data list, ed say, should be in a file called ed.rda, and may include components (only v is essential):
 
-* e (in full ed\$e) = the election name
+* e (in full ed\$e) = title of election
 * s = the number of seats (i.e. how many are to be elected)
 * c = the number of candidates
 * nv = the number of vote lines
@@ -36,14 +36,22 @@ Input details: the election data list, ed say, should be in a file called ed.rda
 
 The output edc is also a list, with components:
 
-* vo = a matrix showing the number of votes for each candidate at each stage of the count, plus their final keep values
-* keep = a matrix of the keep values at each stage (as %s)
-* va = an array, containing in-out matrices for each stage showing how votes have transferred
-* txt = list of text descriptions of what happens at each stage
+* elecname (in full edc$elecname) = title of election
+* sys = STV system used (here = "meek")
+* elec = those elected, in order of election
 * itt = list (by by number) of candidates whose fate has been decided at each stage (+ if elected, - if excluded)
+* counttext = list of text descriptions of what happens at each stage
+* votes = a matrix showing the number of votes for each candidate at each stage of the count, plus their final keep values
+* quotatext = text total number of votes and quota
+* va = an array, containing in-out matrices for each stage showing how votes have transferred
+* keep = a matrix of the keep values at each stage (as %s)
 
 Side effects: text and plots:  The default is to print text output (as in txt), how plots illustrating the progress of the count, at each stage, and finally to display webpages containing these.
 These can be suppressed with the options "verbose=F" and "plot=F" respectively. Alternatively, the plots can be permanently preserved by adding the option outdirec="path" where path is the desired output directory.
+
+## stv.wig
+
+Input and output similar to stv (but with sys = "wig", and note that keep is not relevant).
 
 ## pref.data
 

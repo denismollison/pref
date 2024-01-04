@@ -8,11 +8,11 @@ stv(
   elecdata,
   outdirec = tempdir(),
   electitle = character(),
-  map = F,
-  verbose = F,
-  plot = T,
-  webdisplay = F,
-  timing = F
+  map = FALSE,
+  verbose = FALSE,
+  plot = TRUE,
+  webdisplay = FALSE,
+  timing = FALSE
 )
 }
 \arguments{

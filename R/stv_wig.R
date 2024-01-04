@@ -195,7 +195,7 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
  txt=cbind(txt,dec)
  tim=proc.time()-tim0;  pt=tim[[1]]
 
-# make permanent plots of stage (if plot=T)
+# make permanent plots of stage (if plot=TRUE)
  if(plot==TRUE){
   wi=(nc+4.5); w=wi*120   # plot width in (approx) inches, and in pixels
   for(i in 2:1){
@@ -208,10 +208,10 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
   }}
 
 if(timing==TRUE){cat(stage,"    process time ",pt," secs    "); cat("\n")}
-# print decision (if verbose=T)
+# print decision (if verbose=TRUE)
  if(verbose==TRUE){
   cat(dec,sep=", "); cat("\n")
-# .. and plot current state of votes if plot=T
+# .. and plot current state of votes if plot=TRUE
   if(plot==TRUE){plot_jpeg(plotfile,stage)}
   if(final==""){readline("next? ")}
  }
@@ -233,7 +233,9 @@ pp=paste(" (",party[elec],")",sep=""); if(pp[[1]]==" ( )"|pp[[1]]==" ()"){pp=""}
 elected=paste(fname[elec]," ",name[elec],pp,sep="",collapse=", ")
 cat(paste0("Elected:",elected)); cat("\n\n")
 
-# if plot=T make webpages to go with vote plots, and if verbose=T display them
+# if plot=TRUE make webpages to go with vote plots, ..
+# .. and if verbose=TRUE and webdisplay=TRUE display them
+# and if verbose=TRUE display them
 if(plot==TRUE){
  wp=webpages(ed,va,vo,qa,itt,qtxt,outdirec,sys,map,electitle)
  if(verbose==TRUE){grDevices::dev.off()}

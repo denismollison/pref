@@ -23,6 +23,10 @@
 # #' @examples yale_wig=stv.wig(yale) # omitted because takes over 5 secs
 #'
 stv.wig=function(elecdata,outdirec=tempdir(),electitle=character(),map=FALSE,verbose=FALSE,plot=TRUE,webdisplay=FALSE,timing=FALSE){
+# don't try plotting if package jpeg is not available:
+if(requireNamespace("jpeg")==FALSE){
+plot=FALSE; cat("\npackage jpeg not available, setting plot=FALSE\n\n")
+}
 sys="wig"
 tim0=proc.time()    # to track computing time taken (use timing=T to print for each stage)
 # read and unpack elecdata - only essential component is vote matrix ed$v

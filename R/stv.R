@@ -20,6 +20,10 @@
 #' @examples y12meek=stv(y12,plot=FALSE)
 #'
 stv=function(elecdata,outdirec=tempdir(),electitle=character(),map=FALSE,verbose=FALSE,plot=TRUE,webdisplay=FALSE,timing=FALSE){
+# don't try plotting if package jpeg is not available:
+if(requireNamespace("jpeg")==FALSE){
+plot=FALSE; cat("\npackage jpeg not available, setting plot=FALSE\n\n")
+}
 sys="meek"
 tim0=proc.time()    # to track computing time taken (use timing=T to print for each stage)
 # read and unpack elecdata - only essential component is vote matrix ed$v

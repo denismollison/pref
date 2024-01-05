@@ -198,7 +198,7 @@ webpp
 
 plot_jpeg=function(plotfile,stage)
  {dpi=200
-  jpg = jpeg::readJPEG(plotfile, native=T) # read the file
+  jpg = jpeg::readJPEG(plotfile, native=TRUE) # read the file
   res = dim(jpg)[2:1] # get the resolution, [x, y]
   w=res[[1]]/dpi; h=res[[2]]/dpi
 # if at stage 1 initialize plot of right size

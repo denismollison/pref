@@ -1,4 +1,4 @@
-#' Example of an STV election allowing equal preferences - London Mathematical Society 1999
+#' Example of an election of an academic organisation using STV allowing equal preferences frelection om an
 #'
 #' Votes are in a ballot-format matrix
 #'
@@ -8,4 +8,4 @@
 #'   \item{c}{number of candidates}
 #'   ...
 #' }
-"lms99"
+"c99"

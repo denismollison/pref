@@ -16,7 +16,7 @@
 #' @export
 #'
 #' @examples cnc17meek=stv(cnc17,plot=FALSE)
-#' @examples lms99result=stv(lms99,plot=FALSE)
+#' @examples c99result=stv(c99,plot=FALSE)
 #' @examples y12meek=stv(y12,plot=FALSE)
 #'
 stv=function(elecdata,outdirec=tempdir(),electitle=character(),map=FALSE,verbose=FALSE,plot=TRUE,webdisplay=FALSE,timing=FALSE){

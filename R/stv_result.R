@@ -6,8 +6,8 @@
 #' @return Prints out results
 #' @export
 #'
-#' @examples lms99result=stv(lms99)
-#' @examples stv.result(lms99result)
+#' @examples c99result=stv(c99)
+#' @examples stv.result(c99result)
 #' @examples nws17wig=stv.wig(nws17)
 #' @examples stv.result(nws17wig)
 

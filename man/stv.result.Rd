@@ -16,8 +16,8 @@ Prints out results
 Prints main details of result of an STV election
 }
 \examples{
-lms99result=stv(lms99)
-stv.result(lms99result)
+c99result=stv(c99)
+stv.result(c99result)
 nws17wig=stv.wig(nws17)
 stv.result(nws17wig)
 }

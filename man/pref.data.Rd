@@ -7,11 +7,11 @@
 pref.data(
   datafile,
   mult = FALSE,
-  details = TRUE,
   parties = FALSE,
   ballot = FALSE,
   friendly = FALSE,
-  header = TRUE
+  details = TRUE,
+  header = FALSE
 )
 }
 \arguments{
@@ -19,13 +19,13 @@ pref.data(
 
 \item{mult}{Whether includes aggregated votes (default FALSE)}
 
-\item{details}{Whether full election detail (default) or just vote matrix}
-
 \item{parties}{File with party details (default FALSE, i.e. omit)}
 
 \item{ballot}{Default FALSE (meaning pref format)}
 
 \item{friendly}{Default FALSE (meaning most details after votes)}
+
+\item{details}{Whether full election detail (default) or just vote matrix}
 
 \item{header}{Whether a vote matrix has a header}
 }
@@ -36,8 +36,8 @@ A standardised list of election info to save in a .rda file; for details see man
 put election data in an R file (.rda)
 }
 \examples{
-datafile=system.file("extdata","yale12.dat",package="pref")
-y12=pref.data(datafile,details=FALSE)
+datafile=system.file("extdata","yale.dat",package="pref")
+yale=pref.data(datafile,details=FALSE)
 datafile=system.file("extdata","Jedburgh2012.blt",package="pref")
 parties12=system.file("extdata","parties_SC2012.txt",package="pref")
 jed12=pref.data(datafile,mult=TRUE,parties=parties12)

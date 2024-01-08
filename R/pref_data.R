@@ -21,8 +21,8 @@
 #' @return A standardised list of election info to save in a .rda file; for details see manual pref_pkg_manual.pdf (section 4)
 #' @export
 #' @examples
-#' datafile=system.file("extdata","yale12.dat",package="pref")
-#' y12=pref.data(datafile,details=FALSE)
+#' datafile=system.file("extdata","yale.dat",package="pref")
+#' yale=pref.data(datafile,details=FALSE)
 #' @examples
 #' datafile=system.file("extdata","Jedburgh2012.blt",package="pref")
 #' parties12=system.file("extdata","parties_SC2012.txt",package="pref")
@@ -31,19 +31,19 @@
 #' datafile=system.file("extdata","jmt2002.blt",package="pref")
 #' j02=pref.data(datafile,friendly=TRUE)
                                         #
-pref.data=function(datafile,mult=FALSE,details=TRUE,parties=FALSE,ballot=FALSE,friendly=FALSE,header=TRUE){
+pref.data=function(datafile,mult=FALSE,parties=FALSE,ballot=FALSE,friendly=FALSE,details=TRUE,header=FALSE){
 # note: defaults are format used for (inter alia) Scottish Council elections
 
 # first: minimal case - data a vote matrix - if header=T with candidate names
-    if(details==FALSE){     # minimal case with abbrev names and vote matrix only
+if(details==FALSE){     # minimal case with abbrev names and vote matrix only
  vote=as.matrix(utils::read.table(datafile,header=header,row.names=NULL,sep=" "))
  vote[vote==""]=0
+ # names for anonymous candidates - allow up to nc=104
  LET=paste0(LETTERS,rep(c("","2","3","4"),rep(26,4)))
-# names for anonymous candidates - allow up to nc=104
  if(mult==TRUE){mul=vote[,1]; vote=vote[,2:dim(vote)[[2]]]}else{
   mul=rep(1,dim(vote)[[1]])}
  nv=dim(vote)[[1]]; nc=dim(vote)[[2]]
- if(header==T){name2=dimnames(vote)[[2]]}else{name2=LET[1:nc]}
+ if(header==TRUE){name2=dimnames(vote)[[2]]}else{name2=LET[1:nc]}
  fname=rep("",nc); name=name2; party=rep("",nc)
  colour=grDevices::rainbow(nc)
  elecname = readline("election name?")

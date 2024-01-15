@@ -6,9 +6,8 @@
 calculated to 5 places of decimals as used for those elections}
 \usage{
 stv.wig(
-  elecdata,
+  votedata,
   outdirec = tempdir(),
-  electitle = character(),
   map = FALSE,
   verbose = FALSE,
   plot = TRUE,
@@ -17,11 +16,9 @@ stv.wig(
 )
 }
 \arguments{
-\item{elecdata}{File with vote data}
+\item{votedata}{File with vote data}
 
 \item{outdirec}{Needs to be set for permanent record of results}
-
-\item{electitle}{For web page heading links if appropriate}
 
 \item{map}{Link to a map or other URL associated with election}
 

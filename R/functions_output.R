@@ -3,15 +3,15 @@
 
 
 # voteplot - makes plots of a stage of the count with and without transfer plot
-voteplot=function(ns,vm,qpc,it,tx,name,party,colour,transf,elecname,cx=1,sys="meek"){
+voteplot=function(ns,vm,qpc,it,tx,name,party,colour,transf,elecname,sys="meek"){
 # 
 qa=qpc  # qa is quota as %age
-# consider getting rid of cx (regulates font scaling)
+cx=1 # consider getting rid of cx (regulates font scaling)
 margincolour="burlywood";  panelcolour="burlywood1"
 # convert vote variables to percentages
-b=sum(vm); nc=dim(vm)[[1]]-1
+b=sum(vm); nc=dim(vm)[[1]]  # changed vm
 vm=vm*100/b
-vm0=vm;  diag(vm0)=0
+vm0=vm;  diag(vm0[,1:nc])=0
 ip={max(nchar(party))>0}
 # allocate x coords of cands. - with extra space before "n-t"
 x1=((1:nc)-1)*5; x1=c(x1,(nc+1)*5)
@@ -57,7 +57,7 @@ graphics::rect(x1[i],0,x2[i],vm[i,i],col=colour[i])
 }
 # votes received from transfers (in order of elec/excl)
 if(length(it)>0){
-  y1=diag(vm)
+  y1=c(diag(vm[,1:nc]),0)
   for(i in 1:length(it)){
     io=abs(it[[i]])
     y2=y1+vm0[io,]
@@ -73,7 +73,8 @@ graphics::text((nc+0.5)*2.5,vmax*1.3,dec1,cex=cex1)
 graphics::text((nc+0.5)*2.5,vmax*1.17,dec2,cex=cex2)
 # explanatory box for votes plot
 xt1=(nc*5)+1; xt2=(nc+2)*5-2
-y=vmax*(1.1-0.035*c(0,2,5,7,9,11))
+    y=vmax*(1.1-0.035*c(0,2,5,7,9,11))
+#   cat("voteplot line 77",dim(vm),"\n\n")
 vnt=sum(vm[,(nc+1)])*1.05
 if(y[[6]]<vnt){y=y+(vnt-y[[6]])}
 graphics::rect(xt1,y[[6]],xt2,y[[1]],col=margincolour)
@@ -114,20 +115,24 @@ graphics::text(xt1,y[[8]],pos=4,"amount of votes",cex=1.5)
 } # end of function voteplot
 
 
-webpages=function(elecdata,va,vo,q0,itt,qtxt,outdirec,sys="meek",map=FALSE,electitle=character()){
+webpages=function(elecdata,outdirec,map=FALSE){
 # outlines=readLines("outlines.txt")   # needed if not in RStudio
 # to make a pair of election web pages (without/with transfers) -
 # outlines, = non-varying lines of html, are available because in sysdata.rda
 #   cat("in webpage\n")
 space="&#160;&#160;"; space5="&#160;&#160;&#160;&#160;&#160;"      # needed for formatting
 ed=elecdata
-elecname=ed$e; ns=ed$s; nc=ed$c; mult=ed$m; fname=ed$f; name=ed$n; party=ed$p
+elecname=ed$e; ns=ed$s; nc=ed$c;nv=ed$nv; mult=ed$m; fname=ed$f; name=ed$n; party=ed$p
+sys=ed$sys; el=ed$el; itt=ed$itt; ctext=ed$ctext; csum=ed$csum
+qtext=ed$qtext; va=ed$va; if(sys=="meek"){keep=ed$keep}
+# note vo renamed csum
+# may not need el, ctext
+
 elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
-electitle=c(electitle,elecname)
 if(map!=FALSE){
- electitle=c(electitle,paste0('<a href="',ed$map,'">(map)</a>'))
- }
-if(ed$nv>0){
+ electitle=c(elecname,paste0('<a href="',ed$map,'">(map)</a>'))
+ }else{electitle=elecname}
+if(nv>0){
  if(length(dim(va))==3){nstages=dim(va)[[3]]}else{nstages=1}
  it=itt[[nstages]]
  unc=""
@@ -156,7 +161,7 @@ pp=paste(" (",party[x],")",sep=""); if(pp[[1]]==" ( )"|pp[[1]]==" ()"){pp=""}
 cat(paste(fname[x]," ",name[x],pp,sep="",collapse=paste(", ","&#160;")))
 if(ed$c<ed$s){for(i in 1:(ed$s-ed$c)){cat(", &#160;<em>vacancy</em>")}}
 cat("\n"); cat(outlines[[9]],"\n",sep="")
-if(ed$nv>0){ 
+if(nv>0){ 
  cat(outlines[[10]],"\n",sep="")
  cat('<table bgcolor="red"><tr height=30><td width=5></td><td><a href="index',tra1[[j]],'.html">',hide[[j]],' transfers</a></td><td width=5></td></tr></table>\n',sep='')
  cat("Count stage",space,"\n",sep="")
@@ -172,9 +177,9 @@ if(ed$nv>0){
  }
  cat(outlines[47:48],"\n",sep="")
  options(width=140,max.print=5000)
- print(round(vo,2))
+ print(round(csum,2))
  cat("<p>")
- cat(qtxt)
+ cat(qtext)
  for(i in 49:60){
   cat(outlines[[i]],"\n",sep="")
  }

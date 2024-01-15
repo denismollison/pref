@@ -5,9 +5,8 @@
 \title{STV election count - uses Meek STV, allows equal preferences}
 \usage{
 stv(
-  elecdata,
+  votedata,
   outdirec = tempdir(),
-  electitle = character(),
   map = FALSE,
   verbose = FALSE,
   plot = TRUE,
@@ -16,11 +15,9 @@ stv(
 )
 }
 \arguments{
-\item{elecdata}{File with vote data}
+\item{votedata}{File with vote data}
 
 \item{outdirec}{Needs to be set for permanent record of results}
-
-\item{electitle}{For web page heading links if appropriate}
 
 \item{map}{Link to a map or other URL associated with election}
 
@@ -34,7 +31,7 @@ stv(
 \item{timing}{Whether to report computing time at each stage}
 }
 \value{
-A list containing votes and keep vals at each stage, + optional web pages; for details see manual pref_pkg_manual.pdf (section 3)
+A list containing vote and count data, + optional web pages; for details see manual pref_pkg_manual.pdf (section 3)
 }
 \description{
 STV election count - uses Meek STV, allows equal preferences

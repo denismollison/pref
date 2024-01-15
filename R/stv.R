@@ -2,24 +2,23 @@
 
 #' STV election count - uses Meek STV, allows equal preferences
 #'
-#' @param elecdata File with vote data
+#' @param votedata File with vote data
 #' @param outdirec Needs to be set for permanent record of results
 #' @param verbose If =TRUE reports and pauses at each stage of the count
 #' (press return to continue to next stage)
 #' @param plot If =TRUE (default) produces plots of count and webpages in outdirec
 #' @param webdisplay If =TRUE displays plots and statistics as web pages
-#' @param electitle For web page heading links if appropriate
 #' @param map Link to a map or other URL associated with election
 #' @param timing Whether to report computing time at each stage
 #'
-#' @return A list containing votes and keep vals at each stage, + optional web pages; for details see manual pref_pkg_manual.pdf (section 3)
+#' @return A list containing vote and count data, + optional web pages; for details see manual pref_pkg_manual.pdf (section 3)
 #' @export
 #'
 #' @examples cnc17meek=stv(cnc17,plot=FALSE)
 #' @examples c99result=stv(c99,plot=FALSE)
 #' @examples y12meek=stv(y12,plot=FALSE)
 #'
-stv=function(elecdata,outdirec=tempdir(),electitle=character(),map=FALSE,verbose=FALSE,plot=TRUE,webdisplay=FALSE,timing=FALSE){
+stv=function(votedata,outdirec=tempdir(),map=FALSE,verbose=FALSE,plot=TRUE,webdisplay=FALSE,timing=FALSE){
 # don't try plotting if package jpeg is not available:
 if(requireNamespace("jpeg")==FALSE){
 plot=FALSE; cat("\npackage jpeg not available, setting plot=FALSE\n\n")
@@ -27,7 +26,7 @@ plot=FALSE; cat("\npackage jpeg not available, setting plot=FALSE\n\n")
 sys="meek"
 tim0=proc.time()    # to track computing time taken (use timing=T to print for each stage)
 # read and unpack elecdata - only essential component is vote matrix ed$v
-ed=elecdata; vote=ed$v
+ed=votedata; vote=ed$v
 ned=names(ed)
 if("s" %in% ned){ns=ed$s}else{ns=as.numeric(readline("number of seats? "))}
 nv0=dim(vote)[[1]]; nc0=dim(vote)[[2]]
@@ -62,7 +61,7 @@ iter=0			# keeps track of number of iterations in count
 it=numeric()		# it=elec(+) and excl(-) in order of being decided
 ie=rep(0,nc); ne=0	# indicator (ie=1 indicates elected, =-1 excluded)
 st=character()          # ? for stages
-vo=numeric()            # to record votes at each stage; note also vm, va
+csum=numeric()            # to record votes at each stage; note also vm, va
 stage=0; fin=0
 elec=numeric()
 sel=select(ns)          # ways of selecting subsets - needed in share
@@ -78,15 +77,16 @@ while(ne<ns){
 # recalculate keep values and transfer surpluses
  tr=transfer(k,iter,vote,mult,ns,ie,em,surplus,sel)
   k=tr$k; vm=tr$vm; vc=tr$vc; qa=tr$qa; inn=tr$inn
-  iter=tr$iter; surplus=tr$sur
+ iter=tr$iter; surplus=tr$sur
+# cat("stv line 82, after call to transfer, dim(vm)=",dim(vm),"\n")
 # make next decision to elect or exclude
  hp0=hp
- dn=decision(nc,vc,qa,ie,k,stage,fin,vo,st,surplus,hp)
+ dn=decision(nc,vc,qa,ie,k,stage,fin,csum,st,surplus,hp)
  hp=dn$hp
  if(hp!=hp0){if(verbose==TRUE){cat("close call - need high precision"); cat("\n\n")}
  }else{
   k=dn$k; ie=dn$ie; elec=dn$elec; xcl=dn$xcl; it=c(it,elec,xcl*ie[xcl])
-  stage=dn$stage; vo=dn$vo; st=dn$st
+  stage=dn$stage; csum=dn$vo; st=dn$st
   ne=length(ie[ie==1])
   ks=cbind(ks,k)
   x=decision_text(stage,ne,ns,elec,xcl,name2,dnext)
@@ -94,22 +94,23 @@ while(ne<ns){
   if(stage==1){
    va=vm; itt=list(it)
   }else{
-   va=array(c(va,vm),dim=c((nc+1),(nc+1),stage))
+   va=array(c(va,vm),dim=c(nc,(nc+1),stage))
    itt=append(itt,list(it))
   }
   qpc=100*qa/totalvotes
   tim=proc.time()-tim0;  pt=tim[[1]]
 # if plot=TRUE : make permanent plots of stage
   if(plot==TRUE){
-   wi=(nc+4.5); w=wi*120   # plot width in (approx) inches, and in pixels
-   for(i in 2:1){  # 2 plots, with/without separate transfers plot
-       transf=i-1
-       plotfile=paste(outdirec,paste("stage",trf[[i]],stage,".jpg",sep=""),sep="/")
-    h=600+200*transf
-    grDevices::jpeg(plotfile,width=w,height=h)
-    voteplot(ns,vm,qpc,it,dtext,name2,party,colour,transf,elecname,sys="meek")
-    grDevices::dev.off()
+  wi=(nc+4.5); w=wi*120   # plot width in (approx) inches, and in pixels
+  for(i in 2:1){  # 2 plots, with/without separate transfers plot
+   transf=i-1
+   plotfile=paste(outdirec,paste("stage",trf[[i]],stage,".jpg",sep=""),sep="/")
+   h=600+200*transf
+   grDevices::jpeg(plotfile,width=w,height=h)
+  voteplot(ns,vm,qpc,it,dtext,name2,party,colour,transf,elecname,sys=sys)
+   grDevices::dev.off()
   }}
+
 if(timing==TRUE){cat(stage,"    process time ",pt," secs    "); cat("\n")}
 
 # if verbose=TRUE : print decision, require interaction (CR) at each stage
@@ -127,9 +128,9 @@ if(length(ie[ie>=0])>ns){
  tr=transfer(k,iter,vote,mult,ns,ie,em,surplus,sel)
  k=tr$k; vmp=tr$vmp; vc=tr$vc; qa=tr$qa; inn=tr$inn; iter=tr$iter; surplus=tr$sur
  while(length(k[k>0])>(ns+2)){
-  dn=decision(nc,vc,qa,ie,k,stage,fin,vo,st,surplus,hp)
+  dn=decision(nc,vc,qa,ie,k,stage,fin,csum,st,surplus,hp)
   k=dn$k; ie=dn$ie; elec=dn$elec; xcl=dn$xcl; it=c(it,elec,xcl*ie[xcl])
-  surplus=dn$surplus; stage=dn$stage; vo=dn$vo; st=dn$st
+  surplus=dn$surplus; stage=dn$stage; csum=dn$vo; st=dn$st
   tr=transfer(k,iter,vote,mult,ns,ie,em,surplus,sel)
   k=tr$k; vmp=tr$vmp; vc=tr$vc; qa=tr$qa; inn=tr$inn; iter=tr$iter; surplus=tr$sur
  }
@@ -146,34 +147,35 @@ cat(eleclist); cat("\n\n")
 ic=1:nc; ru=ic[k[ic]==1]
 if(verbose==TRUE){cat(paste("Runner-up: ",fname[ru]," ",name[ru],pp[ru],sep="",collapse=", ")); cat("\n")}
 
-# finalise matrices of keep values and votes at each stage (ks, vo)
+# finalise matrices of keep values and votes at each stage (ks, csum)
 ks=cbind(ks,k)
 dimnames(ks)=list(name=c(paste(name,fname,sep=", "),"non-transferable"),stage=1:dim(ks)[[2]])
-vo=cbind(vo,100*k); st=c(st,"  final keep values (%)")
+csum=cbind(csum,100*k); st=c(st,"  final keep values (%)")
 txt=matrix(txt,nrow=2)
-if(length(party[party!=""])>0){dimnames(vo)=list(name=c(paste(name,", ",fname," (",party,") ",sep=""),"non-transferable"),stage=st)
+if(length(party[party!=""])>0){dimnames(csum)=list(name=c(paste(name,", ",fname," (",party,") ",sep=""),"non-transferable"),stage=st)
 }else{
- dimnames(vo)=list(name=c(paste(name,fname,sep=", "),"non-transferable"),stage=st)
+ dimnames(csum)=list(name=c(paste(name,fname,sep=", "),"non-transferable"),stage=st)
 }
 if(nstages>1){qf=sum(va[1:nc,1:nc,nstages])/(ns+1)}else{qf=q0}
 qtxt=paste0("Total votes ",totalvotes,",  initial quota = ",round(q0,2),", final quota = ",round(qf,2))
 if(verbose==TRUE){cat("\nVotes at each stage and final keep values:\n")
-    print(round(vo,2))
+    print(round(csum,2))
     cat("\n",qtxt,"\n")
 }
 
-# save result details and elecdata in R data files
-result=list(elecname=elecname,sys="meek",elec=elected,itt=itt,counttext=txt,votes=vo,quotatext=qtxt,va=va,keep=ks[1:nc,]*100)
+# save votedata and result details countdata as elecdata in one list
+countdata=list(sys="meek",el=elected,itt=itt,ctext=txt,csum=csum,qtext=qtxt,va=va,keep=ks[1:nc,]*100)
+elecdata=c(votedata,countdata)
 elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
-save(result,file=paste0(outdirec,"/",elecfile,"_",sys,".rda"))
-save(elecdata,file=paste0(outdirec,"/",elecfile,".rda"))
+save(elecdata,file=paste0(outdirec,"/",elecfile,"_",sys,".rda"))
+# save(votedata,file=paste0(outdirec,"/",elecfile,".rda"))
 
 # if plot=TRUE make webpages to go with vote plots,
 #   and if verbose=T display them
 if(plot==TRUE){
- wp=webpages(elecdata,va,vo,q0,itt,qtxt,outdirec,sys,map,electitle)
+ wp=webpages(elecdata,outdirec,map)
  if(verbose==TRUE){grDevices::dev.off()}
  if(webdisplay==TRUE){utils::browseURL(wp[[1]],browser="open")}
  }
-result
+elecdata
 }

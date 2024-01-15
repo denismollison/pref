@@ -10,7 +10,7 @@ transfer=function(k,iter,vote,mult,ns,ie,em,surplus,sel){
 # to transfer surpluses at each stage
 nv=dim(vote)[[1]]; nc=dim(vote)[[2]]; ic=1:nc
 je=ic[ie==1]; ne=length(je)
-v3=array(0,dim=c((nc+1),(nc+1),2^ne))
+v3=array(0,dim=c(nc,(nc+1),2^ne))
 for(iv in 1:nv){
   b=vote[iv,]
 # split vote if more than one first pref (needed to audit transfers)
@@ -49,8 +49,8 @@ if(ne==0){iter=iter+1
  k[je]=k[je]*qa/vc[je]; te=1-k[je]
  iter=iter+1
  }
- vm=matrix(0,nrow=(nc+1),ncol=(nc+1))
- for(i in 1:(nc+1)){
+ vm=matrix(0,nrow=nc,ncol=(nc+1))
+ for(i in 1:nc){
   for(j in 1:(nc+1)){
    vm[i,j]=sum(v3[i,j,]*coef)}}
 }

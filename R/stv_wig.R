@@ -3,13 +3,12 @@
 #' STV election count using WIG as for Scottish Council elections
 #' calculated to 5 places of decimals as used for those elections
 #'
-#' @param elecdata File with vote data
+#' @param votedata File with vote data
 #' @param outdirec Needs to be set for permanent record of results
 #' @param verbose If =TRUE reports and pauses at each stage of the count
 #' (press return to continue to next stage)
 #' @param plot If =TRUE (default) produces plots of count and webpages in outdirec
 #' @param webdisplay If =TRUE displays plots and statistics as web pages
-#' @param electitle For web page heading links if appropriate
 #' @param map Link to a map or other URL associated with election
 #' @param timing Whether to report computing time at each stage
 #'
@@ -22,7 +21,7 @@
 #' @examples cnc17result=stv.wig(cnc17,plot=FALSE)
 # #' @examples yale_wig=stv.wig(yale) # omitted because takes over 5 secs
 #'
-stv.wig=function(elecdata,outdirec=tempdir(),electitle=character(),map=FALSE,verbose=FALSE,plot=TRUE,webdisplay=FALSE,timing=FALSE){
+stv.wig=function(votedata,outdirec=tempdir(),map=FALSE,verbose=FALSE,plot=TRUE,webdisplay=FALSE,timing=FALSE){
 # don't try plotting if package jpeg is not available:
 if(requireNamespace("jpeg")==FALSE){
 plot=FALSE; cat("\npackage jpeg not available, setting plot=FALSE\n\n")
@@ -30,7 +29,7 @@ plot=FALSE; cat("\npackage jpeg not available, setting plot=FALSE\n\n")
 sys="wig"
 tim0=proc.time()    # to track computing time taken (use timing=T to print for each stage)
 # read and unpack elecdata - only essential component is vote matrix ed$v
-ed=elecdata; vote=ed$v
+ed=votedata; vote=ed$v
 ned=names(ed)
 if("s" %in% ned){ns=ed$s}else{ns=as.numeric(readline("number of seats? "))}
 nv0=dim(vote)[[1]]; nc0=dim(vote)[[2]]
@@ -80,7 +79,7 @@ for(iv in 1:nv){
   ff[[fp]]=ff[[fp]]+mult[[iv]]
 }}
 stage=0
-vm=matrix(0,nrow=nc+1,ncol=nc+1)
+vm=matrix(0,nrow=nc,ncol=nc+1)   # changed!
 rem=rep(1,nv)
 
 # transfer step - start of specifically wig stuff
@@ -97,7 +96,8 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
    f0=min(b[b!=0]); fp=ic[b==f0]
    vm[f[[iv]],fp]=vm[f[[iv]],fp]+mult[[iv]]*rem[[iv]]
  }}
- vm[,nc+1]=c(ff,0)-apply(vm,1,sum)   # assumes no n-t fps
+ # vm[,nc+1]=c(ff,0)-apply(vm,1,sum)   # assumes no n-t fps
+ vm[,nc+1]=ff-apply(vm,1,sum)   #
  v=apply(vm,2,sum)
  vmp=vm   # save values of vm for plotting at end of stage
  vo=cbind(vo,v); st=c(st,paste("stage",stage,sep=""))
@@ -165,7 +165,7 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
  if(stage==1){
   va=vm; itt=list(it)
  }else{
-  va=array(c(va,vm),dim=c((nc+1),(nc+1),stage))
+  va=array(c(va,vm),dim=c(nc,(nc+1),stage))   # changed!
   itt=append(itt,list(it))
  }
 
@@ -222,7 +222,7 @@ if(timing==TRUE){cat(stage,"    process time ",pt," secs    "); cat("\n")}
 ann[je]=1
 }          # closes stages loop, i.e. end of this election count
 
-vo[nc+1,]=totalvotes-apply(as.matrix(vo[1:nc,]),2,sum)
+vo[nc+1,]=totalvotes-apply(as.matrix(vo[1:nc,]),2,sum)   # to change
 # fudge to get "non-transferred" into line
 if(length(party[party!=""])>0){
  dimnames(vo)=list(name=c(paste(name,", ",fname," (",party,") ",sep=""),"non-transferable"),stage=st)
@@ -237,19 +237,20 @@ pp=paste(" (",party[elec],")",sep=""); if(pp[[1]]==" ( )"|pp[[1]]==" ()"){pp=""}
 elected=paste(fname[elec]," ",name[elec],pp,sep="",collapse=", ")
 cat(paste0("Elected:",elected)); cat("\n\n")
 
+    
+# save result details and elecdata in R data files
+countdata=list(sys="wig",el=elected,itt=itt,ctext=txt,csum=vo,qtext=qtxt,va=va)
+elecdata=c(votedata,countdata)
+elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
+save(elecdata,file=paste0(outdirec,"/",elecfile,"_",sys,".rda"))
+# save(votedata,file=paste0(outdirec,"/",elecfile,".rda"))
+   
 # if plot=TRUE make webpages to go with vote plots, ..
 # .. and if verbose=TRUE and webdisplay=TRUE display them
-# and if verbose=TRUE display them
 if(plot==TRUE){
- wp=webpages(ed,va,vo,qa,itt,qtxt,outdirec,sys,map,electitle)
- if(verbose==TRUE){grDevices::dev.off()}
+ wp=webpages(elecdata,outdirec,map)
+#  if(verbose==TRUE){grDevices::dev.off()}
  if(webdisplay==TRUE){utils::browseURL(wp[[1]],browser="open")}
 }
-
-# save result details and elecdata in R data files
-result=list(elecname=elecname,sys="wig",elec=elected,itt=itt,counttext=txt,votes=vo,quotatext=qtxt,va=va)
-elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
-save(result,file=paste0(outdirec,"/",elecfile,"_",sys,".rda"))
-save(elecdata,file=paste0(outdirec,"/",elecfile,".rda"))
-result
+elecdata
 }

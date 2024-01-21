@@ -118,6 +118,7 @@ if(timing==TRUE){cat(stage,"    process time ",pt," secs    "); cat("\n")}
 # if verbose=TRUE : print decision, require interaction (CR) at each stage
   if(verbose==TRUE){
   if(stage==1){cat(dtext,sep="\n")}else{cat(dtext,sep=",\n")}
+  cat("\n")
 # .. and plot current state of votes if plot=TRUE
   if(plot==TRUE){plot_jpeg(plotfile,stage)}
    readline("next? ")

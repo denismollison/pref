@@ -215,8 +215,8 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
 
 if(timing==TRUE){cat(stage,"    process time ",pt," secs    "); cat("\n")}
 # print decision (if verbose=TRUE)
- if(verbose==TRUE){
-  cat(dec,sep="\n")
+if(verbose==TRUE){
+cat(dec,sep="\n")
 # .. and plot current state of votes if plot=TRUE
   if(plot==TRUE){plot_jpeg(plotfile,stage)}
   if(final==""){readline("next? ")}

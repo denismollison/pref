@@ -1,8 +1,24 @@
 # functions_output.R - last revised 28 june 2023
 # output plotting functions voteplot, webpages, plot_jpeg; also plural (for grammatical output)
-
-
 # voteplot - makes plots of a stage of the count with and without transfer plot
+#' voteplot
+#'
+#' makes a plot of one stage of an election count.
+#'
+#' @param ns  Number of seats
+#' @param vm  Vote transfers matrix
+#' @param qpc  Quota as per cent
+#' @param it  Candidaates eletedc or excluded so far
+#' @param tx  Text explanation of stage
+#' @param name  Candidates' names
+#' @param party  Candidates' parties
+#' @param colour  Candidates' party colours
+#' @param transf  Whether to include plot of transfers
+#' @param elecname  Election name
+#' @param sys  STV system
+#'
+#' @return  Makes a plot of current stage
+#' @noRd
 voteplot=function(ns,vm,qpc,it,tx,name,party,colour,transf,elecname,sys="meek"){
 # 
 qa=qpc  # qa is quota as %age
@@ -186,11 +202,8 @@ if(nv>0){
  cat("</div>"); cat("\n")
 }else{cat("<br><br><br><br><br>\n")}
 
-cat("<p>&#160;&#160;<b><em>Downloads:</em></b>",
-paste0("<b>Result </b><a href=",elecfile,"_",sys,".rda>as an R list</a>"),"",
- "<b>Vote data file:</b>",
-paste0("<a href=",elecfile,".rda>as an R list</a>"),
-sep="&#160;&#160;"); cat("\n")
+cat("<p>&#160;&#160;<b><em>Download:</em></b>",
+paste0("<a href=",elecfile,"_",sys,".rda><b>Vote and count data </b>as an R list</a>"),sep="&#160;&#160;"); cat("\n")
 
 for(i in 61:62){
  cat(outlines[[i]],"\n",sep="")

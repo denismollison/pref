@@ -7,19 +7,17 @@
 stv(
   votedata,
   outdirec = tempdir(),
-  map = FALSE,
   verbose = FALSE,
   plot = TRUE,
   webdisplay = FALSE,
-  timing = FALSE
+  timing = FALSE,
+  map = FALSE
 )
 }
 \arguments{
 \item{votedata}{File with vote data}
 
 \item{outdirec}{Needs to be set for permanent record of results}
-
-\item{map}{Link to a map or other URL associated with election}
 
 \item{verbose}{If =TRUE reports and pauses at each stage of the count
 (press return to continue to next stage)}
@@ -29,6 +27,8 @@ stv(
 \item{webdisplay}{If =TRUE displays plots and statistics as web pages}
 
 \item{timing}{Whether to report computing time at each stage}
+
+\item{map}{Link to a map or other URL associated with election}
 }
 \value{
 A list containing vote and count data, + optional web pages; for details see manual pref_pkg_manual.pdf (section 3)

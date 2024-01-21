@@ -4,7 +4,7 @@
 \alias{stv.plots}
 \title{Makes webpage plots of result of an STV election}
 \usage{
-stv.plots(elecdata, outdirec = tempdir(), webdisplay = TRUE, map = FALSE)
+stv.plots(elecdata, outdirec = tempdir(), webdisplay = FALSE, map = FALSE)
 }
 \arguments{
 \item{elecdata}{An R list of results from stv or stv.wig}

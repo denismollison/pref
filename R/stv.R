@@ -18,39 +18,42 @@
 #' @examples c99result=stv(c99,plot=FALSE)
 #' @examples y12meek=stv(y12,plot=FALSE)
 #'
-stv=function(votedata,outdirec=tempdir(),map=FALSE,verbose=FALSE,plot=TRUE,webdisplay=FALSE,timing=FALSE){
+stv=function(votedata,outdirec=tempdir(),verbose=FALSE,plot=TRUE,webdisplay=FALSE,timing=FALSE,map=FALSE){
 # don't try plotting if package jpeg is not available:
 if(requireNamespace("jpeg")==FALSE){
 plot=FALSE; cat("\npackage jpeg not available, setting plot=FALSE\n\n")
 }
 sys="meek"
 tim0=proc.time()    # to track computing time taken (use timing=T to print for each stage)
-# read and unpack elecdata - only essential component is vote matrix ed$v
-ed=votedata; vote=ed$v
-ned=names(ed)
-if("s" %in% ned){ns=ed$s}else{ns=as.numeric(readline("number of seats? "))}
+# read and unpack elecdata - only essential component is vote matrix vd$v
+vd=votedata; vote=vd$v
+nvd=names(vd)
+if("s" %in% nvd){ns=vd$s}else{ns=as.numeric(readline("number of seats? "))}
 nv0=dim(vote)[[1]]; nc0=dim(vote)[[2]]
-if("e" %in% ned){elecname=ed$e}else{elecname="election"}
-if("c" %in% ned){nc=ed$c}else{nc=nc0}
-if("nv" %in% ned){nv=ed$nv}else{nv=nv0}
-if("m" %in% ned){mult=ed$m}else{mult=rep(1,nv)}
+if("e" %in% nvd){elecname=vd$e}else{elecname="election"}
+if("c" %in% nvd){nc=vd$c}else{nc=nc0}
+if("nv" %in% nvd){nv=vd$nv}else{nv=nv0}
+if("m" %in% nvd){mult=vd$m}else{mult=rep(1,nv)}
 totalvotes=sum(mult); na2=dimnames(vote)[[2]]
-if(is.null(na2)){na2=LETTERS[1:nc]}
-if("n" %in% ned){name=ed$n}else{if("n2" %in% ned){name=ed$n2}else{name=na2}}
-if("n2" %in% ned){name2=ed$n2}else{name2=name}
-if("f" %in% ned){fname=ed$f}else{fname=rep("",nc)}
-if("p" %in% ned){party=ed$p}else{party=rep("",nc)}; np={party[[1]]==""}
-if("col" %in% ned){colour=ed$col}else{colour=grDevices::rainbow(nc)}
-ed=list(e=elecname,s=ns,c=nc,nv=nv,m=mult,v=vote,f=fname,n=name,n2=name2,p=party,col=colour)
+if(is.null(na2)){na2=let(nc)}else{if(na2[[1]]=="V1"){na2=let(nc)}}
+if("n" %in% nvd){name=vd$n}else{if("n2" %in% nvd){name=vd$n2}else{name=na2}}
+if("n2" %in% nvd){name2=vd$n2}else{name2=name}
+if("f" %in% nvd){fname=vd$f}else{fname=rep("",nc)}
+if("p" %in% nvd){party=vd$p}else{party=rep("",nc)}; np={party[[1]]==""}
+if("col" %in% nvd){colour=vd$col}else{colour=grDevices::rainbow(nc)}
+vd=list(e=elecname,s=ns,c=nc,nv=nv,m=mult,v=vote,f=fname,n=name,n2=name2,p=party,col=colour); votedata=vd
 
 q0=totalvotes/(ns+1)	# initial quota
 
 # print election name and basic statistics
-cat(elecname)
-cat(paste("  (",ns," seats, ",nc," candidates, ",totalvotes," votes)",sep="")); cat("\n")
-if(verbose==TRUE){cat("initial quota ",round(q0,2)); cat("\n\n")}
+cat("\n"); cat("Election: ",elecname,"\n")
+cat("System: meek STV\n")
+cat("To fill",ns,"seats; ",nc," candidates:\n")
+cat(paste(name,collapse=", ")); cat("\n")
+cat(totalvotes,"votes;  initial quota",round(q0,2)); cat("\n\n")
+if(verbose==TRUE){options(width=120)}
 
-# initial quota, keep values (=1), and housekeeping variables
+# initialise quota (=q0), keep values (=1), and housekeeping variables:
 qa=q0
 k=rep(1,(nc+1))		# initial keep values (the +1 is for non-transferable)
 ks=numeric() 		# record keep value at each stage
@@ -60,8 +63,8 @@ surplus=1		# to ensure calculation gets going
 iter=0			# keeps track of number of iterations in count
 it=numeric()		# it=elec(+) and excl(-) in order of being decided
 ie=rep(0,nc); ne=0	# indicator (ie=1 indicates elected, =-1 excluded)
-st=character()          # ? for stages
-csum=numeric()            # to record votes at each stage; note also vm, va
+st=character()          # for stages
+csum=numeric()          # count summary (votes at each stage); note also vm, va
 stage=0; fin=0
 elec=numeric()
 sel=select(ns)          # ways of selecting subsets - needed in share
@@ -70,7 +73,6 @@ txt=character()         # text describing decisions at each stage
 itt=list()              # cand nos in order of elec/excl for each stage
 trf=c("","t")
 if(!dir.exists(outdirec)){dir.create(outdirec)}
-
 # main cycle - to elect or exclude next candidate(s)
 while(ne<ns){
  em=ems[[hp]]
@@ -86,7 +88,7 @@ while(ne<ns){
  if(hp!=hp0){if(verbose==TRUE){cat("close call - need high precision"); cat("\n\n")}
  }else{
   k=dn$k; ie=dn$ie; elec=dn$elec; xcl=dn$xcl; it=c(it,elec,xcl*ie[xcl])
-  stage=dn$stage; csum=dn$vo; st=dn$st
+  stage=dn$stage; csum=dn$csum; st=dn$st
   ne=length(ie[ie==1])
   ks=cbind(ks,k)
   x=decision_text(stage,ne,ns,elec,xcl,name2,dnext)
@@ -115,14 +117,13 @@ if(timing==TRUE){cat(stage,"    process time ",pt," secs    "); cat("\n")}
 
 # if verbose=TRUE : print decision, require interaction (CR) at each stage
   if(verbose==TRUE){
-  if(stage==1){cat(dtext,sep="")}else{cat(dtext,sep=", ")}; cat("\n\n")
+  if(stage==1){cat(dtext,sep="\n")}else{cat(dtext,sep=",\n")}
 # .. and plot current state of votes if plot=TRUE
   if(plot==TRUE){plot_jpeg(plotfile,stage)}
    readline("next? ")
   }
  }}
 fin=1; nstages=stage;  qf=qa   # final values of count proper
-
 # extra stage to calculate final keep values
 if(length(ie[ie>=0])>ns){
  tr=transfer(k,iter,vote,mult,ns,ie,em,surplus,sel)
@@ -130,45 +131,44 @@ if(length(ie[ie>=0])>ns){
  while(length(k[k>0])>(ns+2)){
   dn=decision(nc,vc,qa,ie,k,stage,fin,csum,st,surplus,hp)
   k=dn$k; ie=dn$ie; elec=dn$elec; xcl=dn$xcl; it=c(it,elec,xcl*ie[xcl])
-  surplus=dn$surplus; stage=dn$stage; csum=dn$vo; st=dn$st
+  surplus=dn$surplus; stage=dn$stage; csum=dn$csum; st=dn$st
   tr=transfer(k,iter,vote,mult,ns,ie,em,surplus,sel)
   k=tr$k; vmp=tr$vmp; vc=tr$vc; qa=tr$qa; inn=tr$inn; iter=tr$iter; surplus=tr$sur
  }
  tim=proc.time()-tim0;  pt=tim[[1]]
 }
-
 # print final result
 elec=it[it>0]; x=elec
 if(np==FALSE){pp=paste(" (",party,")",sep="")}else{pp=party}
 elected=paste(fname[x]," ",name[x],pp[x],sep="",collapse=", ")
-eleclist=paste("Elected:",elected,sep="  ")
-cat(eleclist); cat("\n\n")
+cat("Those elected, in order of election:\n")
+cat(elected); cat("\n\n")
 # Runner-up
 ic=1:nc; ru=ic[k[ic]==1]
 if(verbose==TRUE){cat(paste("Runner-up: ",fname[ru]," ",name[ru],pp[ru],sep="",collapse=", ")); cat("\n")}
-
 # finalise matrices of keep values and votes at each stage (ks, csum)
 ks=cbind(ks,k)
 dimnames(ks)=list(name=c(paste(name,fname,sep=", "),"non-transferable"),stage=1:dim(ks)[[2]])
 csum=cbind(csum,100*k); st=c(st,"  final keep values (%)")
 txt=matrix(txt,nrow=2)
-if(length(party[party!=""])>0){dimnames(csum)=list(name=c(paste(name,", ",fname," (",party,") ",sep=""),"non-transferable"),stage=st)
-}else{
- dimnames(csum)=list(name=c(paste(name,fname,sep=", "),"non-transferable"),stage=st)
-}
+cname=name
+if(length(fname[fname!=""])>0){cname=paste0(cname,", ",fname)}
+if(length(party[party!=""])>0){cname=paste0(cname," (",party,")")}    
+dimnames(csum)=list(name=c(cname,"non-transferable"),stage=st)
+    
 if(nstages>1){qf=sum(va[1:nc,1:nc,nstages])/(ns+1)}else{qf=q0}
 qtxt=paste0("Total votes ",totalvotes,",  initial quota = ",round(q0,2),", final quota = ",round(qf,2))
+    
 if(verbose==TRUE){cat("\nVotes at each stage and final keep values:\n")
     print(round(csum,2))
     cat("\n",qtxt,"\n")
 }
-
+    
 # save votedata and result details countdata as elecdata in one list
 countdata=list(sys="meek",el=elected,itt=itt,ctext=txt,csum=csum,qtext=qtxt,va=va,keep=ks[1:nc,]*100)
 elecdata=c(votedata,countdata)
 elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
 save(elecdata,file=paste0(outdirec,"/",elecfile,"_",sys,".rda"))
-# save(votedata,file=paste0(outdirec,"/",elecfile,".rda"))
 
 # if plot=TRUE make webpages to go with vote plots,
 #   and if verbose=T display them

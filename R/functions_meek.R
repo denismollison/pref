@@ -104,7 +104,7 @@ sh
 }
 
 
-decision=function(nc,vc,qa,ie,k,stage,fin,vo,st,surplus,hp){
+decision=function(nc,vc,qa,ie,k,stage,fin,csum,st,surplus,hp){
 #   to make next decision (elect/exclude)
  x=order(-vc[1:nc]);  x=x[ie[x]==0]; elec=numeric(); xcl=numeric(); hp0=hp
 # will switch to `high precision' if a close call
@@ -132,9 +132,9 @@ if(hp==hp0){
  ie[elec]=1; ie[xcl]=-1
  stage=stage+1
 if(fin==0){
-vo=cbind(vo,vc); st=c(st,paste("st",stage,sep=""))
+csum=cbind(csum,vc); st=c(st,paste("st",stage,sep=""))
 }}}
-list(k=k,ie=ie,elec=elec,xcl=xcl,stage=stage,vo=vo,st=st,surplus=surplus,hp=hp)
+list(k=k,ie=ie,elec=elec,xcl=xcl,stage=stage,csum=csum,st=st,surplus=surplus,hp=hp)
 }
 
 

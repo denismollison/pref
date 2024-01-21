@@ -38,12 +38,10 @@ pref.data=function(datafile,mult=FALSE,parties=FALSE,ballot=FALSE,friendly=FALSE
 if(details==FALSE){     # minimal case with abbrev names and vote matrix only
  vote=as.matrix(utils::read.table(datafile,header=header,row.names=NULL,sep=" "))
  vote[vote==""]=0
- # names for anonymous candidates - allow up to nc=104
- LET=paste0(LETTERS,rep(c("","2","3","4"),rep(26,4)))
  if(mult==TRUE){mul=vote[,1]; vote=vote[,2:dim(vote)[[2]]]}else{
   mul=rep(1,dim(vote)[[1]])}
  nv=dim(vote)[[1]]; nc=dim(vote)[[2]]
- if(header==TRUE){name2=dimnames(vote)[[2]]}else{name2=LET[1:nc]}
+ if(header==TRUE){name2=dimnames(vote)[[2]]}else{name2=let(nc)}
  fname=rep("",nc); name=name2; party=rep("",nc)
  colour=grDevices::rainbow(nc)
  elecname = readline("election name?")

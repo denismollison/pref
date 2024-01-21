@@ -8,19 +8,17 @@ calculated to 5 places of decimals as used for those elections}
 stv.wig(
   votedata,
   outdirec = tempdir(),
-  map = FALSE,
   verbose = FALSE,
   plot = TRUE,
   webdisplay = FALSE,
-  timing = FALSE
+  timing = FALSE,
+  map = FALSE
 )
 }
 \arguments{
 \item{votedata}{File with vote data}
 
 \item{outdirec}{Needs to be set for permanent record of results}
-
-\item{map}{Link to a map or other URL associated with election}
 
 \item{verbose}{If =TRUE reports and pauses at each stage of the count
 (press return to continue to next stage)}
@@ -30,6 +28,8 @@ stv.wig(
 \item{webdisplay}{If =TRUE displays plots and statistics as web pages}
 
 \item{timing}{Whether to report computing time at each stage}
+
+\item{map}{Link to a map or other URL associated with election}
 }
 \value{
 A list containing votes at each stage, + optional web pages; for details see manual pref_pkg_manual.pdf (section 3)
@@ -39,9 +39,9 @@ STV election count using WIG as for Scottish Council elections
 calculated to 5 places of decimals as used for those elections
 }
 \examples{
-hc12result=stv.wig(hc12)
-nws17result=stv.wig(nws17)
-p17result=stv.wig(p17,plot=FALSE)
-cnc17result=stv.wig(cnc17,plot=FALSE)
+hc12wig=stv.wig(hc12,plot=FALSE)
+nws17wig=stv.wig(nws17,plot=FALSE)
+p17wig=stv.wig(p17,plot=FALSE)
+cnc17wig=stv.wig(cnc17,plot=FALSE)
 
 }

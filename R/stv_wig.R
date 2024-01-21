@@ -15,44 +15,46 @@
 #' @return A list containing votes at each stage, + optional web pages; for details see manual pref_pkg_manual.pdf (section 3)
 #' @export
 #'
-#' @examples hc12result=stv.wig(hc12)
-#' @examples nws17result=stv.wig(nws17)
-#' @examples p17result=stv.wig(p17,plot=FALSE)
-#' @examples cnc17result=stv.wig(cnc17,plot=FALSE)
+#' @examples hc12wig=stv.wig(hc12,plot=FALSE)
+#' @examples nws17wig=stv.wig(nws17,plot=FALSE)
+#' @examples p17wig=stv.wig(p17,plot=FALSE)
+#' @examples cnc17wig=stv.wig(cnc17,plot=FALSE)
 # #' @examples yale_wig=stv.wig(yale) # omitted because takes over 5 secs
 #'
-stv.wig=function(votedata,outdirec=tempdir(),map=FALSE,verbose=FALSE,plot=TRUE,webdisplay=FALSE,timing=FALSE){
+stv.wig=function(votedata,outdirec=tempdir(),verbose=FALSE,plot=TRUE,webdisplay=FALSE,timing=FALSE,map=FALSE){
 # don't try plotting if package jpeg is not available:
 if(requireNamespace("jpeg")==FALSE){
 plot=FALSE; cat("\npackage jpeg not available, setting plot=FALSE\n\n")
 }
 sys="wig"
-tim0=proc.time()    # to track computing time taken (use timing=T to print for each stage)
+tim0=proc.time()    # to track computing time taken (use timing=TRUE to print for each stage)
 # read and unpack elecdata - only essential component is vote matrix ed$v
-ed=votedata; vote=ed$v
-ned=names(ed)
-if("s" %in% ned){ns=ed$s}else{ns=as.numeric(readline("number of seats? "))}
+vd=votedata; vote=vd$v
+nvd=names(vd)
+if("s" %in% nvd){ns=vd$s}else{ns=as.numeric(readline("number of seats? "))}
 nv0=dim(vote)[[1]]; nc0=dim(vote)[[2]]
-if("e" %in% ned){elecname=ed$e}else{elecname="election"}
-if("c" %in% ned){nc=ed$c}else{nc=nc0}
-if("nv" %in% ned){nv=ed$nv}else{nv=nv0}
-if("m" %in% ned){mult=ed$m}else{mult=rep(1,nv)}
+if("e" %in% nvd){elecname=vd$e}else{elecname="election"}
+if("c" %in% nvd){nc=vd$c}else{nc=nc0}
+if("nv" %in% nvd){nv=vd$nv}else{nv=nv0}
+if("m" %in% nvd){mult=vd$m}else{mult=rep(1,nv)}
 totalvotes=sum(mult); na2=dimnames(vote)[[2]]
-if(is.null(na2)){na2=LETTERS[1:nc]}
-if("n" %in% ned){name=ed$n}else{if("n2" %in% ned){name=ed$n2}else{name=na2}}
-if("n2" %in% ned){name2=ed$n2}else{name2=name}
-if("f" %in% ned){fname=ed$f}else{fname=rep("",nc)}
-if("p" %in% ned){party=ed$p}else{party=rep("",nc)}
-if("col" %in% ned){colour=ed$col}else{colour=grDevices::rainbow(nc)}
-ed=list(e=elecname,s=ns,c=nc,nv=nv,m=mult,v=vote,f=fname,n=name,n2=name2,p=party,col=colour)
+if(is.null(na2)){na2=let(nc)}else{if(na2[[1]]=="V1"){na2=let(nc)}}
+if("n" %in% nvd){name=vd$n}else{if("n2" %in% nvd){name=vd$n2}else{name=na2}}
+if("n2" %in% nvd){name2=vd$n2}else{name2=name}
+if("f" %in% nvd){fname=vd$f}else{fname=rep("",nc)}
+if("p" %in% nvd){party=vd$p}else{party=rep("",nc)}; np={party[[1]]==""}
+if("col" %in% nvd){colour=vd$col}else{colour=grDevices::rainbow(nc)}
+vd=list(e=elecname,s=ns,c=nc,nv=nv,m=mult,v=vote,f=fname,n=name,n2=name2,p=party,col=colour); votedata=vd
 
 qa=ceiling((totalvotes+1)/(ns+1))  # quota (fixed)
 qpc=100*qa/totalvotes
 
 # print election name and basic statistics
-cat("\n"); cat(elecname)
-cat(paste("  (",ns," seats, ",nc," candidates, ",totalvotes," votes)",sep="")); cat("\n")
-if(verbose==TRUE){cat("quota ",qa); cat("\n\n")}
+cat("Election: ",elecname,"\n")
+cat("System: WIG STV\n")
+cat("To fill",ns,"seats; ",nc," candidates:\n")
+cat(paste(name,collapse=", ")); cat("\n")
+cat(totalvotes,"votes;  quota",qa); cat("\n\n")
 
 # quota (fixed) and quota (fixed) andhousekeeping variables
 inn=rep(0,nc)	# 0 indicates still in play (-1 elim, 1 elec, 2 elec & transf)
@@ -61,7 +63,7 @@ ne=0
 it=numeric(); ite=numeric(); backlog=numeric(); ann=rep(0,nc); elec=numeric()
 iter=0			# keeps track of number of iterations in count
 st=character()          # ? for stages
-vo=numeric()            # to record votes at each stage; note also vm, va
+csum=numeric()          # count summary (votes at each stage); note also vm, va
 dnext=""                # text carried over from one stage to next
 txt=character()         # text describing decisions at each stage
 itt=list()              # cand nos in order of elec/excl for each stage
@@ -100,7 +102,7 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
  vm[,nc+1]=ff-apply(vm,1,sum)   #
  v=apply(vm,2,sum)
  vmp=vm   # save values of vm for plotting at end of stage
- vo=cbind(vo,v); st=c(st,paste("stage",stage,sep=""))
+ csum=cbind(csum,v); st=c(st,paste("stage",stage,sep=""))
  j=ic[inn[ic]==0 | inn[ic]==1]
  je=j[v[j]>=qa]      # any still in with >=quota deemed elected
  if(length(je)>0){
@@ -172,7 +174,7 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
 # write output text
  if(ne==ns){final=" - final result"}else{final=""}
  dec2=""
- if(stage==1){dec1=paste("first preferences",final,sep="")}else{
+ if(stage==1){dec1=paste("first preferences -",final,sep="")}else{
   dec1=paste("stage ",stage,final," - ",dnext,sep="")
  }
  if(length(ite)>0){
@@ -214,7 +216,7 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
 if(timing==TRUE){cat(stage,"    process time ",pt," secs    "); cat("\n")}
 # print decision (if verbose=TRUE)
  if(verbose==TRUE){
-  cat(dec,sep=", "); cat("\n")
+  cat(dec,sep="\n")
 # .. and plot current state of votes if plot=TRUE
   if(plot==TRUE){plot_jpeg(plotfile,stage)}
   if(final==""){readline("next? ")}
@@ -222,24 +224,29 @@ if(timing==TRUE){cat(stage,"    process time ",pt," secs    "); cat("\n")}
 ann[je]=1
 }          # closes stages loop, i.e. end of this election count
 
-vo[nc+1,]=totalvotes-apply(as.matrix(vo[1:nc,]),2,sum)   # to change
+csum[nc+1,]=totalvotes-apply(as.matrix(csum[1:nc,]),2,sum)   # to change
 # fudge to get "non-transferred" into line
-if(length(party[party!=""])>0){
- dimnames(vo)=list(name=c(paste(name,", ",fname," (",party,") ",sep=""),"non-transferable"),stage=st)
-}else{
- dimnames(vo)=list(name=c(paste(name,fname,sep=", "),"non-transferable"),stage=st)
-}
+
+cname=name
+if(length(fname[fname!=""])>0){cname=paste0(cname,", ",fname)}
+if(length(party[party!=""])>0){cname=paste0(cname," (",party,")")}
+dimnames(csum)=list(name=c(cname,"non-transferable"),stage=st)
 
 elec=it[it>0]; x=elec
 txt=matrix(txt,nrow=2)
 qtxt=paste0("Total votes ",totalvotes,",  quota = ",qa)
-pp=paste(" (",party[elec],")",sep=""); if(pp[[1]]==" ( )"|pp[[1]]==" ()"){pp=""}
-elected=paste(fname[elec]," ",name[elec],pp,sep="",collapse=", ")
-cat(paste0("Elected:",elected)); cat("\n\n")
+pp=paste(" (",party[x],")",sep=""); if(pp[[1]]==" ( )"|pp[[1]]==" ()"){pp=""}
+elected=paste(fname[x]," ",name[x],pp,sep="",collapse=", ")
+cat("\n"); cat(paste0("Those elected, in order of election:\n"))
+cat(elected); cat("\n\n")
 
-    
+if(verbose==TRUE){cat("\nVotes at each stage:\n")
+    print(round(csum,2))
+    cat("\n",qtxt,"\n")
+}
+
 # save result details and elecdata in R data files
-countdata=list(sys="wig",el=elected,itt=itt,ctext=txt,csum=vo,qtext=qtxt,va=va)
+countdata=list(sys="wig",el=elected,itt=itt,ctext=txt,csum=csum,qtext=qtxt,va=va)
 elecdata=c(votedata,countdata)
 elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
 save(elecdata,file=paste0(outdirec,"/",elecfile,"_",sys,".rda"))

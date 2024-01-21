@@ -14,7 +14,7 @@
 #' @examples nws17wig=stv.wig(nws17)
 #' @examples stv.plots(nws17wig)
 
-stv.plots=function(elecdata,outdirec=tempdir(),webdisplay=TRUE,map=FALSE){
+stv.plots=function(elecdata,outdirec=tempdir(),webdisplay=FALSE,map=FALSE){
 
 if(!dir.exists(outdirec)){dir.create(outdirec)}
 
@@ -25,6 +25,7 @@ elecname=cd$e
 ns=cd$s
 nc=cd$c
 nv=cd$nv
+mult=cd$m
 fname=cd$f
 name=cd$n
 n2=cd$n2
@@ -43,13 +44,14 @@ if(sys=="meek"){keep=cd$keep}
 
 # if we have all those ...
 nstages=dim(csum)[[2]]-1
-qs=apply(csum[1:nc,1:nstages],2,sum)/(ns+1); qs=100*qs/nv
-
+qs=apply(csum[1:nc,1:nstages],2,sum)/(ns+1); qs=100*qs/sum(mult)
+cat("quota: ",round(qs,2));cat("\n")
 wi=(nc+4.5); w=wi*120   # plot width in (approx) inches, and in pixels
 trf=c("","t")
 for(ist in 1:nstages){
     vm=va[,,ist]
-if(sys=="meek"){qpc=qs[[ist]]}else{qpc=qs[[1]]}
+    if(sys=="meek"){qpc=qs[[ist]]}else{qpc=qs[[1]]}
+    cat("stage ",ist,", qpc: ",round(qpc,2)); cat("\n")
     it=itt[[ist]]
     dtext=ctext[,ist]                                     
 for(i in 2:1){  # 2 plots, with/without separate transfers plot

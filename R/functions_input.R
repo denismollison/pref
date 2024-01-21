@@ -58,3 +58,15 @@ cap=function(s) paste(toupper(substring(s, 1, 1)),
   {s=substring(s, 2); if(strict) tolower(s) else s}, sep = "", collapse = " " )
 sapply(strsplit(s, split = " "), cap, USE.NAMES = !is.null(names(s)))
 }
+
+
+# function let, to give names to anonyous candidates
+let=function(nc){
+if(nc<27){n=LETTERS[1:nc]}else{
+naz=ceiling(nc/26)
+x=c("",as.character(2:naz))
+n=paste0(LETTERS,rep(x,rep(26,naz)))
+n=n[1:nc]
+}
+n
+}

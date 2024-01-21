@@ -4,10 +4,12 @@
 \alias{stv.result}
 \title{Prints main details of result of an STV election}
 \usage{
-stv.result(outlist)
+stv.result(elecdata, outfile = "terminal")
 }
 \arguments{
-\item{outlist}{An R list of results from stv or stv.wig}
+\item{elecdata}{An R list of results from stv or stv.wig}
+
+\item{outfile}{Where to print results (terminal or file path)}
 }
 \value{
 Prints out results

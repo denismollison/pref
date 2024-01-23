@@ -1,3 +1,3 @@
-# pref 0.3.0
+# pref 0.4.0
 
 * Initial CRAN submission.

@@ -1,4 +1,4 @@
-# stv() - core of STV package - last revised 25 nov 2023
+# stv() - core of STV package - last revised 23 jan 2024
 
 #' STV election count - uses Meek STV, allows equal preferences
 #'
@@ -80,7 +80,6 @@ while(ne<ns){
  tr=transfer(k,iter,vote,mult,ns,ie,em,surplus,sel)
   k=tr$k; vm=tr$vm; vc=tr$vc; qa=tr$qa; inn=tr$inn
  iter=tr$iter; surplus=tr$sur
-# cat("stv line 82, after call to transfer, dim(vm)=",dim(vm),"\n")
 # make next decision to elect or exclude
  hp0=hp
  dn=decision(nc,vc,qa,ie,k,stage,fin,csum,st,surplus,hp)

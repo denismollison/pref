@@ -1,4 +1,4 @@
-# functions_input.R - last revised 22 nov 2023
+# functions_input.R - last revised 20 jan 2024
 # minor functions abbrev, party_colour and capwords
 # used by main input function pref.data
 

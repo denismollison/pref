@@ -1,4 +1,4 @@
-# functions_meek.R - last revised 28 june 2023
+# functions_meek.R - last revised 28 june 2023, minor rev'n 23 jan 2024
 # functions transfer and share; decision and decision_text;
 # function select for permutations used in share
 # vm a matrix - row = 1st pref, col = who with currently
@@ -111,7 +111,7 @@ decision=function(nc,vc,qa,ie,k,stage,fin,csum,st,surplus,hp){
 # 1 is there another clearly elec? 
  if(vc[x[[1]]]>=qa){
 # if exact order of elec important, need to check margin > surplus 
-# if margin <= surplus, need to reduce em and try again .. see spare.R#margin
+# if margin <= surplus, need to reduce em and try again
  elec=x[vc[x]>=qa]
  surplus=surplus+sum(vc[elec])-qa*length(elec)
   }else{

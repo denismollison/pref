@@ -1,4 +1,5 @@
 # stv.plots - text of main statistics of election count
+# 13 jan 2024, last revised 23 jan 2024
 
 #' Makes webpage plots of result of an STV election
 #'
@@ -18,29 +19,29 @@ stv.plots=function(elecdata,outdirec=tempdir(),webdisplay=FALSE,map=FALSE){
 
 if(!dir.exists(outdirec)){dir.create(outdirec)}
 
-cd=elecdata; cdn=names(cd)
+ed=elecdata
 
-# vars from elecdata
-elecname=cd$e
-ns=cd$s
-nc=cd$c
-nv=cd$nv
-mult=cd$m
-fname=cd$f
-name=cd$n
-n2=cd$n2
-party=cd$p
-col=cd$col
+# vars from votedata
+elecname=ed$e
+ns=ed$s
+nc=ed$c
+nv=ed$nv
+mult=ed$m
+fname=ed$f
+name=ed$n
+n2=ed$n2
+party=ed$p
+col=ed$col
 
 # additional vars from count
-sys=cd$sys
-elec=cd$el
-itt=cd$itt # - may not need 
-ctext=cd$ctext
-csum=cd$csum
-qtext=cd$qtext # - may not need
-va=cd$va
-if(sys=="meek"){keep=cd$keep}
+sys=ed$sys
+elec=ed$el
+itt=ed$itt # - may not need 
+ctext=ed$ctext
+csum=ed$csum
+qtext=ed$qtext # - may not need
+va=ed$va
+if(sys=="meek"){keep=ed$keep}
 
 # if we have all those ...
 nstages=dim(csum)[[2]]-1
@@ -59,13 +60,11 @@ for(i in 2:1){  # 2 plots, with/without separate transfers plot
     plotfile=paste(outdirec,paste0("stage",trf[[i]],ist,".jpg"),sep="/")
     h=600+200*transf
     grDevices::jpeg(plotfile,width=w,height=h)
-#    cat("make_plots line 41",dim(vm),"\n\n")
     voteplot(ns,vm,qpc,it,dtext,n2,party,col,transf,elecname,sys)
     grDevices::dev.off()
 }}
     
 wp=webpages(elecdata,outdirec,map)
-#  if(verbose==TRUE){grDevices::dev.off()}
  if(webdisplay==TRUE){utils::browseURL(wp[[1]],browser="open")}
 
 }

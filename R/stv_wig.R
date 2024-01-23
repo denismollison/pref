@@ -1,4 +1,4 @@
-# stv.wig(() - last revised 1jan2024
+# stv.wig(() - last revised 23 jan 2024
 
 #' STV election count using WIG as for Scottish Council elections
 #' calculated to 5 places of decimals as used for those elections
@@ -19,7 +19,6 @@
 #' @examples nws17wig=stv.wig(nws17,plot=FALSE)
 #' @examples p17wig=stv.wig(p17,plot=FALSE)
 #' @examples cnc17wig=stv.wig(cnc17,plot=FALSE)
-# #' @examples yale_wig=stv.wig(yale) # omitted because takes over 5 secs
 #'
 stv.wig=function(votedata,outdirec=tempdir(),verbose=FALSE,plot=TRUE,webdisplay=FALSE,timing=FALSE,map=FALSE){
 # don't try plotting if package jpeg is not available:
@@ -98,8 +97,7 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
    f0=min(b[b!=0]); fp=ic[b==f0]
    vm[f[[iv]],fp]=vm[f[[iv]],fp]+mult[[iv]]*rem[[iv]]
  }}
- # vm[,nc+1]=c(ff,0)-apply(vm,1,sum)   # assumes no n-t fps
- vm[,nc+1]=ff-apply(vm,1,sum)   #
+ vm[,nc+1]=ff-apply(vm,1,sum)
  v=apply(vm,2,sum)
  vmp=vm   # save values of vm for plotting at end of stage
  csum=cbind(csum,v); st=c(st,paste("stage",stage,sep=""))
@@ -167,7 +165,7 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
  if(stage==1){
   va=vm; itt=list(it)
  }else{
-  va=array(c(va,vm),dim=c(nc,(nc+1),stage))   # changed!
+  va=array(c(va,vm),dim=c(nc,(nc+1),stage))
   itt=append(itt,list(it))
  }
 
@@ -190,7 +188,7 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
   dec2=paste(nomore,"has achieved the quota, so exclude",name2[abs(xcl)])
   dnext=paste("after transfer of votes of",name2[abs(xcl)])
  }
-# correction for when last elec don't reach quota
+# correction for when last elected don't reach quota
  if(final != ""){
   if(v[[ite[[1]]]]<qa){
             dec2=paste(name2[[jm]],"is excluded, so")

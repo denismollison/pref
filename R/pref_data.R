@@ -1,4 +1,4 @@
-# main input function pref.data - put in this separate file 22 nov 2023, revised 25 nov 2023
+# main input function - last revised 23 jan 2024
 # uses abbrev, party_colour and capwords (in functions_input.R) for tidying up
 #
 # handles vote data  with full details whether in pref or ballot format
@@ -72,7 +72,6 @@ if(details==FALSE){     # minimal case with abbrev names and vote matrix only
  }
 # for either input order, can now extract details and votes
 # candidate names, calculate a short-form unique version, name2
-# modify for 2022 SC data
  party=rep("",nc); fname=rep("",nc); name=rep("",nc)
  for(i in cdata){
   j=i+1-cdata[[1]]

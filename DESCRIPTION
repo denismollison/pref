@@ -32,7 +32,4 @@ Imports:
 Depends:
     R (>= 3.5)
 LazyData: true
-Suggests: 
-    knitr
-VignetteBuilder: knitr
 BugReports: https://github.com/denismollison/pref/issues

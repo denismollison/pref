@@ -1,4 +1,5 @@
 # stv.result - text of main statistics of election count - 16jan24
+# 16 jan 2024, last revised 23 jan 2024
 
 #' Prints main details of result of an STV election
 #'
@@ -13,6 +14,7 @@
 #' @examples stv.result(nws17wig)
 
 stv.result=function(elecdata,outfile="terminal"){
+
 ed=elecdata
 elecname=ed$e
 ns=ed$s

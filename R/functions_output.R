@@ -1,4 +1,4 @@
-# functions_output.R - last revised 28 june 2023
+# functions_output.R - last revised 23 jan 2024
 # output plotting functions voteplot, webpages, plot_jpeg; also plural (for grammatical output)
 # voteplot - makes plots of a stage of the count with and without transfer plot
 #' voteplot
@@ -20,8 +20,7 @@
 #' @return  Makes a plot of current stage
 #' @noRd
 voteplot=function(ns,vm,qpc,it,tx,name,party,colour,transf,elecname,sys="meek"){
-# 
-qa=qpc  # qa is quota as %age
+
 cx=1 # consider getting rid of cx (regulates font scaling)
 margincolour="burlywood";  panelcolour="burlywood1"
 # convert vote variables to percentages
@@ -32,13 +31,13 @@ ip={max(nchar(party))>0}
 # allocate x coords of cands. - with extra space before "n-t"
 x1=((1:nc)-1)*5; x1=c(x1,(nc+1)*5)
 x2=x1+4
-vmax=max(qa+5,apply(vm,2,sum)*1.05)
+vmax=max(qpc+5,apply(vm,2,sum)*1.05)
 vmin=-5*max(1,0.1*max(vm))
 # abbreviate long names
 name[nchar(name)>12]=paste(substring(name[nchar(name)>12],1,11),"*",substring(name[nchar(name)>12],nchar(name[nchar(name)>12]),nchar(name[nchar(name)>12])),sep="")
 cexn=2*cx; if(max(nchar(name))>10){cexn=cexn*10/max(nchar(name))}
 # new bit, 22may2018, for transfers plot
-tfsc=qa/100
+tfsc=qpc/100
 tf0=vmax*1.5
 tfmax=100*tfsc
 ymax=tf0+tfmax
@@ -47,20 +46,20 @@ if(transf==1){yy=ymax}else{yy=vmax*1.4}
 graphics::plot(0,0,axes=F,xlim=c(0,(nc+2)*5),ylim=c(vmin,yy),xlab="",ylab="",pch="")
 if(transf==1){graphics::rect(-1,tf0,(nc+2)*5,yy,col=panelcolour)}
 graphics::rect(-1,0,(nc+2)*5,vmax,col=panelcolour)
-spread=1+0.5*max(vmax/(qa+5)-1,0)
+spread=1+0.5*max(vmax/(qpc+5)-1,0)
 graphics::mtext(elecname,side=2,line=9,at=-(7+2*ip)*spread,adj=0,cex=cx*1.3,las=1)
 if(sys !="meek"){systext=paste("STV - sys =",sys)
 graphics::mtext(systext,side=2,line=9,at=-(9+2*ip)*spread,adj=0,font=3,cex=cx*1.3,las=1)}
 # axis and parallel lines for vote plot
-# abline(h=qa*(0:floor(vmax/qa)),lwd=2)
-graphics::abline(h=qa*(0:1),lwd=2)
+# abline(h=qpc*(0:floor(vmax/qpc)),lwd=2)
+graphics::abline(h=qpc*(0:1),lwd=2)
 graphics::abline(h=(1:floor(vmax)),lty=3)
 q5=5*(0:floor(vmax/5))
 graphics::abline(h=q5,lty=2)
 graphics::abline(v=(nc*5+3),lty=1)
 graphics::axis(side=2,at=q5,labels=q5,lty=0,las=1,cex.axis=1.8)
-graphics::mtext(side=2,line=4,at=qa*0.5,text="votes %",cex=cx*2.2)
-graphics::mtext(side=2,line=3,at=qa,text="quota",font=3,las=1,cex=cx*2)
+graphics::mtext(side=2,line=4,at=qpc*0.5,text="votes %",cex=cx*2.2)
+graphics::mtext(side=2,line=3,at=qpc,text="quota",font=3,las=1,cex=cx*2)
 #   name, party, whether elected by this stage
 elec=it[it>0]
 y1=-vmax*(0.1+0.07*(0:2))
@@ -90,7 +89,6 @@ graphics::text((nc+0.5)*2.5,vmax*1.17,dec2,cex=cex2)
 # explanatory box for votes plot
 xt1=(nc*5)+1; xt2=(nc+2)*5-2
     y=vmax*(1.1-0.035*c(0,2,5,7,9,11))
-#   cat("voteplot line 77",dim(vm),"\n\n")
 vnt=sum(vm[,(nc+1)])*1.05
 if(y[[6]]<vnt){y=y+(vnt-y[[6]])}
 graphics::rect(xt1,y[[6]],xt2,y[[1]],col=margincolour)
@@ -132,17 +130,14 @@ graphics::text(xt1,y[[8]],pos=4,"amount of votes",cex=1.5)
 
 
 webpages=function(elecdata,outdirec,map=FALSE){
-# outlines=readLines("outlines.txt")   # needed if not in RStudio
 # to make a pair of election web pages (without/with transfers) -
 # outlines, = non-varying lines of html, are available because in sysdata.rda
-#   cat("in webpage\n")
 space="&#160;&#160;"; space5="&#160;&#160;&#160;&#160;&#160;"      # needed for formatting
 ed=elecdata
-elecname=ed$e; ns=ed$s; nc=ed$c;nv=ed$nv; mult=ed$m; fname=ed$f; name=ed$n; party=ed$p
-sys=ed$sys; el=ed$el; itt=ed$itt; ctext=ed$ctext; csum=ed$csum
+elecname=ed$e; ns=ed$s; nc=ed$c;nv=ed$nv; mult=ed$m
+fname=ed$f; name=ed$n; party=ed$p
+sys=ed$sys; itt=ed$itt; csum=ed$csum
 qtext=ed$qtext; va=ed$va; if(sys=="meek"){keep=ed$keep}
-# note vo renamed csum
-# may not need el, ctext
 
 elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
 if(map!=FALSE){
@@ -153,7 +148,6 @@ if(nv>0){
  it=itt[[nstages]]
  unc=""
 }else{
- cat("in webpages line 134 - uncontested\n")
  unc="(uncontested)"
  it=1:ed$c
 } 
@@ -215,6 +209,7 @@ webpp
 
 
 plot_jpeg=function(plotfile,stage)
+# to display a plot showing one stage of the count
  {dpi=200
   jpg = jpeg::readJPEG(plotfile, native=TRUE) # read the file
   res = dim(jpg)[2:1] # get the resolution, [x, y]

@@ -1,5 +1,5 @@
 # stv.result - text of main statistics of election count - 16jan24
-# 16 jan 2024, last revised 23 jan 2024
+# 16 jan 2024, last revised 24 jan 2024
 
 #' Prints main details of result of an STV election
 #'
@@ -27,10 +27,11 @@ csum=ed$csum
 qtext=ed$qtext
 if(sys=="meek"){keep=ed$keep}
 
+width0=getOption("width")  # note current value, so can restore later
 options(width=max(c(120,nchar(ct))))
 
 if(outfile!="terminal"){sink(outfile)}
-    
+
 cat("\nElection: ",ed$e,"\n",sep="")
 cat("System:",sys,"STV\n",sep=" ")
 cat("To fill",ns,"seats; ",ed$c,"candidates:\n")
@@ -59,5 +60,6 @@ cat("\n")
 print(round(csum,2)); cat("\n")
 cat(qtext)
 
+if(outfile=="terminal"){options(width=width0)}
 if(outfile!="terminal"){sink()}
 }

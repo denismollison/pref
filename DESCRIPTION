@@ -5,13 +5,13 @@ Authors@R:
     person("Denis", "Mollison", , "denis.mollison@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-4014-3431"))
 Description: Implements the Single Transferable Vote (STV) electoral system, with
-    clear explanatory graphics. The core function is Meek's method, the purest
+    clear explanatory graphics. The core function stv() uses Meek's method, the purest
     expression of the simple principles of STV, but which requires electronic
     counting. It can handle votes expressing equal preferences for subsets of
-    the candidates. A function stv.wig implementing the Weighted Inclusive
+    the candidates. A function stv.wig() implementing the Weighted Inclusive
     Gregory method, as used in Scottish council elections, is also provided,
     and with the same options, as described below. The required vote data format
-    is as an R list: a function pref.data is provided to transform some commonly
+    is as an R list: a function pref.data() is provided to transform some commonly
     used data formats into this format.
     References for methodology:
     Hill, Wichmann and Woodall (1987) <doi:10.1093/comjnl/30.3.277>,

@@ -4,7 +4,7 @@
 \alias{stv.result}
 \title{Prints main details of result of an STV election}
 \usage{
-stv.result(elecdata, outfile = "terminal")
+stv.result(elecdata, outfile = "console")
 }
 \arguments{
 \item{elecdata}{An R list of results from stv or stv.wig}

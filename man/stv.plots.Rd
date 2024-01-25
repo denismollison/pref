@@ -23,7 +23,7 @@ Makes webpage plots of result of an STV election
 }
 \examples{
 c99result=stv(c99)
-stv.plots(c99result)
+c99plots=stv.plots(c99result)
 nws17wig=stv.wig(nws17)
-stv.plots(nws17wig)
+nws17plots=stv.plots(nws17wig)
 }

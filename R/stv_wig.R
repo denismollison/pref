@@ -1,4 +1,4 @@
-# stv.wig(() - last revised 23 jan 2024
+# stv.wig(() - last revised 25 jan 2024
 
 #' STV election count using WIG as for Scottish Council elections
 #' calculated to 5 places of decimals as used for those elections
@@ -23,7 +23,7 @@
 stv.wig=function(votedata,outdirec=tempdir(),verbose=FALSE,plot=TRUE,webdisplay=FALSE,timing=FALSE,map=FALSE){
 # don't try plotting if package jpeg is not available:
 if(requireNamespace("jpeg")==FALSE){
-plot=FALSE; cat("\npackage jpeg not available, setting plot=FALSE\n\n")
+plot=FALSE; warning("package jpeg not available, setting plot=FALSE")
 }
 sys="wig"
 tim0=proc.time()    # to track computing time taken (use timing=TRUE to print for each stage)

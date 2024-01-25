@@ -10,7 +10,7 @@ Description: Implements the Single Transferable Vote (STV) electoral system, wit
     counting. It can handle votes expressing equal preferences for subsets of
     the candidates. A function stv.wig() implementing the Weighted Inclusive
     Gregory method, as used in Scottish council elections, is also provided,
-    and with the same options, as described in the manual. The required voted
+    and with the same options, as described in the manual. The required vote
     data format is as an R list: a function pref.data() is provided to transform
     some commonly used data formats into this format.
     References for methodology:

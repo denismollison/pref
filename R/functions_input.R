@@ -1,4 +1,4 @@
-# functions_input.R - last revised 20 jan 2024
+# functions_input.R - last revised 25 jan 2024
 # minor functions abbrev, party_colour and capwords
 # used by main input function pref.data
 
@@ -13,7 +13,7 @@ if(length(dn)>0){
   for(idn in 1:length(dn)){
   dnc=ic[name==dn[[idn]]]
   fname[dnc]=capwords(fname[dnc],T)
-cat("warning - duplicate surname -",dn[[idn]]," (",fname[dnc],")\n")
+warning("duplicate surname -",dn[[idn]]," (",fname[dnc],")")
   tfn=table(fname[dnc])
   kc=0; while(max(table(name2[dnc]))>1 & kc<2){
     kc=kc+1

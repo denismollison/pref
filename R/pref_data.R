@@ -1,4 +1,4 @@
-# main input function - last revised 23 jan 2024
+# main input function - last revised 25 jan 2024
 # uses abbrev, party_colour and capwords (in functions_input.R) for tidying up
 #
 # handles vote data  with full details whether in pref or ballot format
@@ -90,7 +90,7 @@ if(details==FALSE){     # minimal case with abbrev names and vote matrix only
   if(length(ip)>0){
    colour=rep("white",nc)
    colour[ip]=party_colour(party[ip],parties)
-  }else{cat("recommend re-run with party colours file if available\n\n")}
+  }else{warning("recommend re-run with party colours file if available")}
  }else{colour=grDevices::rainbow(nc)}
 # and last but not least - the votes
  if(nv>0){
@@ -100,7 +100,7 @@ if(details==FALSE){     # minimal case with abbrev names and vote matrix only
    for(iv in 1:nv){
     x=strsplit(dat[[vdata[[iv]]]]," ")[[1]]
     if(mult==T){mul[[iv]]=as.numeric(x[[1]]); x=x[2:length(x)]}
-    if(length(x)!=nc){cat("vote ",i," has length ",length(x))}
+    if(length(x)!=nc){warning("vote ",i," has length ",length(x))}
     vote[iv,]=as.numeric(x)
   }}else{
 # if ballot=F
@@ -109,7 +109,7 @@ if(details==FALSE){     # minimal case with abbrev names and vote matrix only
     x=x[x!=""]
     nx0=length(x)
     mul[[iv]]=as.numeric(x[[1]])  # for pref format assume first element is mult
-    if(x[[nx0]]!="0"){cat("check failure at vote no. ",iv,"\n")}
+    if(x[[nx0]]!="0"){warning("check failure at vote no. ",iv,"\n")}
     if(nx0>2){
      x=x[2:(nx0-1)]; nx=length(x)   # actual vote
      pr=1; incr=1; pref=numeric()

@@ -1,4 +1,4 @@
-# stv() - core of STV package - last revised 23 jan 2024
+# stv() - core of STV package - last revised 25 jan 2024
 
 #' STV election count - uses Meek STV, allows equal preferences
 #'
@@ -21,7 +21,7 @@
 stv=function(votedata,outdirec=tempdir(),verbose=FALSE,plot=TRUE,webdisplay=FALSE,timing=FALSE,map=FALSE){
 # don't try plotting if package jpeg is not available:
 if(requireNamespace("jpeg")==FALSE){
-plot=FALSE; cat("\npackage jpeg not available, setting plot=FALSE\n\n")
+    plot=FALSE; warning("package jpeg not available, setting plot=FALSE")
 }
 sys="meek"
 tim0=proc.time()    # to track computing time taken (use timing=T to print for each stage)
@@ -84,7 +84,7 @@ while(ne<ns){
  hp0=hp
  dn=decision(nc,vc,qa,ie,k,stage,fin,csum,st,surplus,hp)
  hp=dn$hp
- if(hp!=hp0){if(verbose==TRUE){cat("close call - need high precision"); cat("\n\n")}
+ if(hp!=hp0){if(verbose==TRUE){warning("close call - need high precision")}
  }else{
   k=dn$k; ie=dn$ie; elec=dn$elec; xcl=dn$xcl; it=c(it,elec,xcl*ie[xcl])
   stage=dn$stage; csum=dn$csum; st=dn$st

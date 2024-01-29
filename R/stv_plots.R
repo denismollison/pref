@@ -18,7 +18,8 @@
 stv.plots=function(elecdata,outdirec=tempdir(),webdisplay=FALSE,map=FALSE){
 
 if(!dir.exists(outdirec)){dir.create(outdirec)}
-
+file.remove(file.path(outdirec,list.files(outdirec)))
+    
 ed=elecdata
 
 # vars from votedata
@@ -61,6 +62,9 @@ for(i in 2:1){  # 2 plots, with/without separate transfers plot
     voteplot(ns,vm,qpc,it,dtext,n2,party,col,transf,elecname,sys)
     grDevices::dev.off()
 }}
+
+elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
+save(elecdata,file=paste0(outdirec,"/",elecfile,"_",sys,".rda"))
 
 wp=webpages(elecdata,outdirec,map)
  if(webdisplay==TRUE){utils::browseURL(paste(outdirec,"index.html",sep="/"),browser="open")}

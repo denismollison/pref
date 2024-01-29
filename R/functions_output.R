@@ -1,4 +1,4 @@
-# functions_output.R - last revised 23 jan 2024
+# functions_output.R - last revised 29 jan 2024
 # output plotting functions voteplot, webpages, plot_jpeg; also plural (for grammatical output)
 # voteplot - makes plots of a stage of the count with and without transfer plot
 #' voteplot
@@ -41,6 +41,8 @@ tfsc=qpc/100
 tf0=vmax*1.5
 tfmax=100*tfsc
 ymax=tf0+tfmax
+oldpar=graphics::par(no.readonly = TRUE) # to record existing setting ..
+on.exit(graphics::par(oldpar)) # .. and restore when exit function
 graphics::par(mar=c(0,11,1,5),bg=margincolour)
 if(transf==1){yy=ymax}else{yy=vmax*1.4}
 graphics::plot(0,0,axes=F,xlim=c(0,(nc+2)*5),ylim=c(vmin,yy),xlab="",ylab="",pch="")
@@ -133,11 +135,12 @@ webpages=function(elecdata,outdirec,map=FALSE){
 # to make a pair of election web pages (without/with transfers) -
 # outlines, = non-varying lines of html, are available because in sysdata.rda
 space="&#160;&#160;"; space5="&#160;&#160;&#160;&#160;&#160;"      # needed for formatting
+
 ed=elecdata
 elecname=ed$e; ns=ed$s; nc=ed$c;nv=ed$nv; mult=ed$m
 fname=ed$f; name=ed$n; party=ed$p
-sys=ed$sys; itt=ed$itt; csum=ed$csum
-qtext=ed$qtext; va=ed$va; if(sys=="meek"){keep=ed$keep}
+sys=ed$sys; itt=ed$itt; csum=ed$count
+qtext=ed$quotatext; va=ed$va; if(sys=="meek"){keep=ed$keep}
 
 elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
 if(map!=FALSE){
@@ -150,76 +153,70 @@ if(nv>0){
 }else{
  unc="(uncontested)"
  it=1:ed$c
-} 
-tra=c("","t"); tra1=c("t",""); hide=c("Show","Hide")    
-webpp=character()
-for(j in 1:2){
- transf=j-1
- indext=paste("index",tra[[j]],".html",sep="")
- out_html=paste(outdirec,indext,sep="/")
- webpp=c(webpp,out_html)
-# now make webpage `out_html'
-sink(out_html)
-for(i in 1:7){
-cat(outlines[[i]],"\n",sep="")
 }
-cat("<h3>"); cat(electitle,sep=space5); cat("</h3>\n")
-cat(outlines[[8]],"\n",sep="")
-cat("<p><b><em>Elected",unc,": </em></b>",space,sep="")
+tra=c("","t"); tra1=c("t",""); hide=c("Show","Hide")    
+    
+for(j in 1:2){
+transf=j-1
+html=outlines[1:7]
+html=c(html,paste0("<h3>",paste(electitle,sep=space5),"</h3>"))
+html=c(html,outlines[[8]])
 elec=it[it>0]; x=elec
 pp=paste(" (",party[x],")",sep=""); if(pp[[1]]==" ( )"|pp[[1]]==" ()"){pp=""}
-cat(paste(fname[x]," ",name[x],pp,sep="",collapse=paste(", ","&#160;")))
-if(ed$c<ed$s){for(i in 1:(ed$s-ed$c)){cat(", &#160;<em>vacancy</em>")}}
-cat("\n"); cat(outlines[[9]],"\n",sep="")
+text1=paste0("<p><b><em>Elected",unc,": </em></b>",space)
+text2=paste(fname[x]," ",name[x],pp,sep="",collapse=paste(", ","&#160;"))
+nvac=max(ns-nc,0); text3=rep(", &#160;<em>vacancy</em>",nvac)
+html=c(html,paste0(text1,text2,text3))
+html=c(html,outlines[[9]])
 if(nv>0){ 
- cat(outlines[[10]],"\n",sep="")
- cat('<table bgcolor="red"><tr height=30><td width=5></td><td><a href="index',tra1[[j]],'.html">',hide[[j]],' transfers</a></td><td width=5></td></tr></table>\n',sep='')
- cat("Count stage",space,"\n",sep="")
- for(i in 1:nstages){
-  cat('<button class="w3-button demo" onclick="currentDiv(',i,')">',i,'</button>\n',sep='')
- }
- cat('</div>\n<div>')
- for(i in 1:nstages){
-  cat('<img class="mySlides" src="stage',tra[[j]],i,'.jpg" style="width:100%">\n',sep='')
- }
- for(i in 11:46){
-  cat(outlines[[i]],"\n",sep="")
- }
- cat(outlines[47:48],"\n",sep="")
- options(width=140,max.print=5000)
- print(round(csum,2))
- cat("<p>")
- cat(qtext)
- for(i in 49:60){
-  cat(outlines[[i]],"\n",sep="")
- }
- cat("</div>"); cat("\n")
-}else{cat("<br><br><br><br><br>\n")}
-
-cat("<p>&#160;&#160;<b><em>Download:</em></b>",
-paste0("<a href=",elecfile,"_",sys,".rda><b>Vote and count data </b>as an R list</a>"),sep="&#160;&#160;"); cat("\n")
-
-for(i in 61:62){
- cat(outlines[[i]],"\n",sep="")
+html=c(html,outlines[[10]])
+html=c(html,paste0('<table bgcolor="red"><tr height=30><td width=5></td><td><a href="index',tra1[[j]],'.html">',hide[[j]],' transfers</a></td><td width=5></td></tr></table>'))
+html=c(html,paste0("Count stage",space))
+for(i in 1:nstages){
+ html=c(html,paste0('<button class="w3-button demo" onclick="currentDiv(',i,')">',i,'</button>\n'))
 }
-sink()
+html=c(html,('</div>\n<div>'))
+for(i in 1:nstages){
+ html=c(html,paste0('<img class="mySlides" src="stage',tra[[j]],i,'.jpg" style="width:100%">\n'))
 }
-webpp
+html=c(html,outlines[11:48])
+
+csvec=utils::capture.output(
+  print(round(csum,2),collapse="\n")
+)
+html=c(html,csvec)
+
+html=c(html,"<p>",qtext)
+html=c(html,outlines[49:60],"</div>")
+}else{html=c(html,"<br><br><br><br><br>")}
+
+text1="<p>&#160;&#160;<b><em>Download:</em></b>"
+text2=paste0("<a href=",elecfile,"_",sys,".rda><b>Vote and count data </b>as an R list</a>")
+html=c(html,paste(text1,text2,sep="&#160;&#160;"))
+
+html=c(html,outlines[61:62])
+
+indext=paste("index",tra[[j]],".html",sep="")
+out_html=paste(outdirec,indext,sep="/")
+writeLines(html,out_html)
+} # end of loop making index.html and indext.html
 } # end of function webpages
 
 
-plot_jpeg=function(plotfile,stage)
+plot_jpeg=function(plotfile,stage){
 # to display a plot showing one stage of the count
- {dpi=200
-  jpg = jpeg::readJPEG(plotfile, native=TRUE) # read the file
-  res = dim(jpg)[2:1] # get the resolution, [x, y]
-  w=res[[1]]/dpi; h=res[[2]]/dpi
+dpi=200
+jpg = jpeg::readJPEG(plotfile, native=TRUE) # read the file
+res = dim(jpg)[2:1] # get the resolution, [x, y]
+w=res[[1]]/dpi; h=res[[2]]/dpi
 # if at stage 1 initialize plot of right size
 #  (will be closed in stv when web pages are written)
-  if(stage==1){grDevices::dev.new(width=w,height=h,noRStudioGD = TRUE)}
-  graphics::par(mar=rep(0,4))
-  graphics::plot(1,1,xlim=c(1,res[1]),ylim=c(1,res[2]),type='n',xaxs='i',yaxs='i',xaxt='n',yaxt='n',xlab='',ylab='',bty='n')
-  graphics::rasterImage(jpg,1,1,res[1],res[2])
+if(stage==1){grDevices::dev.new(width=w,height=h,noRStudioGD = TRUE)}
+oldpar=graphics::par(no.readonly = TRUE) # record existing settings of par ..
+on.exit(graphics::par(oldpar)) # .. and restore when exit function
+graphics::par(mar=rep(0,4))
+graphics::plot(1,1,xlim=c(1,res[1]),ylim=c(1,res[2]),type='n',xaxs='i',yaxs='i',xaxt='n',yaxt='n',xlab='',ylab='',bty='n')
+graphics::rasterImage(jpg,1,1,res[1],res[2])
 }
 
 

@@ -3,5 +3,4 @@
 export(pref.data)
 export(stv)
 export(stv.plots)
-export(stv.result)
 export(stv.wig)

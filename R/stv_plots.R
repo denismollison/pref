@@ -1,5 +1,5 @@
 # stv.plots - plots of main statistics of election count
-# 13 jan 2024, last revised 25 jan 2024
+# 13 jan 2024, last revised 29 jan 2024
 
 #' Makes webpage plots of result of an STV election
 #'
@@ -33,13 +33,13 @@ n2=ed$n2
 party=ed$p
 col=ed$col
 
-# additional vars from count
+# additional vars from countdata
 sys=ed$sys
 elec=ed$el
 itt=ed$itt # - may not need
-ctext=ed$ctext
-csum=ed$csum
-qtext=ed$qtext # - may not need
+ctext=ed$narrative
+csum=ed$count
+qtext=ed$quotatext # - may not need
 va=ed$va
 if(sys=="meek"){keep=ed$keep}
 
@@ -63,6 +63,6 @@ for(i in 2:1){  # 2 plots, with/without separate transfers plot
 }}
 
 wp=webpages(elecdata,outdirec,map)
- if(webdisplay==TRUE){utils::browseURL(wp[[1]],browser="open")}
+ if(webdisplay==TRUE){utils::browseURL(paste(outdirec,"index.html",sep="/"),browser="open")}
 outdirec
 }

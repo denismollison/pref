@@ -1,4 +1,4 @@
-# stv() - core of STV package - last revised 25 jan 2024
+# stv() - core of STV package - last revised 29 jan 2024
 
 #' STV election count - uses Meek STV, allows equal preferences
 #'
@@ -51,7 +51,12 @@ cat("System: meek STV\n")
 cat("To fill",ns,"seats; ",nc," candidates:\n")
 cat(paste(name,collapse=", ")); cat("\n")
 cat(totalvotes,"votes;  initial quota",round(q0,2)); cat("\n\n")
-if(verbose==TRUE){options(width=120)}
+
+if(verbose==TRUE){
+width0=getOption("width")
+on.exit(options(width=width0))
+options(width=120)
+}
 
 # initialise quota (=q0), keep values (=1), and housekeeping variables:
 qa=q0
@@ -76,7 +81,7 @@ if(!dir.exists(outdirec)){dir.create(outdirec)}
 # main cycle - to elect or exclude next candidate(s)
 while(ne<ns){
  em=ems[[hp]]
-# recalculate keep values and transfer surpluses
+ # recalculate keep values and transfer surpluses
  tr=transfer(k,iter,vote,mult,ns,ie,em,surplus,sel)
   k=tr$k; vm=tr$vm; vc=tr$vc; qa=tr$qa; inn=tr$inn
  iter=tr$iter; surplus=tr$sur
@@ -112,7 +117,7 @@ while(ne<ns){
    grDevices::dev.off()
   }}
 
-if(timing==TRUE){cat(stage,"    process time ",pt," secs    "); cat("\n")}
+  if(timing==TRUE){cat(stage,"    process time ",pt," secs    "); cat("\n")}
 
 # if verbose=TRUE : print decision, require interaction (CR) at each stage
   if(verbose==TRUE){
@@ -165,8 +170,11 @@ if(verbose==TRUE){cat("\nVotes at each stage and final keep values:\n")
 }
     
 # save votedata and result details countdata as elecdata in one list
-countdata=list(sys="meek",el=elected,itt=itt,ctext=txt,csum=csum,qtext=qtxt,va=va,keep=ks[1:nc,]*100)
+countdata=list(sys="meek",elec=elected,itt=itt,narrative=txt,count=csum,quotatext=qtxt,va=va,keep=ks[1:nc,]*100)
 elecdata=c(votedata,countdata)
+report=stv.report(elecdata)
+elecdata=c(elecdata,list(report=report))    # add report narrative
+
 elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
 save(elecdata,file=paste0(outdirec,"/",elecfile,"_",sys,".rda"))
 
@@ -175,7 +183,7 @@ save(elecdata,file=paste0(outdirec,"/",elecfile,"_",sys,".rda"))
 if(plot==TRUE){
  wp=webpages(elecdata,outdirec,map)
  if(verbose==TRUE){grDevices::dev.off()}
- if(webdisplay==TRUE){utils::browseURL(wp[[1]],browser="open")}
+ if(webdisplay==TRUE){utils::browseURL(paste(outdirec,"index.html",sep="/"),browser="open")}
  }
 elecdata
 }

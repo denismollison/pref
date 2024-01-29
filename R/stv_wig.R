@@ -1,4 +1,4 @@
-# stv.wig(() - last revised 25 jan 2024
+# stv.wig(() - last revised 29 jan 2024
 
 #' STV election count using WIG as for Scottish Council elections
 #' calculated to 5 places of decimals as used for those elections
@@ -191,7 +191,7 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
 # correction for when last elected don't reach quota
  if(final != ""){
   if(v[[ite[[1]]]]<qa){
-            dec2=paste(name2[[jm]],"is excluded, so")
+   dec2=paste(name2[[jm]],"is excluded, so")
    enames=name2[ite]; x=plural(enames)
    dec2=paste(dec2,x$out,x$is,"elected")
  }}
@@ -214,9 +214,9 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
 if(timing==TRUE){cat(stage,"    process time ",pt," secs    "); cat("\n")}
 # print decision (if verbose=TRUE)
 if(verbose==TRUE){
-cat(dec,sep="\n"); cat("\n")
+ cat(dec,sep="\n"); cat("\n")
 # .. and plot current state of votes if plot=TRUE
-  if(plot==TRUE){plot_jpeg(plotfile,stage)}
+ if(plot==TRUE){plot_jpeg(plotfile,stage)}
   if(final==""){readline("next? ")}
  }
 ann[je]=1
@@ -232,30 +232,33 @@ dimnames(csum)=list(name=c(cname,"non-transferable"),stage=st)
 
 elec=it[it>0]; x=elec
 txt=matrix(txt,nrow=2)
-qtxt=paste0("Total votes ",totalvotes,",  quota = ",qa)
+qtext=paste0("Total votes ",totalvotes,",  quota = ",qa)
 pp=paste(" (",party[x],")",sep=""); if(pp[[1]]==" ( )"|pp[[1]]==" ()"){pp=""}
 elected=paste(fname[x]," ",name[x],pp,sep="",collapse=", ")
 cat("\n"); cat(paste0("Those elected, in order of election:\n"))
 cat(elected); cat("\n\n")
 
 if(verbose==TRUE){cat("\nVotes at each stage:\n")
-    print(round(csum,2))
-    cat("\n",qtxt,"\n")
+  print(round(csum,2))
+  cat("\n",qtext,"\n")
 }
+# cat(getOption("width"),"\n")
 
 # save result details and elecdata in R data files
-countdata=list(sys="wig",el=elected,itt=itt,ctext=txt,csum=csum,qtext=qtxt,va=va)
+countdata=list(sys="wig",elec=elected,itt=itt,narrative=txt,count=csum,quotatext=qtext,va=va)
 elecdata=c(votedata,countdata)
+report=stv.report(elecdata)
+elecdata=c(elecdata,list(report=report))    # add report narrative
+
 elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
 save(elecdata,file=paste0(outdirec,"/",elecfile,"_",sys,".rda"))
-# save(votedata,file=paste0(outdirec,"/",elecfile,".rda"))
    
 # if plot=TRUE make webpages to go with vote plots, ..
 # .. and if verbose=TRUE and webdisplay=TRUE display them
 if(plot==TRUE){
  wp=webpages(elecdata,outdirec,map)
 #  if(verbose==TRUE){grDevices::dev.off()}
- if(webdisplay==TRUE){utils::browseURL(wp[[1]],browser="open")}
+ if(webdisplay==TRUE){utils::browseURL(paste(outdirec,"index.html",sep="/"),browser="open")}
 }
 elecdata
 }

@@ -181,10 +181,14 @@ for(i in 1:nstages){
 }
 html=c(html,outlines[11:48])
 
+width0=getOption("width")
+options(width=150)
+on.exit(options(width=width0))
 csvec=utils::capture.output(
   print(round(csum,2),collapse="\n")
 )
 html=c(html,csvec)
+options(width=width0)
 
 html=c(html,"<p>",qtext)
 html=c(html,outlines[49:60],"</div>")
@@ -229,4 +233,61 @@ if(n>2){
   for(i in (n-2):1){outnames=paste(names[[i]],", ",outnames,sep="")}}
   if(n==1){is="is"; has="has"; es=""}else{is="are"; has="have";es="es"}
   list(out=outnames,is=is,has=has,es=es)
+}
+
+
+# stv.report - text report of main statistics of STV election count -
+# 16 jan 2024 as stv.result; rewritten to avoid written output 29 jan 2024
+
+stv.report=function(elecdata){
+
+ed=elecdata
+elecname=ed$e
+ns=ed$s
+nc=ed$c
+mult=ed$m
+name=ed$n
+sys=ed$sys
+ct=ed$narrative; nst=dim(ct)[[2]]
+csum=ed$count
+qtext=ed$quotatext
+if(sys=="meek"){keep=ed$keep}
+
+report=""
+report=c(report,paste("Election:",elecname))
+report=c(report,paste("System:",sys,"STV"))
+report=c(report,paste("To fill",ns,"seats; ",nc,"candidates:"))
+report=c(report,paste(name,collapse=", "))
+totalvotes=sum(mult)
+if(sys=="meek"){q0=totalvotes/(ns+1); q0text="votes;  initial quota"}else{
+  q0=1+floor(totalvotes/(ns+1)); q0text="votes;  quota"}
+report=c(report,paste(totalvotes,q0text,round(q0,2)),"")
+
+# count text:
+for(i in 1:nst){
+report=c(report,paste(ct[1,i]),paste("  ",ct[2,i]),"")
+}
+report=c(report,paste("Those elected, in order of election:"),paste(ed$el),"")
+
+if(sys=="meek"){
+ic=1:nc; nst=dim(keep)[[2]]
+ir=ic[keep[ic,nst]==100]
+if(length(ir)>0){rname=dimnames(csum)[[1]][ir]}
+report=c(report,paste("Runner-up:",paste(rname,collapse=", ")))
+report=c(report,"")
+}
+
+if(sys=="meek"){
+report=c(report,paste(("Votes at each stage and final keep values:")))
+}else{
+report=c(report,paste("Votes at each stage:"))
+}
+
+csvec=utils::capture.output(
+  print(round(csum,2),collapse="\n")
+)
+
+report=c(report,csvec,"",paste(qtext))
+
+report
 }

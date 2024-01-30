@@ -10,10 +10,12 @@
 #' @return Webpages with plots of election count and results
 #' @export
 #'
-#' @examples c99result=stv(c99)
-#' @examples c99plots=stv.plots(c99result)
-#' @examples nws17wig=stv.wig(nws17)
-#' @examples nws17plots=stv.plots(nws17wig)
+#' @examples
+#' c99result=stv(c99)
+#' c99plots=stv.plots(c99result)
+#' @examples
+#' nws17wig=stv.wig(nws17)
+#' nws17plots=stv.plots(nws17wig)
 
 stv.plots=function(elecdata,outdirec=tempdir(),webdisplay=FALSE,map=FALSE){
 
@@ -45,7 +47,7 @@ va=ed$va
 if(sys=="meek"){keep=ed$keep}
 
 # if we have all those ...
-nstages=dim(csum)[[2]]-1
+nstages=dim(csum)[[2]]-{sys=="meek"} # if meek, ignore last column (keep values)
 qs=apply(csum[1:nc,1:nstages],2,sum)/(ns+1); qs=100*qs/sum(mult)
 wi=(nc+4.5); w=wi*120   # plot width in (approx) inches, and in pixels
 trf=c("","t")

@@ -7,9 +7,10 @@
 stv(
   votedata,
   outdirec = tempdir(),
-  verbose = FALSE,
   plot = TRUE,
   webdisplay = FALSE,
+  interactive = FALSE,
+  messages = TRUE,
   timing = FALSE,
   map = FALSE
 )
@@ -19,12 +20,14 @@ stv(
 
 \item{outdirec}{Needs to be set for permanent record of results}
 
-\item{verbose}{If =TRUE reports and pauses at each stage of the count
-(press return to continue to next stage)}
-
 \item{plot}{If =TRUE (default) produces plots of count and webpages in outdirec}
 
 \item{webdisplay}{If =TRUE displays plots and statistics as web pages}
+
+\item{interactive}{If =TRUE reports and pauses at each stage of the count
+(press return to continue to next stage)}
+
+\item{messages}{If=TRUE prints 1-line initial and final reports}
 
 \item{timing}{Whether to report computing time at each stage}
 

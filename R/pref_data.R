@@ -1,4 +1,4 @@
-# main input function - last revised 25 jan 2024
+# main input function - last revised 30 jan 2024
 # uses abbrev, party_colour and capwords (in functions_input.R) for tidying up
 #
 # handles vote data  with full details whether in pref or ballot format
@@ -30,10 +30,11 @@
 #' @examples
 #' datafile=system.file("extdata","jmt2002.blt",package="pref")
 #' j02=pref.data(datafile,friendly=TRUE)
-                                        #
-pref.data=function(datafile,mult=FALSE,parties=FALSE,ballot=FALSE,friendly=FALSE,details=TRUE,header=FALSE){
-# note: defaults are format used for (inter alia) Scottish Council elections
 
+pref.data=function(datafile,mult=FALSE,details=TRUE,parties=FALSE,ballot=FALSE,friendly=FALSE,header=FALSE){
+# note: defaults are format used for (inter alia) Scottish Council elections,
+# except that those data have mult=TRUE and parties=FALSE
+    
 # first: minimal case - data a vote matrix - if header=T with candidate names
 if(details==FALSE){     # minimal case with abbrev names and vote matrix only
  vote=as.matrix(utils::read.table(datafile,header=header,row.names=NULL,sep=" "))

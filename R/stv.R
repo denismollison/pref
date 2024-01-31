@@ -4,12 +4,13 @@
 #'
 #' @param votedata File with vote data
 #' @param outdirec Needs to be set for permanent record of results
-#' @param verbose If =TRUE reports and pauses at each stage of the count
-#' (press return to continue to next stage)
 #' @param plot If =TRUE (default) produces plots of count and webpages in outdirec
 #' @param webdisplay If =TRUE displays plots and statistics as web pages
-#' @param map Link to a map or other URL associated with election
+#' @param interactive If =TRUE reports and pauses at each stage of the count
+#' (press return to continue to next stage)
+#' @param messages If=TRUE prints 1-line initial and final reports
 #' @param timing Whether to report computing time at each stage
+#' @param map Link to a map or other URL associated with election
 #'
 #' @return A list containing vote and count data, + optional web pages; for details see manual pref_pkg_manual.pdf (section 3)
 #' @export
@@ -18,7 +19,7 @@
 #' @examples c99result=stv(c99,plot=FALSE)
 #' @examples y12meek=stv(y12,plot=FALSE)
 #'
-stv=function(votedata,outdirec=tempdir(),verbose=FALSE,plot=TRUE,webdisplay=FALSE,timing=FALSE,map=FALSE){
+stv=function(votedata,outdirec=tempdir(),plot=TRUE,webdisplay=FALSE,interactive=FALSE,messages=TRUE,timing=FALSE,map=FALSE){
 # don't try plotting if package jpeg is not available:
 if(requireNamespace("jpeg")==FALSE){
     plot=FALSE; warning("package jpeg not available, setting plot=FALSE")
@@ -45,14 +46,17 @@ vd=list(e=elecname,s=ns,c=nc,nv=nv,m=mult,v=vote,f=fname,n=name,n2=name2,p=party
 
 q0=totalvotes/(ns+1)	# initial quota
 
-# print election name and basic statistics
+if(interactive==TRUE){
 cat("\n"); cat("Election: ",elecname,"\n")
 cat("System: meek STV\n")
 cat("To fill",ns,"seats; ",nc," candidates:\n")
 cat(paste(name,collapse=", ")); cat("\n")
 cat(totalvotes,"votes;  initial quota",round(q0,2)); cat("\n\n")
+}else{
+if(messages==TRUE){packageStartupMessage(paste("Election:",elecname,"(Meek STV) -",nc,"candidates,",totalvotes,"votes"))}
+}
 
-if(verbose==TRUE){
+if(interactive==TRUE){
 width0=getOption("width")
 on.exit(options(width=width0))
 options(width=120)
@@ -89,7 +93,7 @@ while(ne<ns){
  hp0=hp
  dn=decision(nc,vc,qa,ie,k,stage,fin,csum,st,surplus,hp)
  hp=dn$hp
- if(hp!=hp0){if(verbose==TRUE){warning("close call - need high precision")}
+ if(hp!=hp0){if(interactive==TRUE){warning("close call - need high precision")}
  }else{
   k=dn$k; ie=dn$ie; elec=dn$elec; xcl=dn$xcl; it=c(it,elec,xcl*ie[xcl])
   stage=dn$stage; csum=dn$csum; st=dn$st
@@ -117,10 +121,10 @@ while(ne<ns){
    grDevices::dev.off()
   }}
 
-  if(timing==TRUE){cat(stage,"    process time ",pt," secs    "); cat("\n")}
+  if(timing==TRUE){message(paste(stage,"   process time ",round(pt,3)," secs"))}
 
-# if verbose=TRUE : print decision, require interaction (CR) at each stage
-  if(verbose==TRUE){
+# if interactive=TRUE : print decision, require interaction (CR) at each stage
+  if(interactive==TRUE){
   if(stage==1){cat(dtext,sep="\n")}else{cat(dtext,sep=",\n")}
   cat("\n")
 # .. and plot current state of votes if plot=TRUE
@@ -142,15 +146,15 @@ if(length(ie[ie>=0])>ns){
  }
  tim=proc.time()-tim0;  pt=tim[[1]]
 }
-# print final result
+# final result
 elec=it[it>0]; x=elec
 if(np==FALSE){pp=paste(" (",party,")",sep="")}else{pp=party}
 elected=paste(fname[x]," ",name[x],pp[x],sep="",collapse=", ")
-cat("Those elected, in order of election:\n")
-cat(elected); cat("\n\n")
+
 # Runner-up
 ic=1:nc; ru=ic[k[ic]==1]
-if(verbose==TRUE){cat(paste("Runner-up: ",fname[ru]," ",name[ru],pp[ru],sep="",collapse=", ")); cat("\n")}
+if(interactive==TRUE){cat(paste("Runner-up: ",fname[ru]," ",name[ru],pp[ru],sep="",collapse=", ")); cat("\n")}
+
 # finalise matrices of keep values and votes at each stage (ks, csum)
 ks=cbind(ks,k)
 dimnames(ks)=list(name=c(paste(name,fname,sep=", "),"non-transferable"),stage=1:dim(ks)[[2]])
@@ -163,10 +167,12 @@ dimnames(csum)=list(name=c(cname,"non-transferable"),stage=st)
     
 if(nstages>1){qf=sum(va[1:nc,1:nc,nstages])/(ns+1)}else{qf=q0}
 qtxt=paste0("Total votes ",totalvotes,",  initial quota = ",round(q0,2),", final quota = ",round(qf,2))
-    
-if(verbose==TRUE){cat("\nVotes at each stage and final keep values:\n")
-    print(round(csum,2))
-    cat("\n",qtxt,"\n")
+
+if(interactive==TRUE){cat("\nVotes at each stage and final keep values:\n")
+ print(round(csum,2))
+cat("\n",qtxt,"\n")
+}else{
+if(messages==TRUE){packageStartupMessage(paste("Those elected, in order of election:",elected))}
 }
     
 # save votedata and result details countdata as elecdata in one list
@@ -179,10 +185,10 @@ elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
 save(elecdata,file=paste0(outdirec,"/",elecfile,"_",sys,".rda"))
 
 # if plot=TRUE make webpages to go with vote plots,
-#   and if verbose=T display them
+#   and if interactive=TRUE display them
 if(plot==TRUE){
  wp=webpages(elecdata,outdirec,map)
- if(verbose==TRUE){grDevices::dev.off()}
+ if(interactive==TRUE){grDevices::dev.off()}
  if(webdisplay==TRUE){utils::browseURL(paste(outdirec,"index.html",sep="/"),browser="open")}
  }
 elecdata

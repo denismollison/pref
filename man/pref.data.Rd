@@ -7,10 +7,10 @@
 pref.data(
   datafile,
   mult = FALSE,
+  details = TRUE,
   parties = FALSE,
   ballot = FALSE,
   friendly = FALSE,
-  details = TRUE,
   header = FALSE
 )
 }
@@ -19,13 +19,13 @@ pref.data(
 
 \item{mult}{Whether includes aggregated votes (default FALSE)}
 
+\item{details}{Whether full election detail (default) or just vote matrix}
+
 \item{parties}{File with party details (default FALSE, i.e. omit)}
 
 \item{ballot}{Default FALSE (meaning pref format)}
 
 \item{friendly}{Default FALSE (meaning most details after votes)}
-
-\item{details}{Whether full election detail (default) or just vote matrix}
 
 \item{header}{Whether a vote matrix has a header}
 }

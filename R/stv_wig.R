@@ -1,26 +1,27 @@
-# stv.wig(() - last revised 29 jan 2024
+# stv.wig(() - last revised 30 jan 2024
 
 #' STV election count using WIG as for Scottish Council elections
 #' calculated to 5 places of decimals as used for those elections
 #'
 #' @param votedata File with vote data
 #' @param outdirec Needs to be set for permanent record of results
-#' @param verbose If =TRUE reports and pauses at each stage of the count
 #' (press return to continue to next stage)
 #' @param plot If =TRUE (default) produces plots of count and webpages in outdirec
 #' @param webdisplay If =TRUE displays plots and statistics as web pages
-#' @param map Link to a map or other URL associated with election
+#' @param interactive If =TRUE reports and pauses at each stage of the count
+#' @param messages If=TRUE prints 1-line initial and final reports
 #' @param timing Whether to report computing time at each stage
+#' @param map Link to a map or other URL associated with election
 #'
 #' @return A list containing votes at each stage, + optional web pages; for details see manual pref_pkg_manual.pdf (section 3)
 #' @export
 #'
-#' @examples hc12wig=stv.wig(hc12,plot=FALSE)
+#' @examples hc12wig=stv.wig(hc12,plot=FALSE,messages=FALSE)
 #' @examples nws17wig=stv.wig(nws17,plot=FALSE)
 #' @examples p17wig=stv.wig(p17,plot=FALSE)
-#' @examples cnc17wig=stv.wig(cnc17,plot=FALSE)
+#' @examples cnc17wig=stv.wig(cnc17,plot=FALSE,timing=TRUE)
 #'
-stv.wig=function(votedata,outdirec=tempdir(),verbose=FALSE,plot=TRUE,webdisplay=FALSE,timing=FALSE,map=FALSE){
+stv.wig=function(votedata,outdirec=tempdir(),plot=TRUE,webdisplay=FALSE,interactive=FALSE,messages=TRUE,timing=FALSE,map=FALSE){
 # don't try plotting if package jpeg is not available:
 if(requireNamespace("jpeg")==FALSE){
 plot=FALSE; warning("package jpeg not available, setting plot=FALSE")
@@ -48,12 +49,17 @@ vd=list(e=elecname,s=ns,c=nc,nv=nv,m=mult,v=vote,f=fname,n=name,n2=name2,p=party
 qa=ceiling((totalvotes+1)/(ns+1))  # quota (fixed)
 qpc=100*qa/totalvotes
 
-# print election name and basic statistics
-cat("Election: ",elecname,"\n")
+# inital output if interactive, briefer version if messages=TRUE
+if(interactive==TRUE){
+cat("\n"); cat("Election: ",elecname,"\n")
 cat("System: WIG STV\n")
 cat("To fill",ns,"seats; ",nc," candidates:\n")
 cat(paste(name,collapse=", ")); cat("\n")
 cat(totalvotes,"votes;  quota",qa); cat("\n\n")
+}else{
+if(messages==TRUE){packageStartupMessage(paste("Election:",elecname,"(WIG STV) -",nc,"candidates,",totalvotes,"votes"))}
+}
+
 
 # quota (fixed) and quota (fixed) andhousekeeping variables
 inn=rep(0,nc)	# 0 indicates still in play (-1 elim, 1 elec, 2 elec & transf)
@@ -211,9 +217,10 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
    grDevices::dev.off()
   }}
 
-if(timing==TRUE){cat(stage,"    process time ",pt," secs    "); cat("\n")}
-# print decision (if verbose=TRUE)
-if(verbose==TRUE){
+if(timing==TRUE){message(paste(stage,"   process time ",round(pt,3)," secs"))}
+
+# print decision (if interactive=TRUE)
+if(interactive==TRUE){
  cat(dec,sep="\n"); cat("\n")
 # .. and plot current state of votes if plot=TRUE
  if(plot==TRUE){plot_jpeg(plotfile,stage)}
@@ -235,14 +242,14 @@ txt=matrix(txt,nrow=2)
 qtext=paste0("Total votes ",totalvotes,",  quota = ",qa)
 pp=paste(" (",party[x],")",sep=""); if(pp[[1]]==" ( )"|pp[[1]]==" ()"){pp=""}
 elected=paste(fname[x]," ",name[x],pp,sep="",collapse=", ")
-cat("\n"); cat(paste0("Those elected, in order of election:\n"))
-cat(elected); cat("\n\n")
 
-if(verbose==TRUE){cat("\nVotes at each stage:\n")
-  print(round(csum,2))
-  cat("\n",qtext,"\n")
+
+if(interactive==TRUE){cat("\nVotes at each stage and final keep values:\n")
+ print(round(csum,2))
+cat("\n",qtext,"\n")
+}else{
+if(messages==TRUE){packageStartupMessage(paste("Those elected, in order of election:",elected))}
 }
-# cat(getOption("width"),"\n")
 
 # save result details and elecdata in R data files
 countdata=list(sys="wig",elec=elected,itt=itt,narrative=txt,count=csum,quotatext=qtext,va=va)
@@ -254,10 +261,10 @@ elecfile=paste(strsplit(elecname," ")[[1]],collapse="_")
 save(elecdata,file=paste0(outdirec,"/",elecfile,"_",sys,".rda"))
    
 # if plot=TRUE make webpages to go with vote plots, ..
-# .. and if verbose=TRUE and webdisplay=TRUE display them
+# .. and if interactive=TRUE and webdisplay=TRUE display them
 if(plot==TRUE){
  wp=webpages(elecdata,outdirec,map)
-#  if(verbose==TRUE){grDevices::dev.off()}
+#  if(interactive==TRUE){grDevices::dev.off()}
  if(webdisplay==TRUE){utils::browseURL(paste(outdirec,"index.html",sep="/"),browser="open")}
 }
 elecdata

@@ -8,9 +8,10 @@ calculated to 5 places of decimals as used for those elections}
 stv.wig(
   votedata,
   outdirec = tempdir(),
-  verbose = FALSE,
   plot = TRUE,
   webdisplay = FALSE,
+  interactive = FALSE,
+  messages = TRUE,
   timing = FALSE,
   map = FALSE
 )
@@ -18,14 +19,16 @@ stv.wig(
 \arguments{
 \item{votedata}{File with vote data}
 
-\item{outdirec}{Needs to be set for permanent record of results}
-
-\item{verbose}{If =TRUE reports and pauses at each stage of the count
+\item{outdirec}{Needs to be set for permanent record of results
 (press return to continue to next stage)}
 
 \item{plot}{If =TRUE (default) produces plots of count and webpages in outdirec}
 
 \item{webdisplay}{If =TRUE displays plots and statistics as web pages}
+
+\item{interactive}{If =TRUE reports and pauses at each stage of the count}
+
+\item{messages}{If=TRUE prints 1-line initial and final reports}
 
 \item{timing}{Whether to report computing time at each stage}
 
@@ -39,9 +42,9 @@ STV election count using WIG as for Scottish Council elections
 calculated to 5 places of decimals as used for those elections
 }
 \examples{
-hc12wig=stv.wig(hc12,plot=FALSE)
+hc12wig=stv.wig(hc12,plot=FALSE,messages=FALSE)
 nws17wig=stv.wig(nws17,plot=FALSE)
 p17wig=stv.wig(p17,plot=FALSE)
-cnc17wig=stv.wig(cnc17,plot=FALSE)
+cnc17wig=stv.wig(cnc17,plot=FALSE,timing=TRUE)
 
 }

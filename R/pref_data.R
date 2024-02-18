@@ -108,11 +108,12 @@ if(details==FALSE){     # minimal case with abbrev names and vote matrix only
    for(iv in 1:nv){
     x=strsplit(dat[[vdata[[iv]]]]," ")[[1]]
     x=x[x!=""]
-    nx0=length(x)
-    mul[[iv]]=as.numeric(x[[1]])  # for pref format assume first element is mult
-    if(x[[nx0]]!="0"){warning("check failure at vote no. ",iv,"\n")}
-    if(nx0>2){
-     x=x[2:(nx0-1)]; nx=length(x)   # actual vote
+    if(mult==TRUE){mul[[iv]]=as.numeric(x[[1]])}else{mul[[iv]]=1}
+    nx1=1+as.numeric(mult)
+    nx2=length(x)
+    if(x[[nx2]]!="0"){warning("check failure at vote no. ",iv,"\n")}
+    if(nx2>nx1){
+     x=x[nx1:(nx2-1)]; nx=length(x)   # actual vote
      pr=1; incr=1; pref=numeric()
      for(i in 1:nx){
       nch=nchar(x[[i]])

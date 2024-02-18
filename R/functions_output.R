@@ -24,7 +24,7 @@ voteplot=function(ns,vm,qpc,it,tx,name,party,colour,transf,elecname,sys="meek"){
 cx=1 # consider getting rid of cx (regulates font scaling)
 margincolour="burlywood";  panelcolour="burlywood1"
 # convert vote variables to percentages
-b=sum(vm); nc=dim(vm)[[1]]  # changed vm
+b=sum(vm); nc=dim(vm)[[1]]
 vm=vm*100/b
 vm0=vm;  diag(vm0[,1:nc])=0
 ip={max(nchar(party))>0}

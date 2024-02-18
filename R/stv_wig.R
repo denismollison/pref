@@ -84,9 +84,9 @@ for(iv in 1:nv){
   f0=min(b[b!=0]); fp=ic[b==f0]
   f[[iv]]=fp
   ff[[fp]]=ff[[fp]]+mult[[iv]]
-}}
+ }}
 stage=0
-vm=matrix(0,nrow=nc,ncol=nc+1)   # changed!
+vm=matrix(0,nrow=nc,ncol=nc+1)
 rem=rep(1,nv)
 
 # transfer step - start of specifically wig stuff
@@ -94,7 +94,7 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
  iter=iter+1
  done=length(it)
  stage=stage+1
- vm[,inn!=2]=0
+ vm[,inn!=2]=0   # should we set vm[,(nc+1)]=0 too ??
 
 # count votes
  for(iv in 1:nv){
@@ -102,10 +102,11 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
   if(max(b)>0){
    f0=min(b[b!=0]); fp=ic[b==f0]
    vm[f[[iv]],fp]=vm[f[[iv]],fp]+mult[[iv]]*rem[[iv]]
- }}
- vm[,nc+1]=ff-apply(vm,1,sum)
+  }}
+ vm[,nc+1]=ff-apply(vm[,1:nc],1,sum)
  v=apply(vm,2,sum)
  vmp=vm   # save values of vm for plotting at end of stage
+ 
  csum=cbind(csum,v); st=c(st,paste("stage",stage,sep=""))
  j=ic[inn[ic]==0 | inn[ic]==1]
  je=j[v[j]>=qa]      # any still in with >=quota deemed elected
@@ -148,6 +149,8 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
     }
 # can do extra output to identify close contests - qv R2019 version if wanted
 }
+# note vm now differs from vm if there's been a new elec candidate
+      
 # adjust vote file
   for(i in 1:nv){
    b=vote[i,]
@@ -174,7 +177,7 @@ while(ne<ns){   # start of main loop (`while no. elec < no. of seats')
   va=array(c(va,vm),dim=c(nc,(nc+1),stage))
   itt=append(itt,list(it))
  }
-
+ 
 # write output text
  if(ne==ns){final=" - final result"}else{final=""}
  dec2=""

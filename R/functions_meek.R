@@ -6,9 +6,10 @@
 # -> delegates sharing out of each vote to function ..
 # .. share which calculates details for a single vote
 
-transfer=function(k,iter,vote,mult,ns,ie,em,surplus,sel){
+transfer=function(vc,k,iter,vote,mult,ns,ie,em,surplus,sel){
 # to transfer surpluses at each stage
 nv=dim(vote)[[1]]; nc=dim(vote)[[2]]; ic=1:nc
+qa=sum(vc[1:nc])/(ns+1)
 je=ic[ie==1]; ne=length(je)
 v3=array(0,dim=c(nc,(nc+1),2^ne))
 for(iv in 1:nv){
@@ -27,6 +28,7 @@ for(iv in 1:nv){
    v3[j,,]=v3[j,,]+share(ie,bj,sel)*mult[[iv]]/nf   # for share see below
 }}
 }
+
 if(ne==0){iter=iter+1
  vm=v3[,,1]; vc=apply(vm,2,sum)
  qa=sum(vc[1:nc])/(ns+1)   # revise quota
@@ -35,6 +37,7 @@ if(ne==0){iter=iter+1
  v4=apply(v3,c(2,3),sum)
  i94=1
  while(surplus>em | i94==1){
+ k[je]=k[je]*qa/vc[je]
  i94=0
  t=1-k; te=t[je]; tr=te[ne:1]
 #   Calc vc from coefs using current val of t (=1-k)   
@@ -46,7 +49,6 @@ if(ne==0){iter=iter+1
  qa=sum(vc[1:nc])/(ns+1)   # revise quota
 # calculate surplus of already-elected candidates
  surplus=sum(vc[je]-qa)
- k[je]=k[je]*qa/vc[je]; te=1-k[je]
  iter=iter+1
  }
  vm=matrix(0,nrow=nc,ncol=(nc+1))
@@ -54,7 +56,7 @@ if(ne==0){iter=iter+1
   for(j in 1:(nc+1)){
    vm[i,j]=sum(v3[i,j,]*coef)}}
 }
-list(k=k,vm=vm,vc=vc,qa=qa,inn=je,iter=iter,sur=surplus)
+list(k=k,vm=vm,vc=vc,qa=qa,iter=iter,sur=surplus)
 }
 
 

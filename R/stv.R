@@ -72,6 +72,7 @@ surplus=1		# to ensure calculation gets going
 iter=0			# keeps track of number of iterations in count
 it=numeric()		# it=elec(+) and excl(-) in order of being decided
 ie=rep(0,nc); ne=0	# indicator (ie=1 indicates elected, =-1 excluded)
+vc=rep(0,nc+1)	        # current votes (including non-transferable)
 st=character()          # for stages
 csum=numeric()          # count summary (votes at each stage); note also vm, va
 stage=0; fin=0
@@ -86,9 +87,8 @@ if(!dir.exists(outdirec)){dir.create(outdirec)}
 while(ne<ns){
  em=ems[[hp]]
  # recalculate keep values and transfer surpluses
- tr=transfer(k,iter,vote,mult,ns,ie,em,surplus,sel)
-  k=tr$k; vm=tr$vm; vc=tr$vc; qa=tr$qa; inn=tr$inn
- iter=tr$iter; surplus=tr$sur
+ tr=transfer(vc,k,iter,vote,mult,ns,ie,em,surplus,sel)
+  k=tr$k; vm=tr$vm; vc=tr$vc; qa=tr$qa; iter=tr$iter; surplus=tr$sur
 # make next decision to elect or exclude
  hp0=hp
  dn=decision(nc,vc,qa,ie,k,stage,fin,csum,st,surplus,hp)
@@ -135,14 +135,14 @@ while(ne<ns){
 fin=1; nstages=stage;  qf=qa   # final values of count proper
 # extra stage to calculate final keep values
 if(length(ie[ie>=0])>ns){
- tr=transfer(k,iter,vote,mult,ns,ie,em,surplus,sel)
- k=tr$k; vmp=tr$vmp; vc=tr$vc; qa=tr$qa; inn=tr$inn; iter=tr$iter; surplus=tr$sur
+ tr=transfer(vc,k,iter,vote,mult,ns,ie,em,surplus,sel)
+ k=tr$k; vmp=tr$vmp; vc=tr$vc; qa=tr$qa; iter=tr$iter; surplus=tr$sur
  while(length(k[k>0])>(ns+2)){
   dn=decision(nc,vc,qa,ie,k,stage,fin,csum,st,surplus,hp)
   k=dn$k; ie=dn$ie; elec=dn$elec; xcl=dn$xcl; it=c(it,elec,xcl*ie[xcl])
   surplus=dn$surplus; stage=dn$stage; csum=dn$csum; st=dn$st
-  tr=transfer(k,iter,vote,mult,ns,ie,em,surplus,sel)
-  k=tr$k; vmp=tr$vmp; vc=tr$vc; qa=tr$qa; inn=tr$inn; iter=tr$iter; surplus=tr$sur
+  tr=transfer(vc,k,iter,vote,mult,ns,ie,em,surplus,sel)
+  k=tr$k; vmp=tr$vmp; vc=tr$vc; qa=tr$qa; iter=tr$iter; surplus=tr$sur
  }
  tim=proc.time()-tim0;  pt=tim[[1]]
 }
